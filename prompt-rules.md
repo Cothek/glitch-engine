@@ -331,3 +331,21 @@ If you are running in safe mode (launch-glitch-safe.bat):
 ### Why This Rule Exists (PM-007)
 A missing closing `}` in opencode.json caused both `launch-glitch.bat` and `launch-glitch-safe.bat` to fail. The reviewer didn't catch it because JSON syntax validation wasn't part of the gate. This rule ensures every opencode.json change is syntactically validated before it can block a launch. The safe mode workflow was also fixed so that fixes applied during safe mode properly persist through the backup/restore cycle.
 
+## R14: Config/Launch Change Gate — Reviewer Must Approve (Immutable Rule)
+
+When ANY change touches `opencode.json`, `launch.ps1`, `serve-glitch.ps1`, `launch-glitch.bat`, `serve-glitch.bat`, or any launch/bootstrap script:
+
+### Mandatory Pre-Commit Steps
+1. **Load the reviewer skill**: Before writing any code, load `skill "code-review"` or dispatch to @reviewer with the full planned change set
+2. **Present the diff**: Show the reviewer exactly what files will change and what the changes do
+3. **Get approval**: Do NOT commit or apply changes until the reviewer gives PASS with no BLOCKERs
+4. **Validate after**: Run `validate-config.ps1` after every config change
+5. **Notify**: After the change is committed, tell the user they need to restart opencode
+
+### Exceptions (Rare)
+- Emergency fix when opencode won't start at all (safe mode)
+- Trivial single-line doc changes (formatting, comments only)
+
+### Why This Exists
+Repeated failures from unvalidated config/launch changes. Every script change must pass review before it lands, not after.
+
