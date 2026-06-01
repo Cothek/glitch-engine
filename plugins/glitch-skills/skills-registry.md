@@ -38,13 +38,39 @@
 ## Agent Files (Auto-Discovered by OpenCode)
 *Agent definitions in `.opencode/agents/` — loaded automatically, no manual invocation needed.*
 
+### Free Agents (Try First)
 | Agent | File | Model | Purpose |
 |-------|------|-------|---------|
+| @general | `opencode.json` | deepseek-v4-flash-free | General-purpose — bash, file ops, simple edits, standard code |
+| @explore | `opencode.json` | deepseek-v4-flash-free | Codebase research — read-only, find files, search code |
+| @plan | `opencode.json` | deepseek-v4-flash-free | Architecture & planning — reason without executing code |
+| @build | `opencode.json` | deepseek-v4-flash-free | Code scaffolding — generates code from prompts |
+| @coder-free | `.opencode/agents/coder-free.md` | qwen3.6-plus-free | Senior full-stack engineer (free) — same as @coder but free model |
+| @ui-designer-free | `.opencode/agents/ui-designer-free.md` | qwen3.6-plus-free | Senior UI designer (free) — same as @ui-designer but free model |
+| @reviewer-free | `.opencode/agents/reviewer-free.md` | qwen3.6-plus-free | Independent code quality gate (free) — same as @reviewer but free model |
+| @testing-free | `.opencode/agents/testing-free.md` | qwen3.6-plus-free | Test writer (free) — same as @testing but free model |
+| @vision-free | `.opencode/agents/vision-free.md` | qwen3.6-plus-free | Image/visual analysis (free) — same as @vision but free model |
+
+### Paid Agents (Fallback When Free Fails)
+| Agent | File | Model | Purpose |
+|-------|------|-------|---------|
+| @general-paid | `.opencode/agents/general-paid.md` | deepseek-v4-flash | General-purpose paid fallback — when @general exhausts free quota |
+| @explore-paid | `.opencode/agents/explore-paid.md` | deepseek-v4-flash | Codebase research paid fallback — when @explore fails |
+| @plan-paid | `.opencode/agents/plan-paid.md` | deepseek-v4-flash | Planning paid fallback — when @plan exhausts free quota |
+| @build-paid | `.opencode/agents/build-paid.md` | deepseek-v4-flash | Scaffolding paid fallback — when @build exhausts free quota |
 | @coder | `.opencode/agents/coder.md` | kimi-k2.6 | Senior full-stack engineer — production code, typed, all states handled, modern stack. Skill-loaded: senior-developer, testing, code-review |
 | @ui-designer | `.opencode/agents/ui-designer.md` | kimi-k2.6 | Senior UI designer — shadcn/ui, Radix, Tailwind v4, anti-slop rules, motion system, UI Craft references. Skill-loaded: ui-design, ui-craft |
 | @reviewer | `.opencode/agents/reviewer.md` | qwen3.6-plus | Independent code quality gate — read-only, severity-rated reports, SIMPLIFY directive. Skill-loaded: code-review |
 | @testing | `.opencode/agents/testing.md` | kimi-k2.6 | Test writer — TDD, framework detection, edge case coverage, flaky detection. Read-write tests only, never source code. |
+| @vision | `.opencode/agents/vision.md` | qwen3.6-plus | Image/visual content analysis — uses read tool, bash: deny |
+
+### Free→Paid Fallback Model Chains
+| Free Model | Paid Fallback | Agents Using |
+|------------|--------------|-------------|
+| deepseek-v4-flash-free | deepseek-v4-flash (same family) | @general, @explore, @plan, @build |
+| qwen3.6-plus-free | qwen3.6-plus (same family) | @reviewer, @vision |
+| qwen3.6-plus-free | kimi-k2.6 (cross-family) | @coder, @ui-designer, @testing |
 
 ---
 
-**Total: 23 skills + 4 agent definitions** — Last updated: 2026-06-01
+**Total: 23 skills + 14 agent definitions** — Last updated: 2026-06-01
