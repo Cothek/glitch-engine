@@ -1,0 +1,9 @@
+{
+  "name": "glitch-skills",
+  "version": "1.0.0",
+  "description": "Glitch's auto-triggered skills for the user's AI companion",
+  "author": {
+    "name": "the user",
+    "email": ""
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "glitch-embed-search",
+  "version": "1.0.0",
+  "description": "FTS5 full-text search indexer for Glitch MemoryCore markdown files",
+  "type": "module",
+  "main": "index-memory.mjs",
+  "bin": {
+    "index-memory": "./index-memory.mjs",
+    "search-memory": "./search-memory.mjs"
+  },
+  "scripts": {
+    "index": "node index-memory.mjs",
+    "search": "node search-memory.mjs"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
+    "better-sqlite3": "^12.10.0"
+  },
+  "license": "MIT"
+}

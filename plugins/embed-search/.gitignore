@@ -1,0 +1,5 @@
+node_modules/
+build/
+memory-search.db
+memory-search.db-wal
+memory-search.db-shm

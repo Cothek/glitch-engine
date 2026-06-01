@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glitch Memory System — Architecture & Documentation</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2333;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --accent: #a855f7;
+    --accent2: #7c3aed;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --cyan: #22d3ee;
+    --purple: #a855f7;
+    --orange: #f97316;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    display: flex;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 20px 0;
+  }
+  .sidebar h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text2);
+    padding: 8px 20px;
+    margin-top: 12px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 6px 20px;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--text);
+    background: var(--bg3);
+    border-left-color: var(--accent);
+  }
+  .sidebar a.sub { padding-left: 36px; font-size: 13px; }
+  .sidebar .logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .sidebar .logo h1 { font-size: 20px; color: var(--accent); }
+  .sidebar .logo p { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    min-width: 0;
+    max-width: 960px;
+    padding: 40px 48px 80px;
+  }
+  .main h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 32px 0 8px;
+    color: var(--text);
+  }
+  .main h1:first-child { margin-top: 0; }
+  .main h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 40px 0 12px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .main h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 28px 0 8px;
+    color: var(--accent);
+  }
+  .main h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 20px 0 6px;
+    color: var(--cyan);
+  }
+  .main p { margin: 8px 0 16px; color: var(--text2); }
+  .main ul, .main ol { margin: 8px 0 16px 24px; color: var(--text2); }
+  .main li { margin: 4px 0; }
+
+  /* Tags */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .tag-green { background: #14532d; color: var(--green); }
+  .tag-yellow { background: #422006; color: var(--yellow); }
+  .tag-red { background: #450a0a; color: var(--red); }
+  .tag-blue { background: #1e3a5f; color: var(--blue); }
+  .tag-purple { background: #3b0764; color: var(--purple); }
+  .tag-orange { background: #431407; color: var(--orange); }
+  .tag-cyan { background: #164e63; color: var(--cyan); }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card h4 { margin: 0 0 6px; color: var(--text); font-size: 15px; }
+  .card p { margin: 0; font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .card .meta { margin-top: 8px; font-size: 12px; color: var(--text2); }
+
+  /* Code blocks */
+  pre {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    overflow-x: auto;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 12px 0;
+    color: var(--text);
+  }
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 13px;
+    background: var(--bg3);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--cyan);
+  }
+  pre code { background: none; padding: 0; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--bg3);
+    color: var(--text);
+    font-weight: 600;
+  }
+  td { color: var(--text2); }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .flow-step {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    text-align: center;
+    min-width: 80px;
+  }
+  .flow-step .label { color: var(--text2); font-size: 11px; }
+  .flow-step .name { color: var(--text); font-weight: 600; }
+  .flow-arrow { color: var(--border); font-size: 18px; }
+
+  /* Status indicators */
+  .status { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot-green { background: var(--green); }
+  .dot-yellow { background: var(--yellow); }
+  .dot-red { background: var(--red); }
+  .dot-cyan { background: var(--cyan); }
+
+  /* Highlight box */
+  .highlight {
+    background: var(--bg3);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 16px;
+    margin: 16px 0;
+  }
+  .highlight p { margin: 4px 0; }
+  .highlight.warn { border-left-color: var(--yellow); }
+  .highlight.err { border-left-color: var(--red); }
+  .highlight.ok { border-left-color: var(--green); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====== SIDEBAR ====== -->
+<nav class="sidebar">
+  <div class="logo">
+    <h1>Glitch</h1>
+    <p>Memory System Architecture</p>
+  </div>
+
+  <h2>Overview</h2>
+  <a href="#overview">System Overview</a>
+  <a class="sub" href="#projects">Projects</a>
+  <a class="sub" href="#files">File Map</a>
+
+  <h2>Subsystems</h2>
+  <a href="#memory-search">Memory Search</a>
+  <a class="sub" href="#memory-fts5">FTS5 Indexer</a>
+  <a class="sub" href="#memory-embeddings">Embedding Layer</a>
+  <a class="sub" href="#memory-hybrid">Hybrid Search</a>
+
+  <a href="#tool-system">Tool System</a>
+  <a class="sub" href="#tool-execute">execute-tool.mjs</a>
+  <a class="sub" href="#tool-tdd">tdd-test.mjs</a>
+  <a class="sub" href="#tool-run">run-tool.mjs</a>
+  <a class="sub" href="#tool-lifecycle">Lifecycle & Trust</a>
+
+  <a href="#skills">Skills System</a>
+  <a class="sub" href="#skills-registry">Registry</a>
+  <a class="sub" href="#skills-list">All 22 Skills</a>
+
+  <a href="#agents">Agent Hierarchy</a>
+  <a class="sub" href="#agents-selection">Selection Guide</a>
+  <a class="sub" href="#agents-models">Model Assignments</a>
+
+  <a href="#quality">Quality Gates</a>
+  <a class="sub" href="#quality-devloop">Dev Loop</a>
+  <a class="sub" href="#quality-review">Code Review</a>
+
+  <h2>Self-Improvement</h2>
+  <a href="#forge">Forge System</a>
+  <a class="sub" href="#forge-triggers">Creation Triggers</a>
+  <a class="sub" href="#forge-levels">Level History</a>
+
+  <a href="#meta-agent">Meta-Agent</a>
+  <a class="sub" href="#meta-checklist">Review Checklist</a>
+
+  <a href="#curriculum">Self-Play Curriculum</a>
+  <a class="sub" href="#curriculum-levels">Challenge Levels</a>
+
+  <a href="#compaction">Compaction Protocol</a>
+
+  <h2>Configuration</h2>
+  <a href="#rules">Prompt Rules (R1-R13)</a>
+  <a href="#config">Config Validation</a>
+  <a href="#safety">Safety & Safe Mode</a>
+
+  <h2>Daedalus</h2>
+  <a href="#daedalus">Project Daedalus</a>
+  <a class="sub" href="#daedalus-roadmap">Roadmap</a>
+  <a class="sub" href="#daedalus-status">Status</a>
+  <a class="sub" href="#daedalus-integration">Integration Status</a>
+</nav>
+
+<!-- ====== MAIN ====== -->
+<div class="main">
+
+<!-- OVERVIEW -->
+<h1 id="overview">Glitch Memory System</h1>
+<p>
+  Glitch is a self-improving AI companion built on the <strong>opencode</strong> agent runtime.
+  It operates as a <strong>delegator</strong> — parsing tasks, orchestrating sub-agents,
+  and managing all memory directly. The system is designed for <strong>autonomous operation</strong>:
+  it can create its own tools, improve its own skills, and challenge itself to grow.
+</p>
+
+<div class="highlight">
+  <p><strong>Core Architecture Pattern:</strong> Delegator → Sub-agents → Tools → Memory → Self-Improvement</p>
+  <p style="margin-top:4px">The delegator (this AI) orchestrates everything. Sub-agents execute specialized work. Tools extend capabilities at runtime. Memory persists everything. Self-improvement loops drive growth.</p>
+</div>
+
+<h2 id="projects">Projects Tracked</h2>
+<table>
+  <tr><th>Project</th><th>Purpose</th><th>Status</th></tr>
+  <tr><td><strong>glitch-ai</strong></td><td>Parent repo — configuration, launch scripts, project code (ai-gm, ECD)</td><td><span class="status"><span class="dot dot-green"></span> Active</span></td></tr>
+  <tr><td><strong>glitch-memorycore</strong></td><td>Memory system — plugins, skills, docs, diary, everything you're reading now</td><td><span class="status"><span class="dot dot-green"></span> Active</span></td></tr>
+  <tr><td><strong>Project Daedalus</strong></td><td>6-phase roadmap to autonomous tool/skill/agent creation</td><td><span class="status"><span class="dot dot-green"></span> Complete</span></td></tr>
+</table>
+
+<h2 id="files">File Map</h2>
+<table>
+  <tr><th>Path</th><th>Purpose</th></tr>
+  <tr><td><code>prompt-rules.md</code></td><td>13 immutable behavior rules injected at every session start</td></tr>
+  <tr><td><code>main/main-memory.md</code></td><td>Identity, preferences, communication style, memory protocol</td></tr>
+  <tr><td><code>main/current-session.md</code></td><td>Session RAM — scratchpad, active context, PID table</td></tr>
+  <tr><td><code>main/session-dashboard.md</code></td><td>Live workstream tracker — all active projects and their status</td></tr>
+  <tr><td><code>main/reminders.md</code></td><td>Open follow-ups, bug reports, recurring tasks</td></tr>
+  <tr><td><code>main/decisions.md</code></td><td>Architecture decisions with dates and context</td></tr>
+  <tr><td><code>main/post-mortems.md</code></td><td>Failure post-mortems (PM-NNN format) with root cause + fix</td></tr>
+  <tr><td><code>main/forge-log.md</code></td><td>Self-improvement history — skill creations, level-ups, milestones</td></tr>
+  <tr><td><code>plugins/dev-loop/</code></td><td>Core tooling: execute-tool.mjs, tdd-test.mjs, run-tool.mjs</td></tr>
+  <tr><td><code>plugins/embed-search/</code></td><td>FTS5 + embedding search: indexer, search CLI, embeddings module</td></tr>
+  <tr><td><code>plugins/glitch-skills/skills/</code></td><td>22 skills in SKILL.md format with progressive disclosure</td></tr>
+  <tr><td><code>plugins/tools/</code></td><td>Auto-created tools (exectuable .mjs files)</td></tr>
+  <tr><td><code>daily-diary/current/</code></td><td>Per-session diary entries</td></tr>
+  <tr><td><code>library/research/</code></td><td>Research docs (self-improving agents, magic-context analysis)</td></tr>
+</table>
+
+<!-- MEMORY SEARCH -->
+<h1 id="memory-search">Memory Search System</h1>
+<p>
+  Three-tier search architecture: FTS5 keyword search → Embedding similarity → Hybrid BM25+embedding fusion.
+  Powers memory retrieval for all sub-agents and the delegator.
+</p>
+
+<div class="flow">
+  <div class="flow-step"><div class="label">Markdown</div><div class="name">.md files</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Step 1</div><div class="name">index-memory.mjs</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Step 2</div><div class="name">embeddings.mjs</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Step 3</div><div class="name">search-memory.mjs</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Output</div><div class="name">Ranked Results</div></div>
+</div>
+
+<h2 id="memory-fts5">FTS5 Indexer (<code>index-memory.mjs</code>)</h2>
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Location</td><td><code>plugins/embed-search/index-memory.mjs</code></td></tr>
+  <tr><td>Database</td><td>SQLite via better-sqlite3, WAL mode, FTS5 virtual table</td></tr>
+  <tr><td>Tokenization</td><td>Porter stemmer + unicode61 (language-aware stemming)</td></tr>
+  <tr><td>Chunking</td><td>Split by <code>##</code> headings and <code>---</code> separators</td></tr>
+  <tr><td>Change detection</td><td>SHA256 hash + file mtime — only re-indexes changed chunks</td></tr>
+  <tr><td>Coverage</td><td>463 chunks across all .md files in glitch-memorycore</td></tr>
+  <tr><td>Flags</td><td><code>--dir</code> (custom path), <code>--embeddings</code> (compute + store embeddings)</td></tr>
+</table>
+
+<h2 id="memory-embeddings">Embedding Layer (<code>embeddings.mjs</code>)</h2>
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Location</td><td><code>plugins/embed-search/embeddings.mjs</code> (242 lines)</td></tr>
+  <tr><td>Model</td><td>MiniLM-L6-v2 via @huggingface/transformers (384 dimensions)</td></tr>
+  <tr><td>Storage</td><td>SQLite BLOB — Float32Array binary in <code>chunk_embeddings</code> table</td></tr>
+  <tr><td>Computation</td><td>Lazy-loaded singleton model (loaded once on first use)</td></tr>
+  <tr><td>Normalization</td><td>Mean pooling + L2 normalization (cosine-similarity-ready)</td></tr>
+</table>
+
+<h2 id="memory-hybrid">Hybrid Search (<code>search-memory.mjs --hybrid</code>)</h2>
+<p>
+  Combines BM25 keyword ranking with embedding cosine similarity using
+  <strong>Reciprocal Rank Fusion (RRF)</strong>. Each result shows three scores:
+  BM25 score, similarity score, and fused RRF score.
+</p>
+
+<pre>
+# The killer demo:
+$ search-memory.mjs -q "saving my work to the repo"
+→ <span style="color:var(--red)">No results found</span> (BM25 needs keyword overlap)
+
+$ search-memory.mjs -q "saving my work to the repo" --hybrid
+→ <span style="color:var(--green)">3 results</span>: auto-commit SKILL.md, save-memory protocol, save-memory rules
+</pre>
+
+<p><strong>RRF formula:</strong> <code>score = 1/(60 + rank_bm25) + 1/(60 + rank_sim)</code></p>
+
+<div class="highlight">
+  <p><strong>Fallback behavior:</strong> If embeddings aren't indexed (<code>--hybrid</code> without <code>--embeddings</code>), shows a warning and falls back to BM25-only. The system never breaks — it degrades gracefully.</p>
+</div>
+
+<!-- TOOL SYSTEM -->
+<h1 id="tool-system">Tool System</h1>
+<p>
+  Three-tier tool infrastructure: create → test → run. Agents can write, validate,
+  and use tools entirely at runtime. Every tool has a lifecycle with trust levels.
+</p>
+
+<div class="flow">
+  <div class="flow-step"><div class="label">Create</div><div class="name">execute-tool.mjs</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Validate</div><div class="name">tdd-test.mjs</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Save</div><div class="name">--save-on-pass</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Run</div><div class="name">run-tool.mjs</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Promote</div><div class="name">Auto-trust</div></div>
+</div>
+
+<h2 id="tool-execute"><code>execute-tool.mjs</code> — Code Execution Engine</h2>
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Location</td><td><code>plugins/dev-loop/execute-tool.mjs</code> (248 lines)</td></tr>
+  <tr><td>Isolation</td><td>Node.js Worker thread (<code>eval: true, type: 'module'</code>)</td></tr>
+  <tr><td>Timeout</td><td>Configurable (default 10s) — terminates hung workers</td></tr>
+  <tr><td>Console capture</td><td>stdout + stderr arrays in output</td></tr>
+  <tr><td>Save mode</td><td><code>--save-to</code> persists code on success (creates dirs)</td></tr>
+  <tr><td>Input</td><td><code>--code</code>, <code>--file</code>, or stdin</td></tr>
+  <tr><td>Dependencies</td><td><strong>Zero</strong> — pure Node.js built-ins (worker_threads, parseArgs)</td></tr>
+</table>
+
+<h2 id="tool-tdd"><code>tdd-test.mjs</code> — TDD Test Runner</h2>
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Location</td><td><code>plugins/dev-loop/tdd-test.mjs</code> (309 lines)</td></tr>
+  <tr><td>Architecture</td><td>Spawns <code>execute-tool.mjs</code> as child process for each test (code reuse)</td></tr>
+  <tr><td>Test format</td><td><code>[{ input, expected, name? }]</code></td></tr>
+  <tr><td>Comparison</td><td>Deep recursive equality (objects, arrays, nested)</td></tr>
+  <tr><td>Save mode</td><td><code>--save-on-pass</code> — only saves when ALL tests pass</td></tr>
+  <tr><td>Verbose mode</td><td><code>--verbose</code> — shows expected/actual for every test</td></tr>
+</table>
+
+<h2 id="tool-run"><code>run-tool.mjs</code> — Lifecycle Runner</h2>
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Location</td><td><code>plugins/dev-loop/run-tool.mjs</code> (341 lines)</td></tr>
+  <tr><td>Invocation</td><td><code>run-tool.mjs &lt;name&gt; --input '{}'</code></td></tr>
+  <tr><td>Discovery</td><td>Searches <code>plugins/tools/*.mjs</code>, case-insensitive matching</td></tr>
+  <tr><td>Stats tracking</td><td><code>plugins/tools/tool-stats.json</code> — runs, successes, failures, trust level</td></tr>
+  <tr><td>List</td><td><code>--list</code> shows all tools with trust levels and stats</td></tr>
+</table>
+
+<h2 id="tool-lifecycle">Trust Lifecycle</h2>
+<table>
+  <tr><th>Level</th><th>Requirement</th><th>Means</th></tr>
+  <tr><td><span class="tag tag-yellow">sandboxed</span></td><td>File exists in <code>plugins/tools/</code></td><td>Unvalidated — warnings shown on use</td></tr>
+  <tr><td><span class="tag tag-blue">tested</span></td><td>Passed <code>tdd-test.mjs --save-on-pass</code></td><td>Test-verified, standard use</td></tr>
+  <tr><td><span class="tag tag-green">validated</span></td><td>3+ successful runtime executions</td><td>Production-reliable</td></tr>
+  <tr><td><span class="tag tag-cyan">live</span></td><td>10+ successful runtime executions</td><td>Full trust — used as standard tool</td></tr>
+  <tr><td><span class="tag tag-red">degraded</span></td><td>3+ consecutive failures</td><td>Flagged for review</td></tr>
+</table>
+
+<div class="highlight ok">
+  <p><strong>Promotion is automatic.</strong> Every call to <code>run-tool.mjs</code> updates the stats. When a tool crosses a threshold, its trust level upgrades automatically. No human intervention needed.</p>
+</div>
+
+<!-- SKILLS -->
+<h1 id="skills">Skills System</h1>
+<p>
+  22 skills in portable SKILL.md format (Agent Skills Open Standard). Each skill is a
+  markdown file with YAML frontmatter containing trigger descriptions. Loaded via
+  progressive disclosure — the registry index is always in context, full content
+  loaded on demand.
+</p>
+
+<h2 id="skills-registry">Registry</h2>
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Location</td><td><code>plugins/glitch-skills/skills-registry.md</code></td></tr>
+  <tr><td>Format</td><td>Auto-injected into all context at session start</td></tr>
+  <tr><td>Count</td><td>22 skills, 1 auto-created (senior-developer)</td></tr>
+  <tr><td>Standard</td><td>Agent Skills Open Standard (Anthropic, Dec 2025) — SKILL.md + YAML</td></tr>
+</table>
+
+<h2 id="skills-list">All 22 Skills</h2>
+<table>
+  <tr><th>#</th><th>Skill</th><th>Category</th><th>Trigger</th></tr>
+  <tr><td>1</td><td><strong>auto-commit</strong></td><td>Git</td><td>"commit", "save changes"</td></tr>
+  <tr><td>2</td><td><strong>forge</strong></td><td>Self-Improvement</td><td>"create skill", 3+ pattern repeats</td></tr>
+  <tr><td>3</td><td><strong>image-prompt</strong></td><td>Creative</td><td>"create a prompt", "midjourney"</td></tr>
+  <tr><td>4</td><td><strong>interactive-story</strong></td><td>Creative</td><td>"new adventure"</td></tr>
+  <tr><td>5</td><td><strong>mulahazah</strong></td><td>Behavior</td><td>Auto-triggers on tool calls</td></tr>
+  <tr><td>6</td><td><strong>observation</strong></td><td>Code</td><td>"survey", "investigate", "audit"</td></tr>
+  <tr><td>7</td><td><strong>post-mortem</strong></td><td>Debug</td><td>Auto-triggers on failure</td></tr>
+  <tr><td>8</td><td><strong>save-memory</strong></td><td>Memory</td><td>Auto-triggers on decisions, errors</td></tr>
+  <tr><td>9</td><td><strong>session-briefing</strong></td><td>Behavior</td><td>Auto-triggers at session start</td></tr>
+  <tr><td>10</td><td><strong>song-creation</strong></td><td>Creative</td><td>"create song"</td></tr>
+  <tr><td>11</td><td><strong>work-plan</strong></td><td>Productivity</td><td>"copy plan", "resume plan"</td></tr>
+  <tr><td>12</td><td><strong>debugging</strong></td><td>Debug</td><td>"debug", "it crashed", error output</td></tr>
+  <tr><td>13</td><td><strong>dev-loop</strong></td><td>Code</td><td>"build this", "run dev loop", "autonomous mode"</td></tr>
+  <tr><td>14</td><td><strong>code-review</strong></td><td>Quality</td><td>"review this", "code review", "quality gate"</td></tr>
+  <tr><td>15</td><td><strong>testing</strong></td><td>Quality</td><td>"write tests", "test coverage"</td></tr>
+  <tr><td>16</td><td><strong>refactoring</strong></td><td>Code</td><td>"refactor", "simplify this"</td></tr>
+  <tr><td>17</td><td><strong>brainstorming</strong></td><td>Creative</td><td>"brainstorm", "think of ideas"</td></tr>
+  <tr><td>18</td><td><strong>ui-design</strong></td><td>Design</td><td>"improve the UI", "design this"</td></tr>
+  <tr><td>19</td><td><strong>gitnexus</strong></td><td>Code</td><td>"impact", "blast radius", "trace this call"</td></tr>
+  <tr><td>20</td><td><strong>senior-developer</strong></td><td>Code</td><td>Auto-created by Forge Lv.2</td></tr>
+  <tr><td>21</td><td><strong>self-review</strong></td><td>Self-Improvement</td><td>Auto-fires at R3 step 7</td></tr>
+  <tr><td>22</td><td><strong>curriculum</strong></td><td>Self-Improvement</td><td>Auto-fires at R3 step 8</td></tr>
+</table>
+
+<div class="highlight ok">
+  <p><strong>✅ Fixed:</strong> R3 steps 6-8 now use the <code>read</code> tool instead of the <code>skill</code> tool to load forge, self-review, and curriculum skill content. Takes effect immediately — no opencode restart needed.</p>
+</div>
+
+<!-- AGENTS -->
+<h1 id="agents">Agent Hierarchy</h1>
+<p>
+  10 agents total: 1 delegator + 9 sub-agents. The delegator parses tasks and dispatches
+  to sub-agents based on complexity and type. Fallback chain when models hit quota limits.
+</p>
+
+<h2 id="agents-selection">Selection Guide</h2>
+<table>
+  <tr><th>Agent</th><th>Model</th><th>Tier</th><th>Cost</th><th>Use For</th></tr>
+  <tr><td>@general</td><td>deepseek-v4-flash-free</td><td>Free</td><td>$0</td><td>Bash, file ops, simple edits, 1-5 file code</td></tr>
+  <tr><td>@explore</td><td>deepseek-v4-flash-free</td><td>Free</td><td>$0</td><td>Codebase research, file discovery</td></tr>
+  <tr><td>@plan</td><td>deepseek-v4-flash-free</td><td>Free</td><td>$0</td><td>Architecture planning</td></tr>
+  <tr><td>@build</td><td>deepseek-v4-flash-free</td><td>Free</td><td>$0</td><td>Code scaffolding</td></tr>
+  <tr><td>@general-paid</td><td>deepseek-v4-flash</td><td>Paid</td><td>$0.14/$0.28</td><td>Fallback for free quota exhausted</td></tr>
+  <tr><td>@build-paid</td><td>deepseek-v4-flash</td><td>Paid</td><td>$0.14/$0.28</td><td>Fallback for @build</td></tr>
+  <tr><td>@coder</td><td>kimi-k2.6</td><td>Paid</td><td>$0.50/$3.00</td><td>Complex code, 5+ files, auth, API</td></tr>
+  <tr><td>@ui-designer</td><td>kimi-k2.6</td><td>Paid</td><td>$0.95/$4.00</td><td>UI/design system (vision-capable)</td></tr>
+  <tr><td>@vision</td><td>qwen3.6-plus</td><td>Paid</td><td>$0.50/$3.00</td><td>Image/screenshot analysis</td></tr>
+  <tr><td>@reviewer</td><td>qwen3.6-plus</td><td>Paid</td><td>$0.50/$3.00</td><td>Code review, quality gate (read-only)</td></tr>
+</table>
+
+<h2 id="agents-models">Model Assignments</h2>
+<table>
+  <tr><th>Model</th><th>Used By</th><th>Context</th></tr>
+  <tr><td><code>opencode/deepseek-v4-flash-free</code></td><td>@general, @explore, @plan, @build</td><td>Free tier — general purpose</td></tr>
+  <tr><td><code>opencode-go/deepseek-v4-flash</code></td><td>Delegator, @general-paid, @build-paid</td><td>Paid — 1M context, fallback</td></tr>
+  <tr><td><code>opencode-go/kimi-k2.6</code></td><td>@coder, @ui-designer</td><td>Strong reasoning + vision</td></tr>
+  <tr><td><code>opencode-go/qwen3.6-plus</code></td><td>@vision, @reviewer</td><td>Vision-capable, read-only review</td></tr>
+</table>
+
+<div class="highlight">
+  <p><strong>Fallback chain:</strong> @general (free) → @general-paid → @coder → (escalate to user).
+  The delegator detects silent failures (empty results, rate limits) and retries up the chain automatically.</p>
+</div>
+
+<!-- QUALITY GATES -->
+<h1 id="quality">Quality Gates</h1>
+
+<h2 id="quality-devloop">Dev Loop</h2>
+<p>
+  The autonomous development cycle: Write → Review → Build → Interact → Verify → Iterate.
+  Each phase delegates to the appropriate sub-agent with clear inputs and outputs.
+</p>
+
+<div class="flow">
+  <div class="flow-step"><div class="label">Phase 1</div><div class="name">Write</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Phase 2</div><div class="name">Review</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Phase 3</div><div class="name">Build</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Phase 4</div><div class="name">Interact</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Phase 5</div><div class="name">Verify</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Phase 6</div><div class="name">Iterate</div></div>
+</div>
+
+<table>
+  <tr><th>Phase</th><th>Agent</th><th>Output</th><th>Gate Check</th></tr>
+  <tr><td>Write</td><td>@coder / @general</td><td>Code changes</td><td>Files created, syntax ok</td></tr>
+  <tr><td>Review</td><td>@reviewer</td><td>Structured report</td><td>BLOCKER → stop; PASS → continue</td></tr>
+  <tr><td>Build</td><td>@general</td><td>Running server</td><td>HTTP 200 on expected URL</td></tr>
+  <tr><td>Interact</td><td>@coder (plan) + @general (execute)</td><td>Screenshots + results</td><td><code>summary.success === true</code></td></tr>
+  <tr><td>Verify</td><td>@vision</td><td>Visual analysis</td><td>All screenshots match expectations</td></tr>
+  <tr><td>Iterate</td><td>Delegator</td><td>Decision: loop or finish</td><td>Max 3 iterations per feature</td></tr>
+</table>
+
+<h2 id="quality-review">Code Review Protocol</h2>
+<p>
+  Four-phase review: Context Gathering → Quality Analysis → Security Audit → Gate Verdict.
+  Each finding has a severity rating: <span class="tag tag-red">BLOCKER</span>
+  <span class="tag tag-orange">MAJOR</span>
+  <span class="tag tag-yellow">MINOR</span>
+  <span class="tag tag-cyan">NIT</span>
+</p>
+
+<p>Triggers automatically when code changes involve 3+ files, logic changes, API changes, or security-sensitive code (R4).</p>
+
+<!-- SELF-IMPROVEMENT -->
+<h1 id="forge">Forge System</h1>
+<p>
+  The Forge is the self-improvement engine. It detects patterns, creates skills,
+  and drives autonomous growth. Currently at Lv.2 with Lv.3 target in progress.
+</p>
+
+<h2 id="forge-triggers">Autonomous Creation Triggers</h2>
+<p>The Forge auto-creates skills when ANY of these fire (no approval needed):</p>
+<ol>
+  <li><strong>Complex task completed</strong> — 5+ tool calls with non-trivial workflow</li>
+  <li><strong>Error recovery</strong> — Hit dead-ends then found the working path</li>
+  <li><strong>User correction</strong> — The user corrected approach (especially if repeated)</li>
+  <li><strong>Crystallized workflow</strong> — Clear repeatable pattern emerged</li>
+  <li><strong>3+ occurrences</strong> — Same ad-hoc task handled three or more times</li>
+  <li><strong>Tool creation via CodeAct-lite</strong> — Tool was written, tested, and saved</li>
+</ol>
+
+<h2 id="forge-levels">Level History</h2>
+<table>
+  <tr><th>Level</th><th>Unlocked</th><th>Capability</th></tr>
+  <tr><td>Lv.1</td><td>2026-05-21</td><td>Pattern detection, skill creation with approval</td></tr>
+  <tr><td>Lv.2</td><td>2026-05-21</td><td>Autonomous skill creation on 6 triggers</td></tr>
+  <tr><td>Lv.3 (target)</td><td>Project Daedalus</td><td>Tool + agent creation, sandbox verification</td></tr>
+</table>
+
+<!-- META-AGENT -->
+<h1 id="meta-agent">Meta-Agent (Self-Review)</h1>
+<p>
+  A passive review protocol that runs at every compaction checkpoint (R3 step 7).
+  Reads the system's own configuration files and identifies improvement opportunities.
+  Produces a structured report with severity ratings.
+</p>
+
+<h2 id="meta-checklist">Review Checklist</h2>
+<table>
+  <tr><th>Category</th><th>Checks</th></tr>
+  <tr><td>Agent Configs (<code>opencode.json</code>)</td><td>Model adequacy, missing agents, orphaned agents, stale prompts, config errors</td></tr>
+  <tr><td>Skills Registry (<code>skills-registry.md</code>)</td><td>Path validity, trigger accuracy, stale skills (30+ days), overlaps, orphans</td></tr>
+  <tr><td>Prompt Rules (<code>prompt-rules.md</code>)</td><td>Dead references, contradictions, gaps, stale rules, selection guide accuracy</td></tr>
+  <tr><td>Performance (<code>current-session.md</code> + <code>forge-log.md</code>)</td><td>Recurring errors, slow tasks, workaround patterns, token waste, unused capabilities</td></tr>
+</table>
+
+<p><strong>Severity levels:</strong> <span class="tag tag-red">BLOCKER</span> (stop everything) → <span class="tag tag-orange">ISSUE</span> (fix this session) → <span class="tag tag-cyan">SUGGESTION</span> (log for later)</p>
+
+<div class="highlight ok">
+  <p><strong>✅ Fixed:</strong> R3 step 7 now uses <code>read plugins/glitch-skills/skills/self-review/SKILL.md</code> — no <code>skill</code> tool dependency.</p>
+</div>
+
+<!-- CURRICULUM -->
+<h1 id="curriculum">Self-Play Curriculum</h1>
+<p>
+  The autonomous challenge system (Phase 6 of Project Daedalus). Generates leveled
+  challenges, dispatches them to sub-agents, scores results, and tracks progression.
+  Fires at every other compaction checkpoint (R3 step 8).
+</p>
+
+<h2 id="curriculum-levels">Challenge Levels</h2>
+<table>
+  <tr><th>Level</th><th>Type</th><th>Verifier</th><th>Promotion</th></tr>
+  <tr><td>1</td><td>Tool creation (sort, reverse, validate, etc.)</td><td><code>tdd-test.mjs</code> pass/fail</td><td>3 tools created</td></tr>
+  <tr><td>2</td><td>Tool chains (multi-step tasks)</td><td>End-to-end execution</td><td>5 tools total</td></tr>
+  <tr><td>3</td><td>System improvement (fix configs/skills/rules)</td><td>Change committed</td><td>3 improvements</td></tr>
+  <tr><td>4</td><td>Memory consolidation (deduplicate/merge)</td><td>Merge applied</td><td>2 consolidations</td></tr>
+  <tr><td>5</td><td>Meta-curriculum (improve curriculum itself)</td><td>Self-patch works</td><td>Voluntary</td></tr>
+</table>
+
+<p><strong>Cooldown:</strong> 2 compaction cycles between attempts to avoid over-challenging.</p>
+<p><strong>Gap detection:</strong> 3 consecutive failures at the same level → logged in forge-log for review.</p>
+
+<div class="highlight ok">
+  <p><strong>✅ Fixed:</strong> R3 step 8 now uses <code>read plugins/glitch-skills/skills/curriculum/SKILL.md</code> — no <code>skill</code> tool dependency.</p>
+</div>
+
+<!-- COMPACTION -->
+<h1 id="compaction">Compaction Protocol (R3)</h1>
+<p>
+  The heartbeat of the memory system. Runs every ~8 conversation turns. 8 steps
+  that handle memory persistence, self-improvement checks, and autonomous challenges.
+</p>
+
+<div class="flow">
+  <div class="flow-step"><div class="label">Step 1-2</div><div class="name" style="color:var(--cyan)">Memory</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Step 3</div><div class="name" style="color:var(--cyan)">Diary</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Step 4-5</div><div class="name" style="color:var(--cyan)">Git</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Step 6</div><div class="name" style="color:var(--yellow)">🔨 Forge</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Step 7</div><div class="name" style="color:var(--purple)">🪞 Self-Review</div></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-step"><div class="label">Step 8</div><div class="name" style="color:var(--green)">🎯 Curriculum</div></div>
+</div>
+
+<pre>
+1. Promote scratchpad entries to proper files
+2. Update Last Memory Update timestamp
+3. Append to daily diary
+4. Auto-commit all memory changes (git add + commit + push)
+5. Summarize auto-commits
+6. Pattern scan → forge check (create skills for repeated patterns)
+7. Meta-agent → system self-review (BLOCKER/ISSUE/SUGGESTION report)
+8. Self-play curriculum (if 2+ cycles since last attempt)
+</pre>
+
+<div class="highlight ok">
+  <p><strong>✅ Fixed:</strong> Steps 6-8 now use <code>read</code> tool with known file paths. No dependency on <code>skill</code> tool's available_skills list.</p>
+</div>
+
+<!-- RULES -->
+<h1 id="rules">Prompt Rules (R1-R13)</h1>
+<p>13 immutable rules injected at every session start via opencode.json instructions. These define all behavior.</p>
+
+<table>
+  <tr><th>Rule</th><th>Name</th><th>Purpose</th></tr>
+  <tr><td>R1</td><td>Session Start — Memory Context</td><td>Load core files, deliver session brief, check version sync</td></tr>
+  <tr><td>R2</td><td>Memory Updates Using Scratchpad</td><td>Real-time capture → compaction promotion</td></tr>
+  <tr><td>R3</td><td>Compaction Checkpoints</td><td>8-step save cycle every ~8 turns (heart of persistence)</td></tr>
+  <tr><td>R4</td><td>Code Quality Gates</td><td>Review + test every significant code change</td></tr>
+  <tr><td>R5</td><td>Radical Candor</td><td>Disagree openly, flag risks, never fake agreement</td></tr>
+  <tr><td>R6</td><td>🔧 Operational Learning</td><td>Tag failures + patterns, promote to skills/post-mortems</td></tr>
+  <tr><td>R7</td><td>Visual Content Protocol</td><td>Save-then-analyze for images via @vision</td></tr>
+  <tr><td>R8</td><td>Task Decomposition</td><td>Todo list → subtasks → close with compaction</td></tr>
+  <tr><td>R9</td><td>GitNexus Code Graph</td><td>Use knowledge graph before code changes</td></tr>
+  <tr><td>R10</td><td>Process Isolation</td><td>PID tracking, never kill by name, separate terminals</td></tr>
+  <tr><td>R11</td><td>Version Sync Check</td><td>Git fetch + dep update check at session start</td></tr>
+  <tr><td>R12</td><td>Immediate Memory Integration</td><td>Write memory NOW, commit RIGHT AFTER</td></tr>
+  <tr><td>R13</td><td>Config Validation Gate</td><td>Validate opencode.json + PS scripts before commit</td></tr>
+</table>
+
+<!-- CONFIG -->
+<h1 id="config">Config Validation</h1>
+<p>
+  Multi-layer defense against config errors. Born from PM-007 (missing closing bracket
+  in opencode.json blocked all launches).
+</p>
+
+<table>
+  <tr><th>Layer</th><th>What it catches</th><th>Where</th></tr>
+  <tr><td>validate-config.ps1</td><td>JSON syntax, missing files, duplicate agents, model validation</td><td>Standalone script, runs on demand</td></tr>
+  <tr><td>Launch validation</td><td>JSON parse before opencode starts</td><td>launch.ps1, serve-glitch.ps1</td></tr>
+  <tr><td>Launch-free validation</td><td>Generated config validity</td><td>launch-free.ps1</td></tr>
+  <tr><td>Code review Phase 0.5</td><td>JSON syntax in opencode.json changes</td><td>code-review SKILL.md</td></tr>
+</table>
+
+<h1 id="safety">Safety & Safe Mode</h1>
+<p>
+  When opencode.json is so broken that Glitch won't start, <strong>Safe Mode</strong> generates
+  a minimal working config via PowerShell objects → ConvertTo-Json (bulletproof).
+</p>
+
+<pre>
+launch-glitch-safe.bat
+  → launch-safe.ps1
+  → Generates config via PS objects (no manual JSON)
+  → No instructions array, no file dependencies
+  → Only the delegator agent — minimum viable config
+  → Validates JSON by re-parsing before writing
+</pre>
+
+<div class="highlight ok">
+  <p><strong>Safe mode fix workflow:</strong> When safe mode is running, the broken <code>opencode.json</code> is backed up as <code>opencode.json.bak</code>. Fixes should be applied to the <strong>backup</strong> — it gets restored when safe mode exits. <code>validate-config.ps1 -Path opencode.json.bak</code> confirms the fix.</p>
+</div>
+
+<!-- DAEDALUS -->
+<h1 id="daedalus">Project Daedalus</h1>
+<p>
+  <strong>Codename:</strong> Project Daedalus — Roadmap to autonomous tool, skill, and agent creation.<br>
+  <strong>Built:</strong> All 6 phases in one session (2026-05-30).<br>
+  <strong>Research:</strong> 13 projects analyzed across 6 categories (HyperAgents, Voyager, CodeAct, Superagent, etc.).
+</p>
+
+<h2 id="daedalus-roadmap">The 6 Phases</h2>
+
+<div class="card-grid">
+  <div class="card">
+    <h4>Phase 1: CodeAct-lite</h4>
+    <p>Sandboxed code execution via worker_threads. Agents write and test code at runtime.</p>
+    <div class="meta"><span class="tag tag-green">✅ Done</span> <code>execute-tool.mjs</code> (248 lines)</div>
+  </div>
+  <div class="card">
+    <h4>Phase 2: TDD Tool Generation</h4>
+    <p>Test-first methodology. Write test cases, implement, save on all pass.</p>
+    <div class="meta"><span class="tag tag-green">✅ Done</span> <code>tdd-test.mjs</code> (309 lines)</div>
+  </div>
+  <div class="card">
+    <h4>Phase 3: Meta-Agent</h4>
+    <p>Passive system self-review at compaction. Reads configs, identifies issues.</p>
+    <div class="meta"><span class="tag tag-green">✅ Done</span> <code>self-review</code> skill (#21)</div>
+  </div>
+  <div class="card">
+    <h4>Phase 4: Embedding Retrieval</h4>
+    <p>MiniLM-L6-v2 semantic search. Hybrid BM25 + cosine similarity via RRF.</p>
+    <div class="meta"><span class="tag tag-green">✅ Done</span> <code>embeddings.mjs</code> (242 lines)</div>
+  </div>
+  <div class="card">
+    <h4>Phase 5: Sandbox + Trust</h4>
+    <p>Tool lifecycle with trust levels. Auto-promotion based on successful runs.</p>
+    <div class="meta"><span class="tag tag-green">✅ Done</span> <code>run-tool.mjs</code> (341 lines)</div>
+  </div>
+  <div class="card">
+    <h4>Phase 6: Self-Play Curriculum</h4>
+    <p>5-level challenge system. Tool creation → tool chains → meta-curriculum.</p>
+    <div class="meta"><span class="tag tag-green">✅ Done</span> <code>curriculum</code> skill (#22)</div>
+  </div>
+</div>
+
+<h2 id="daedalus-status">Status Summary</h2>
+<table>
+  <tr><th>Phase</th><th>File(s) Created</th><th>Lines</th><th>Status</th></tr>
+  <tr><td>1 — CodeAct-lite</td><td><code>plugins/dev-loop/execute-tool.mjs</code></td><td>248</td><td><span class="tag tag-green">Live</span></td></tr>
+  <tr><td>2 — TDD Tool Gen</td><td><code>plugins/dev-loop/tdd-test.mjs</code></td><td>309</td><td><span class="tag tag-green">Live</span></td></tr>
+  <tr><td>3 — Meta-Agent</td><td><code>skills/self-review/SKILL.md</code></td><td>—</td><td><span class="tag tag-green">Live</span></td></tr>
+  <tr><td>4 — Embedding Retrieval</td><td><code>plugins/embed-search/embeddings.mjs</code></td><td>242</td><td><span class="tag tag-green">Live</span></td></tr>
+  <tr><td>5 — Sandbox + Trust</td><td><code>plugins/dev-loop/run-tool.mjs</code></td><td>341</td><td><span class="tag tag-green">Live</span></td></tr>
+  <tr><td>6 — Self-Play</td><td><code>skills/curriculum/SKILL.md</code></td><td>—</td><td><span class="tag tag-green">Live</span></td></tr>
+</table>
+<p><em>All phases live and integrated — no opencode restart needed.</em></p>
+
+<h2 id="daedalus-integration">Integration Status</h2>
+
+<div class="highlight ok">
+  <p><strong>✅ Fully integrated:</strong></p>
+  <ul>
+    <li><code>execute-tool.mjs</code> → worker_thread execution, zero deps, works anywhere with Node.js</li>
+    <li><code>tdd-test.mjs</code> → spawns execute-tool.mjs as child process (no code duplication)</li>
+    <li><code>run-tool.mjs</code> → same worker_thread pattern as execute-tool.mjs, separated concerns</li>
+    <li><code>embeddings.mjs</code> → imported by both indexer (--embeddings) and search CLI (--hybrid)</li>
+    <li>Skills registry → 22 skills indexed in skills-registry.md, auto-loaded at session start</li>
+    <li>Session dashboard → real-time workstream tracking for all active projects</li>
+  </ul>
+</div>
+
+<div class="highlight ok">
+  <p><strong>✅ Fixed:</strong> R3 steps 6-8 use <code>read</code> tool with known file paths. The self-improvement loop now fires reliably at compaction checkpoints.</p>
+  <ul>
+    <li>Step 6: <code>read plugins/glitch-skills/skills/forge/SKILL.md</code></li>
+    <li>Step 7: <code>read plugins/glitch-skills/skills/self-review/SKILL.md</code></li>
+    <li>Step 8: <code>read plugins/glitch-skills/skills/curriculum/SKILL.md</code></li>
+  </ul>
+</div>
+
+<div class="highlight">
+  <p><strong>🧪 What's working:</strong></p>
+  <ul>
+    <li>All scripts built, tested, and verified (test output captured in diary)</li>
+    <li>All git commits pushed (memorycore + parent repo)</li>
+    <li>All documentation updated (forge-log, session-dashboard, diary, skills-registry)</li>
+    <li>Portability maintained: zero external dependencies for execute-tool/tdd-test/run-tool</li>
+  </ul>
+</div>
+
+<hr style="border-color: var(--border); margin: 40px 0;">
+
+<p style="text-align: center; color: var(--text2); font-size: 13px;">
+  Glitch Memory System — Last updated 2026-05-30 · All 6 phases of Project Daedalus complete<br>
+  3 scripts · 3 skills · 2 registries · 8 prompt-rule changes · 6 git commits<br>
+  <em style="font-size:11px">This document is maintained alongside the system. Report stale info via issue.</em>
+</p>
+
+</div>
+</body>
+</html>

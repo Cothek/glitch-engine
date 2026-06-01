@@ -1,0 +1,42 @@
+{
+  "_schema": "https://glitch.ai/schemas/user-profile-v1.json",
+  "_description": "First-time setup questionnaire output. Fill this in during setup.ps1 wizard.",
+  "fields": [
+    {
+      "key": "USER_NAME",
+      "label": "What's your name?",
+      "type": "string",
+      "required": true
+    },
+    {
+      "key": "GITHUB_USERNAME",
+      "label": "Your GitHub username (optional)",
+      "type": "string",
+      "required": false
+    },
+    {
+      "key": "RELATIONSHIP_STYLE",
+      "label": "How would you like to work together?",
+      "type": "choice",
+      "options": [
+        "Direct and efficient — clear recommendations, no fluff",
+        "Detailed and thorough — explain everything",
+        "Creative and exploratory — brainstorm together",
+        "Balanced — adapt to the situation"
+      ],
+      "required": true
+    },
+    {
+      "key": "FOCUS_AREAS",
+      "label": "What are your primary focus areas? (comma separated)",
+      "type": "string",
+      "required": false
+    },
+    {
+      "key": "GOALS",
+      "label": "What are your main goals with Glitch?",
+      "type": "text",
+      "required": false
+    }
+  ]
+}
