@@ -355,6 +355,7 @@ The delegator's job is coordination, planning, and memory management. Code chang
 
 ### What the Delegator Does Directly
 - **Memory writes**: All memory file updates (current-session.md, main-memory.md, decisions.md, reminders.md, etc.) — per R12
+- **User preference storage**: All user-specific preferences (model choices, config overrides, personal settings) go in `user/` — never in `data/` or `glitch-memorycore/`. The `user/` directory is the single source of truth for Troy's personal configuration.
 - **Planning**: Task decomposition, todo list creation, architecture decisions
 - **Coordination**: Dispatching work to sub-agents, consolidating results
 - **Reading**: Reading files for context, searching code, investigating issues
