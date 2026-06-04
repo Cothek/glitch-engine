@@ -152,6 +152,28 @@ Skip gates only when ALL criteria met:
 - **Direct execution**: Before presenting any code change result, run code-review + testing inline
 - This rule is NOT optional — same tier as Radical Candor and Git Discipline
 
+## Delegator Discipline (Immutable Rule)
+
+The delegator handles coordination, planning, and memory management. Code changes belong to sub-agents.
+
+### What the Delegator Does Directly
+- Memory writes (current-session.md, main-memory.md, decisions.md, etc.)
+- Planning, task decomposition, todo list creation
+- Dispatching work to sub-agents, consolidating results
+- Reading files for context, searching code
+- Asking clarifying questions
+
+### What the Delegator Delegates
+- Code edits → @general or @coder
+- File creation → @build or @coder
+- Bash commands (non-git) → @general
+- Code review → @reviewer
+- Testing → @testing
+- Visual analysis → @vision
+
+### Test
+Before using `edit` or `write` tools, ask: "Is this memory/planning work (mine) or code work (delegate)?"
+
 ### Image/Visual Content Protocol (Non-Negotiable)
 - This model has NO vision capability
 - ALL images, screenshots, and visual content MUST be dispatched to @vision sub-agent immediately

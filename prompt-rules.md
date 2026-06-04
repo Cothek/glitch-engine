@@ -349,3 +349,28 @@ When ANY change touches `opencode.json`, `launch.ps1`, `serve-glitch.ps1`, `laun
 ### Why This Exists
 Repeated failures from unvalidated config/launch changes. Every script change must pass review before it lands, not after.
 
+## R15: Delegator Discipline — Delegate Code Work, Own Memory (Immutable Rule)
+
+The delegator's job is coordination, planning, and memory management. Code changes belong to sub-agents.
+
+### What the Delegator Does Directly
+- **Memory writes**: All memory file updates (current-session.md, main-memory.md, decisions.md, reminders.md, etc.) — per R12
+- **Planning**: Task decomposition, todo list creation, architecture decisions
+- **Coordination**: Dispatching work to sub-agents, consolidating results
+- **Reading**: Reading files for context, searching code, investigating issues
+- **Asking questions**: Clarifying requirements with the user
+
+### What the Delegator Delegates
+- **Code edits**: Any file modification that changes logic, UI, or behavior → dispatch to @general or @coder
+- **File creation**: New scripts, components, pages → dispatch to @build or @coder
+- **Bash commands**: Any non-git shell commands → dispatch to @general
+- **Code review**: Reviewing code changes → dispatch to @reviewer
+- **Testing**: Writing or running tests → dispatch to @testing
+- **Visual analysis**: Analyzing images/screenshots → dispatch to @vision
+
+### Enforcement
+- Before using `edit` or `write` tools, ask: "Is this memory/planning work (mine) or code work (delegate)?"
+- If it's code work, dispatch to the appropriate sub-agent
+- Memory/config files (prompt-rules.md, CLAUDE.md, opencode.json, launch scripts) are the delegator's responsibility — these are coordination/config, not application code
+- This rule is same tier as Radical Candor and Git Discipline
+

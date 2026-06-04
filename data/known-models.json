@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-06-03T14:29:52.3747277-05:00",
+    "lastCheck":  "2026-06-04T13:34:41.4159819-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-opus-4-8",
@@ -46,7 +46,8 @@
                                 "mimo-v2.5-free",
                                 "qwen3.6-plus-free",
                                 "minimax-m3-free",
-                                "nemotron-3-super-free"
+                                "nemotron-3-super-free",
+                                "nemotron-3-ultra-free"
                             ],
                     "go":  [
                                "minimax-m3",
@@ -59,8 +60,8 @@
                                "deepseek-v4-pro",
                                "deepseek-v4-flash",
                                "qwen3.7-max",
-                               "qwen3.6-plus",
                                "qwen3.7-plus",
+                               "qwen3.6-plus",
                                "qwen3.5-plus",
                                "mimo-v2-pro",
                                "mimo-v2-omni",
@@ -69,6 +70,8 @@
                                "hy3-preview"
                            ],
                     "openrouter":  [
+                                       "openrouter/nvidia/nemotron-3.5-content-safety:free",
+                                       "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
                                        "openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
                                        "openrouter/poolside/laguna-xs.2:free",
                                        "openrouter/poolside/laguna-m.1:free",
@@ -175,6 +178,7 @@
                                    "nvidia/nemotron-3-nano-30b-a3b",
                                    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
                                    "nvidia/nemotron-3-super-120b-a12b",
+                                   "nvidia/nemotron-3-ultra-550b-a55b",
                                    "nvidia/nemotron-3.5-content-safety",
                                    "nvidia/nemotron-4-340b-instruct",
                                    "nvidia/nemotron-4-340b-reward",
