@@ -47,6 +47,7 @@ Active: [project name] · [status]
 ⛔ Version: [N] behind origin/main    ← skip if up-to-date or offline
 Updates: [N available → list]         ← read from data/update-status.json; skip if stale/missing
 Models: [N new → list]                ← read from data/model-update-status.json; skip if stale/missing
+User Memory: [N] behind origin           ← skip if up-to-date or not a repo
 Reminders: [N] open → [preview]    ← skip if none
 Suggestion: [time-appropriate work type]
 ```
@@ -186,6 +187,11 @@ Before using `edit` or `write` tools, ask: "Is this memory/planning work (mine) 
 Memory-only file changes (diary, decisions, reminders, preferences, dashboard, current-session, patterns, post-mortems):
 - **Auto-commit immediately** after writing — no approval needed
 - `git add -A && git commit -m "memory: [what changed]" && git push` in one sequence
+- **IMPORTANT**: `user/` is a standalone nested git repo (remote: `Cothek/glitch-user-troy`), NOT tracked by the glitch-ai parent. Memory writes in `user/` must be committed and pushed inside `user/`:
+  ```
+  cd user && git add -A && git commit -m "memory: [what changed]" && git push
+  ```
+  Or use the helper: `.\scripts\sync-user.ps1 -Push`
 - At end of session, summarize all auto-commits made for visibility
 - This removes the friction that caused prior memory write failures
 
@@ -227,6 +233,8 @@ Memory-only file changes (diary, decisions, reminders, preferences, dashboard, c
 | Session history sync (multi-device) | `plugins/auth-proxy.mjs` |
 | Forge log | `user/forge-log.md` |
 | Behavioral rules | `glitch-memorycore/main/mulahazah-rules.md` |
+| User memory sync helper | `scripts/sync-user.ps1` |
+| User data repo (standalone nested) | `Cothek/glitch-user-troy` at `user/.git` |
 
 ## GitNexus Code Intelligence
 

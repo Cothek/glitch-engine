@@ -251,7 +251,13 @@ On EVERY session start, before delivering the session brief:
    If no updates: `Updates: all up-to-date`
    If stale/missing: skip silently (the launch scripts run the check, so it's always fresh at session start).
 
-6. **Read `model-update-status.json`** (written by launch scripts on startup): Check `data/model-update-status.json` for the latest model discovery scan. If it exists and was written within the last hour, include a model update line in the session brief:
+6. **Check `user/` repo behind count**: `cd user && git fetch origin main 2>&1 && git rev-list --count HEAD..origin/main 2>&1`. If the result is a number > 0, include a user memory flag in the session brief:
+   ```
+   User Memory: [N] commits behind origin — run `scripts/sync-user.ps1 -Pull` to sync
+   ```
+   If output is 0 or empty/error: skip. If `user/.git` doesn't exist (no separate repo): skip.
+
+7. **Read `model-update-status.json`** (written by launch scripts on startup): Check `data/model-update-status.json` for the latest model discovery scan. If it exists and was written within the last hour, include a model update line in the session brief:
    ```
    Models: N new → [list of new model IDs]
    ```
@@ -261,6 +267,7 @@ On EVERY session start, before delivering the session brief:
 
 ### Important
 - Use the **parent repo** (`glitch-ai`), NOT the submodule (`glitch-memorycore`)
+- The `user/` directory is a separate nested git repo with its own remote (`Cothek/glitch-user-troy`). Check it separately in step 6.
 - The working directory should already be the glitch-ai parent — just run `git fetch` directly
 - If git fetch fails (no network), silently skip — don't block the session brief
 - Error output (no network, no git) should be captured and treated as "skip check"
@@ -290,7 +297,11 @@ When ANY of these happen during conversation, stop and write the update immediat
 ### Write-Then-Commit Protocol
 After EVERY memory write:
 1. Run `git add -A && git commit -m "memory: [brief description]" && git push` in the glitch-ai parent repo
-2. If `user/` is a separate git repo (e.g., private user submodule), also commit and push there
+2. If `user/` is a separate git repo (e.g., private user submodule), also commit and push there:
+   ```
+   cd user && git add -A && git commit -m "memory: [brief description]" && git push
+   ```
+   Or use the helper: `.\scripts\sync-user.ps1 -Push`
 3. This happens in one uninterrupted sequence — no waiting, no batching
 
 ### Why This Exists
