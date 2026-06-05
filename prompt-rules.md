@@ -386,3 +386,50 @@ The delegator's job is coordination, planning, and memory management. Code chang
 - Memory/config files (prompt-rules.md, CLAUDE.md, opencode.json, launch scripts) are the delegator's responsibility — these are coordination/config, not application code
 - This rule is same tier as Radical Candor and Git Discipline
 
+## R16: Branch Discipline — Never Modify Main Directly (Immutable Rule)
+
+Main is the stable launch branch. All **Glitch core code** changes go through feature branches.
+
+### Scope: What Counts as "Glitch Core Code"
+This rule applies ONLY to files that affect Glitch's ability to start and run:
+- `opencode.json` and `config/opencode-*.json` templates
+- `glitch-memorycore/` engine files (prompt-rules.md, CLAUDE.md, skills)
+- `scripts/launch*.ps1`, `scripts/serve-glitch.ps1`, `scripts/switch-branch.ps1`
+- `.opencode/agents/*.md` (agent definitions)
+- `.launch-glitch*.bat`, `serve-glitch.bat`
+- `validate-config.ps1`
+
+**Everything else** (external projects, user memory files, the website, non-core scripts) can be edited directly on any branch without restriction.
+
+### The Workflow
+```
+main (stable)  ←  develop (active)  ←  feature/xxx (experiments)
+      ↑                                  |
+      └── only merge when confirmed ──────┘
+```
+
+### Hard Rules
+1. **Never make changes to Glitch core files directly on main**. Main is updated only via merge from develop.
+2. **All core code work starts with a branch switch** — if currently on main, switch to develop or a feature branch before any core file edits.
+3. **Troy always launches from main** — the main branch's config is always valid. develop and feature branches may have work-in-progress configs that won't parse.
+
+### Branch Management Tool
+Use `.\scripts\switch-branch.ps1` for all branch operations:
+- `-Branch <name>` — switch with auto-stash + config validation
+- `-Create <name> [-From <source>]` — new branch from develop (default) or other source
+- `-Merge <branch> -Message <msg>` — merge a branch into current (requires message)
+- `-List` — show all branches
+- `-Force` — skip config validation (use when switching to a broken branch to fix it)
+
+### Merge Protocol
+- Only merge when Troy explicitly says to merge
+- Merging develop into main requires confirmation (it makes changes permanent)
+- Merges use `--no-ff` to preserve branch history
+- Always push after merge
+
+### Enforcement
+- If on main, before any Glitch core file edit, propose switching to develop or a feature branch
+- If the target branch has a broken config and you're switching to fix it, use `-Force` to skip validation
+- This rule applies only to Glitch core files (see Scope above). Non-core files can be edited freely on any branch.
+- This rule is same tier as R10 (Process Isolation) and R13 (Config Validation Gate)
+
