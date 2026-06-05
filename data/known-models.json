@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-06-05T11:05:36.5747421-05:00",
+    "lastCheck":  "2026-06-05T13:14:11.8182056-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-opus-4-8",
@@ -46,6 +46,7 @@
                                 "mimo-v2.5-free",
                                 "qwen3.6-plus-free",
                                 "minimax-m3-free",
+                                "nemotron-3-ultra-free",
                                 "nemotron-3-super-free"
                             ],
                     "go":  [
