@@ -45,8 +45,8 @@ Core context is already loaded (auto-injected). Before responding to the first u
 Last session: [1-line recap]
 Active: [project name] · [status]
 ⛔ Version: [N] behind origin/main    ← skip if up-to-date or offline
-Updates: [N available → list]         ← read from update-status.json; skip if stale/missing
-Models: [N new → list]                ← read from model-update-status.json; skip if stale/missing
+Updates: [N available → list]         ← read from data/update-status.json; skip if stale/missing
+Models: [N new → list]                ← read from data/model-update-status.json; skip if stale/missing
 Reminders: [N] open → [preview]    ← skip if none
 Suggestion: [time-appropriate work type]
 ```
