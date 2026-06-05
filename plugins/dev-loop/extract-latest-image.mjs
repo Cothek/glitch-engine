@@ -19,7 +19,7 @@
  */
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
-import { basename, dirname, resolve } from 'path';
+import { basename, dirname, resolve, join } from 'path';
 import { fileURLToPath } from 'url';
 import { execFileSync } from 'child_process';
 import { homedir } from 'os';
@@ -36,9 +36,9 @@ const PROJECT_DIR = process.env.OPENCODE_PROJECT_DIR || process.cwd();
 
 // ─── SQLite Fallback Config ──────────────────────────────────────────────
 
-const SQLITE_BIN = resolve(__dirname, '..', '..', '..', '..', 'tools', 'sqlite.exe');
+const SQLITE_BIN = resolve(__dirname, '..', '..', '..', '..', 'tools', process.platform === 'win32' ? 'sqlite.exe' : 'sqlite3');
 const OPENCODE_DB = process.env.OPENCODE_DB || 
-  `${process.env.USERPROFILE || homedir()}\\.local\\share\\opencode\\opencode.db`;
+  join(homedir(), '.local', 'share', 'opencode', 'opencode.db');
 
 // ─── Args ────────────────────────────────────────────────────────────────
 
