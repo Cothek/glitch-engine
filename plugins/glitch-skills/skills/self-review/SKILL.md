@@ -16,7 +16,7 @@ When this skill activates, output:
 
 ## Overview
 
-The meta-agent is a **passive review protocol** that runs at compaction checkpoints. It reads Glitch's own system files and identifies improvement opportunities. It does NOT apply changes autonomously — it produces a structured report for the delegator to evaluate.
+The meta-agent is a **passive review protocol** that runs at compaction checkpoints. It reads Glitch's own system files and identifies improvement opportunities. It does NOT apply changes autonomously — it produces a structured report for Glitch to evaluate.
 
 **Inspired by**: HyperAgents (metacognitive self-modification), SICA (self-patching via test validation), Karpathy Auto-Research (meta-agent modifies task agent harness).
 

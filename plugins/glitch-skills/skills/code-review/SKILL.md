@@ -86,7 +86,7 @@ Skip quality gate if ALL of:
 - **Step 2 — Token budget**: Memory files should not grow unbounded. If a file exceeds ~300 lines, flag for compaction.
 
 **For skill files (`plugins/glitch-skills/skills/*/SKILL.md`):**
-- **Step 0 — Registration**: Is the skill listed in `skills-registry.md`? If not, the delegator can't discover it.
+- **Step 0 — Registration**: Is the skill listed in `skills-registry.md`? If not, Glitch can't discover it.
 - **Step 1 — References**: Does the skill reference scripts/files that exist? Dead references cause confusion but not crashes.
 
 #### Verdict Rules for This Phase

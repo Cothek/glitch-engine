@@ -2,11 +2,11 @@
 
 ## Overview
 An FTS5 full-text search index over all Glitch MemoryCore markdown files.
-Run by the delegator or called by sub-agents to find relevant memory content.
+Run by Glitch or called by sub-agents to find relevant memory content.
 
 ## Usage
 
-### Index (delegator only — rebuild the search index)
+### Index (Glitch only — rebuild the search index)
 ```bash
 node index-memory.mjs
 ```
@@ -36,7 +36,7 @@ Returns ranked results with BM25 scoring. Higher score = better match.
 ## FTS5 Query Syntax
 - Simple words: `memory`
 - Phrase: `"memory update protocol"`
-- AND/OR: `delegator AND agent`, `free OR paid`
+- AND/OR: `glitch AND agent`, `free OR paid`
 - NOT: `decision NOT deprecated`
 - Prefix: `model*`
 - NEAR: `NEAR(agent, task, 3)`

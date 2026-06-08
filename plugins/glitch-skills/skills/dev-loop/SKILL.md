@@ -2,7 +2,7 @@
 name: dev-loop
 description: "MUST load when running autonomous development — building features end-to-end without user interaction.
               Activates when: user says 'build this feature', 'implement X', 'run the dev loop', 'autonomous mode',
-              or when the delegator needs to continuously iterate on code with write → review → render → interact → verify cycles.
+              or when running autonomously — continuously iterating on code with write → review → render → interact → verify cycles.
               NOT for single-file edits, simple changes, or one-off tasks."
 ---
 
@@ -26,7 +26,7 @@ The dev loop orchestrates sub-agents in a strict sequence for each feature:
  Write  Review  Build  Interact Verify Iterate Complete
   │       │       │       │       │       │       │
   ▼       ▼       ▼       ▼       ▼       ▼       ▼
-@coder  @reviewer @general @coder  @vision  delegator
+@coder  @reviewer @general @coder  @vision  Glitch
 @general          +        +       checks   evaluates
                   wait     @general screens  pass/fail
                   -for-    runs     hots    loops back

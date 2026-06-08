@@ -73,4 +73,4 @@
 
 ---
 
-**Total: 23 skills + 14 agent definitions** — Last updated: 2026-06-01
+**Total: 23 skills + 14 agent definitions** — Last updated: 2026-06-05
