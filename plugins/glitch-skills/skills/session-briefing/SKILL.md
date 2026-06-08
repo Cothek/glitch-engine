@@ -16,10 +16,7 @@ At the start of every session, before responding to the first message, deliver a
 3. Read `projects/project-list.md` for active projects (skip if none)
 4. Detect current time period (Morning/Afternoon/Evening/Night)
 
-### Step 2: Display Glitch Head
-Read and display the ASCII robot head from `glitch-head.txt` (in the glitch-ai project root). Output it verbatim as the very first thing in your response — it represents Glitch visually at every session start.
-
-### Step 3: Compose Brief
+### Step 2: Compose Brief
 Format (under 12 lines):
 ```
 📋 Session Brief · [Time Period]
@@ -31,8 +28,8 @@ Reminders: [N] open → [preview]    ← skip if none
 Suggestion: [time-appropriate work type]
 ```
 
-### Step 4: Deliver and Continue
-Output the head + brief sequence, then process the user's first request.
+### Step 3: Deliver and Continue
+Output the brief, then process the user's first request.
 
 ## Commands
 - `"brief"` — Manually trigger mid-session

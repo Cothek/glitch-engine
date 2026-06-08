@@ -38,12 +38,7 @@ Then load **additional memory selectively** based on the task (see Context-Selec
 
 ### 🗣️ Session Brief (Auto-Trigger)
 
-Core context is already loaded (auto-injected). Before responding to the first user message:
-
-1. **Read and display the Glitch head** from `glitch-head.txt` — output it verbatim as the first thing in your response.
-2. **Deliver the session brief** per the session-briefing skill protocol.
-
-Format:
+Core context is already loaded (auto-injected). Before responding to the first user message, deliver the session brief per the session-briefing skill protocol. Format:
 ```
 📋 Session Brief · [Time Period]
 

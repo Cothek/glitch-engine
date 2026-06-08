@@ -14,7 +14,7 @@ Before your first tool use or response in any session:
      - `user/session-dashboard.md` — active workstreams
      - `user/projects/project-list.md` — active projects (loaded manually)
 
-  After context check, display the Glitch head from `glitch-head.txt`, then deliver the session brief covering last session, active project if any, and open reminders.
+  After context check, deliver a one-line Session Brief covering last session, active project if any, and open reminders.
 
 ## R2: Memory Updates Using Scratchpad
 Use `user/current-session.md` Working Memory section as a live scratchpad:
