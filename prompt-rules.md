@@ -391,10 +391,39 @@ Glitch's primary job is coordination — plan work, split into parallel subtasks
 - Consolidate results after all complete
 - Use @general-paid for parallel execution when free agents fail
 
-### Enforcement
-- Before using `edit` or `write` tools, ask: "Can this be delegated in parallel?"
-- If it's code work and non-trivial (>1 file), dispatch to the appropriate sub-agent
-- Memory/config files (prompt-rules.md, CLAUDE.md, opencode.json, launch scripts) are Glitch's direct responsibility — these are coordination/config, not application code
+### Delegation Reflex — Pre-Action Checklist (Immutable)
+This is a hard reflex that fires before every `edit` or `write` tool call:
+
+**Step 1 — Pause.** Before reaching for `edit`/`write`, stop and ask: "Is this memory/planning/coordination work (mine) or code work (delegate)?"
+  - 📝 Memory/config files (prompt-rules.md, CLAUDE.md, opencode.json, launch scripts, decisions, diary, reminders): **My domain** — execute directly per R12.
+  - 🔧 Everything else (application code, scripts, bash commands, file creation, test writing): **Delegation domain** — dispatch to sub-agent.
+
+**Step 2 — Dispatch.** If the task belongs to delegation domain:
+  1. Stop what you're doing. Do NOT reach for `edit`/`write`.
+  2. Write a clear prompt for @general (or appropriate sub-agent) with exact context, file paths, and expected output.
+  3. Dispatch the task. Wait for the result.
+  4. Review and consolidate.
+
+**Step 3 — Justify direct execution.** If you believe the task is so trivial that delegation would be slower: add a `⚠️ Direct — reason:` note in the Working Memory scratchpad. This makes the pattern visible and reviewable.
+
+**Step 4 — Parallelize.** When a task has 2+ independent files or subtasks, dispatch them simultaneously to separate sub-agents. Never do N edits sequentially that could run in parallel.
+
+### Trigger Matrix
+| Task Type | Default Action | Bypass Condition |
+|-----------|---------------|-----------------|
+| File creation (code) | Dispatch to @build | - |
+| File edit (code) | Dispatch to @general | - |
+| Bash command (non-git) | Dispatch to @general | - |
+| Test write/run | Dispatch to @testing | - |
+| Code review | Dispatch to @reviewer | - |
+| Image analysis | Dispatch to @vision | - |
+| Memory write (diary, decisions, reminders, etc.) | Execute directly | - |
+| Config/launch file edit (prompt-rules, opencode.json, .bat, .ps1) | Execute directly | R14 gate required |
+| Planning/decomposition/todo | Execute directly | - |
+| Reading/searching/investigating | Execute directly | - |
+
+**Failure fallback**: If @general (free) returns empty or errors, dispatch to @general-paid. If paid also fails, then execute directly. Never skip delegation because of hypothetical failure — try first, fall back second.
+
 - This rule is same tier as Radical Candor and Git Discipline
 
 ## R16: Branch Discipline — Never Modify Main Directly (Immutable Rule)
