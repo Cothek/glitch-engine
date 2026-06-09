@@ -125,50 +125,37 @@ During the compaction checkpoint (R3, every ~8 turns), scan the scratchpad for `
 - **Persistence is guaranteed**: promoted entries get auto-committed (R3 step 4)
 - **No new triggers needed**: piggybacks on existing infrastructure
 
-## R7: Visual Content — Save-then-Analyze Protocol
+## R7: Visual Content — Text-Only Protocol (No Image Extraction)
 When the user shares an image, screenshot, or any visual content:
 
-### The Constraint
-OpenCode's `SubtaskPartInput` has NO field for image attachments. When I dispatch a task to @vision via the task tool, ONLY the text prompt is forwarded. The image stays in the parent conversation and is NOT accessible to the sub-agent.
+### The Constraint — Critical
+This model (`deepseek-v4-flash`) has NO vision capability. Pasted images are rejected at model level before I can see them. Additionally, **opencode v1.16.x does NOT persist pasted images to the SQLite database** in any extractable way. The `part` table stores only text metadata (tool calls, reasoning, text blocks) — no `FilePart` or `data:image` entries for clipboard-pasted images. Confirmed 2026-06-08 by exhaustive DB query across all tables (`part`, `message`, `session_input`, `session_message`, `event`). No image data found.
 
-Additionally, my primary model (`deepseek-v4-flash`) does NOT support image input — pasted images are rejected at model level before I can see them. However, opencode's SQLite database stores the pasted image as a `FilePart` entry in the `part` table (confirmed working 2026-05-26 and 2026-06-08).
+### What DOES NOT Work (Deprecated)
+- **DB extraction**: The `part` table does NOT contain image data. `SELECT ... WHERE data LIKE '%mime%image%'` returns zero results. This was a false positive in earlier testing.
+- **Plugin-based save-images.js**: Requires a model that accepts images, which this model doesn't.
+- **extract-latest-image.mjs**: Requires OPENCODE_SERVER_PASSWORD which is not set.
 
-### Image Persistence in opencode DB
-When the user pastes an image in the conversation:
-- **Even though my model can't accept images**, the opencode server still stores the image data in the SQLite database (`~/.local/share/opencode/opencode.db`)
-- The `part` table contains a row with `data` JSON like: `{"type":"file","mime":"image/png","filename":"clipboard","url":"data:image/png;base64,..."}`
-- The `url` field contains the full base64-encoded data URI of the image
-- This data persists in the DB even after my model rejects the image input
+### The Workflow (What Actually Works)
 
-### The Workflow
+When the user shares an image:
 
-#### Path A: Plugin-based (works when primary model accepts images)
-If the model accepts image input, the `save-images.js` plugin hooks `chat.message` automatically:
-- Plugin intercepts the `FilePart` from the incoming message
-- Extracts base64 data and saves to `screenshots/`
-- Updates `screenshots/manifest.json`
-- Read the manifest and dispatch to @vision
+1. **Acknowledge** that I cannot directly view the image
+2. **Extract all information** from the user's text description, HTML markup, or any other text they provide alongside the image
+3. **If the user provides HTML or code markup** in their message (e.g., from a design tool), use that as the primary specification — it's more precise than visual analysis
+4. **Implement based on the text description** and ask for follow-up feedback
+5. **Iterate** based on the user's corrections
 
-#### Path B: DB extraction (works for ALL models, including text-only)
-When Path A fails (model doesn't support images, or manifest.json is empty):
-1. **Query the opencode DB** directly to find the last image part:
-   ```sql
-   SELECT p.data FROM part p
-   WHERE p.data LIKE '%mime%image%'
-   ORDER BY p.time_created DESC LIMIT 1;
-   ```
-2. **Extract the base64 data** from the `url` field in the JSON result
-3. **Save to `screenshots/`**: `[Convert]::FromBase64String($base64)` → `WriteAllBytes`
-4. **Dispatch to @vision** with the file path — include the directive to use the `read` tool
+#### If the user insists the image IS accessible:
+- Be transparent: explain that exhaustive DB queries proved images aren't persisted in this opencode version
+- Offer to work from their text description instead
+- Do NOT keep querying the DB — it has been proven empty of image data
 
-#### Path C: Already on disk
-For Playwright screenshots or existing files — skip straight to @vision.
-
-### Retry on Empty Results
-If @vision returns an empty/blank result:
-1. The sub-agent call likely failed silently (model error, quota, transient issue)
-2. Retry the dispatch to @vision ONCE with the same prompt
-3. If it fails again, fall back to describing the expected issue based on code analysis and ask the user for confirmation
+### Retry on Unclear Feedback
+If the user's feedback on your implementation is unclear:
+1. Ask specific yes/no questions about what to change
+2. Offer 2-3 concrete options based on your best interpretation
+3. Only dispatch to @vision if the image is already an accessible file on disk (Playwright screenshot, saved file, etc.)
 
 ## R8: Task Decomposition — Todo List + Memory Close (Immutable Rule)
 When the user gives a task:
@@ -375,9 +362,9 @@ Repeated failures from unvalidated config/launch changes. Every script change mu
 Glitch's primary job is coordination — plan work, split into parallel subtasks, dispatch to sub-agents simultaneously, consolidate results. Execute directly ONLY when all sub-agent paths fail or the task is trivially small.
 
 ### Priority Order
-1. **Dispatch free agents first** — @general, @explore, @plan, @build, @coder-free, etc. Run independent tasks in parallel.
-2. **Fall back to paid agents** — If free agents return empty/errors, dispatch @general-paid, @build-paid, @coder (paid), etc. Keep running in parallel.
-3. **Execute directly** — Only when both free AND paid fail, or the task is 1 file with no logic changes.
+1. **Dispatch free agents first** — @general, @explore, @plan, @build, @coder-free, @ui-designer-free, @reviewer-free, @testing-free, @vision-free. Run independent tasks in parallel.
+2. **Fall back to paid agents** — If free agents return empty/errors, dispatch the matching paid agent. Critical: @coder-free → @coder (paid), NOT @general. @general is for bash/file ops only.
+3. **Execute directly** — Only when both free AND paid fail, or the task is trivially small (1 file, no logic changes, comments only).
 
 ### What Glitch Always Does Directly
 - **Memory writes**: All memory file updates (current-session.md, main-memory.md, decisions.md, reminders.md, etc.) — per R12
@@ -388,14 +375,14 @@ Glitch's primary job is coordination — plan work, split into parallel subtasks
 - **Asking questions**: Clarifying requirements with the user
 
 ### What Glitch Delegates (Parallel When Possible)
-- **Code edits**: Any file modification that changes logic, UI, or behavior → dispatch to @general or @coder
+- **Code edits**: Any file modification that changes logic, UI, or behavior → dispatch to @coder-free or @coder
 - **File creation**: New scripts, components, pages → dispatch to @build or @coder
 - **Bash commands**: Any non-git shell commands → dispatch to @general
 - **Code review**: Reviewing code changes → dispatch to @reviewer
 - **Testing**: Writing or running tests → dispatch to @testing
 - **Visual analysis**: Analyzing images/screenshots → dispatch to @vision
 
-### Parallelism Rules
+### Paralellism Rules
 - Always look for independent subtasks that can run simultaneously
 - Dispatch all parallel agents at once, not sequentially
 - Consolidate results after all complete
@@ -442,18 +429,25 @@ EVERYTHING ELSE                                   → DELEGATE
 | Task Type | Default Action | Bypass Condition |
 |-----------|---------------|-----------------|
 | File creation (code) | Dispatch to @build | - |
-| File edit (code) | Dispatch to @general | - |
+| File edit (code) | Dispatch to @coder-free (fallback: @coder paid) | - |
 | Bash command (non-git) | Dispatch to @general | - |
-| Test write/run | Dispatch to @testing | - |
-| Code review | Dispatch to @reviewer | - |
-| Image analysis | Dispatch to @vision | - |
+| Test write/run | Dispatch to @testing-free (fallback: @testing paid) | - |
+| Code review | Dispatch to @reviewer-free (fallback: @reviewer paid) | - |
+| Image analysis | Dispatch to @vision-free (fallback: @vision paid) | - |
+| UI design work | Dispatch to @ui-designer-free (fallback: @ui-designer paid) | - |
+| Complex code (5+ files, auth, architecture) | Dispatch to @coder (paid) | - |
 | Memory write (diary, decisions, reminders, etc.) | Execute directly | - |
 | Config/launch file edit (prompt-rules, opencode.json, .bat, .ps1) | Execute directly | R14 gate required |
 | Planning/decomposition/todo | Execute directly | - |
 | Reading/searching/investigating | Execute directly | - |
 | Git commands (status, add, commit, push, pull) | Execute directly | - |
 
-**Failure fallback**: If @general (free) returns empty or errors, dispatch to @general-paid. If paid also fails, then execute directly. Never skip delegation because of hypothetical failure — try first, fall back second.
+**Critical distinction**: @coder-free → @coder (paid) for code/component work. @general is ONLY for bash, file ops, and simple edits. NEVER use @general for component design, complex logic, or multi-file code changes.
+
+**Failure fallback chain**:
+- Code work: @coder-free → @coder (paid) → execute directly
+- Bash/file ops: @general → @general-paid → execute directly
+- UI design: @ui-designer-free → @ui-designer (paid) → execute directly
 
 - This rule is same tier as Radical Candor and Git Discipline
 - **Override allowed by**: Troy only. Never self-override.
