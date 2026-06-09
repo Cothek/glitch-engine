@@ -131,33 +131,38 @@ When the user shares an image, screenshot, or any visual content:
 ### The Constraint
 OpenCode's `SubtaskPartInput` has NO field for image attachments. When I dispatch a task to @vision via the task tool, ONLY the text prompt is forwarded. The image stays in the parent conversation and is NOT accessible to the sub-agent.
 
-### How Images Reach Disk (Plugin-Based)
-A server-side plugin at `.opencode/plugins/save-images.js` hooks the `chat.message` event. When the user posts a message with an image:
-- The plugin intercepts the `FilePart` containing the image data URI
-- Extracts the base64 data and saves it to `screenshots/chat-image-{timestamp}-{n}.{ext}`
-- Writes/updates `screenshots/manifest.json` with the latest image path
+Additionally, my primary model (`deepseek-v4-flash`) does NOT support image input — pasted images are rejected at model level before I can see them. However, opencode's SQLite database stores the pasted image as a `FilePart` entry in the `part` table (confirmed working 2026-05-26 and 2026-06-08).
 
-**This happens automatically** — no dispatch needed. The image is on disk before the AI even processes the message.
+### Image Persistence in opencode DB
+When the user pastes an image in the conversation:
+- **Even though my model can't accept images**, the opencode server still stores the image data in the SQLite database (`~/.local/share/opencode/opencode.db`)
+- The `part` table contains a row with `data` JSON like: `{"type":"file","mime":"image/png","filename":"clipboard","url":"data:image/png;base64,..."}`
+- The `url` field contains the full base64-encoded data URI of the image
+- This data persists in the DB even after my model rejects the image input
 
 ### The Workflow
-1. **NEVER try to interpret images yourself** (this model has no vision capability)
-2. **Wait** — the plugin saves the image automatically. Then read the manifest to get the file path:
-   - Read `screenshots/manifest.json` to find the `latest.relative` path
-3. **Dispatch to @vision** with the FILE PATH in the prompt — **IMPORTANT: explicitly tell @vision to use the `read` tool** (not bash, which is denied):
-   - Use the path from the manifest: `screenshots/chat-image-{timestamp}-{n}.{ext}`
-   - Include the directive: "Read this file using the `read` tool and analyze the image: {path}"
-4. @vision uses its `read: "allow"` permission to read the file from disk
-5. Review @vision's output and incorporate into your response
 
-### For Dev Loop / Screenshot Workflows
-When the image is ALREADY a file on disk (e.g., Playwright screenshot):
-- Skip the manifest read — just dispatch to @vision with the file path directly
-- The file-based workflow is the fast path
+#### Path A: Plugin-based (works when primary model accepts images)
+If the model accepts image input, the `save-images.js` plugin hooks `chat.message` automatically:
+- Plugin intercepts the `FilePart` from the incoming message
+- Extracts base64 data and saves to `screenshots/`
+- Updates `screenshots/manifest.json`
+- Read the manifest and dispatch to @vision
 
-### If the Plugin Hasn't Saved the Image Yet
-If `screenshots/manifest.json` doesn't exist or is stale:
-- The plugin may not have loaded yet (requires opencode restart after install)
-- Ask the user to save the image to a known file path first, then dispatch to @vision
+#### Path B: DB extraction (works for ALL models, including text-only)
+When Path A fails (model doesn't support images, or manifest.json is empty):
+1. **Query the opencode DB** directly to find the last image part:
+   ```sql
+   SELECT p.data FROM part p
+   WHERE p.data LIKE '%mime%image%'
+   ORDER BY p.time_created DESC LIMIT 1;
+   ```
+2. **Extract the base64 data** from the `url` field in the JSON result
+3. **Save to `screenshots/`**: `[Convert]::FromBase64String($base64)` → `WriteAllBytes`
+4. **Dispatch to @vision** with the file path — include the directive to use the `read` tool
+
+#### Path C: Already on disk
+For Playwright screenshots or existing files — skip straight to @vision.
 
 ### Retry on Empty Results
 If @vision returns an empty/blank result:
