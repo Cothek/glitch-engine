@@ -131,34 +131,39 @@ When the user shares an image, screenshot, or any visual content:
 ### The Constraint
 OpenCode's `SubtaskPartInput` has NO field for image attachments. When I dispatch a task to @vision via the task tool, ONLY the text prompt is forwarded. The image stays in the parent conversation and is NOT accessible to the sub-agent.
 
+### How Images Reach Disk (Plugin-Based)
+A server-side plugin at `.opencode/plugins/save-images.js` hooks the `chat.message` event. When the user posts a message with an image:
+- The plugin intercepts the `FilePart` containing the image data URI
+- Extracts the base64 data and saves it to `screenshots/chat-image-{timestamp}-{n}.{ext}`
+- Writes/updates `screenshots/manifest.json` with the latest image path
+
+**This happens automatically** — no dispatch needed. The image is on disk before the AI even processes the message.
+
 ### The Workflow
-1. NEVER try to interpret images yourself (this model has no vision capability)
-2. IMMEDIATELY dispatch to @general to SAVE the image to disk using the extraction utility:
-   - `node <glitch-memorycore>/plugins/dev-loop/extract-latest-image.mjs --out screenshots/chat-image.png`
-   - This connects to the opencode API, finds the latest user message with an image attachment, extracts the base64 data, and saves it to disk
-3. Then dispatch to @vision with the FILE PATH in the prompt — **IMPORTANT: explicitly tell @vision to use the `read` tool** (not bash, which is denied):
-   - "Read this file using the `read` tool and analyze the image: screenshots/chat-image.png"
-   - "Use the read tool to open screenshots/chat-image.png and describe what you see."
-   - Always include the directive "use the read tool" because @vision has `bash: "deny"` and defaults to trying bash for file access
+1. **NEVER try to interpret images yourself** (this model has no vision capability)
+2. **Wait** — the plugin saves the image automatically. Then read the manifest to get the file path:
+   - Read `screenshots/manifest.json` to find the `latest.relative` path
+3. **Dispatch to @vision** with the FILE PATH in the prompt — **IMPORTANT: explicitly tell @vision to use the `read` tool** (not bash, which is denied):
+   - Use the path from the manifest: `screenshots/chat-image-{timestamp}-{n}.{ext}`
+   - Include the directive: "Read this file using the `read` tool and analyze the image: {path}"
 4. @vision uses its `read: "allow"` permission to read the file from disk
 5. Review @vision's output and incorporate into your response
 
 ### For Dev Loop / Screenshot Workflows
 When the image is ALREADY a file on disk (e.g., Playwright screenshot):
-- Skip step 2 — just dispatch to @vision with the file path directly
+- Skip the manifest read — just dispatch to @vision with the file path directly
 - The file-based workflow is the fast path
 
-### Fallback (if API extraction fails)
-If the opencode API is unreachable or the session image can't be found:
-- Ask the user to save the image to a known file path first
-- Then dispatch to @vision with that file path
+### If the Plugin Hasn't Saved the Image Yet
+If `screenshots/manifest.json` doesn't exist or is stale:
+- The plugin may not have loaded yet (requires opencode restart after install)
+- Ask the user to save the image to a known file path first, then dispatch to @vision
 
 ### Retry on Empty Results
 If @vision returns an empty/blank result:
 1. The sub-agent call likely failed silently (model error, quota, transient issue)
 2. Retry the dispatch to @vision ONCE with the same prompt
-3. If it fails again, check the extract-latest-image.mjs script has the AbortController fix (fetch timeout) — the script at `glitch-memorycore/plugins/dev-loop/extract-latest-image.mjs` should have `AbortController` with 2s timeout on both the API fetch and image data fetch
-4. If retry still returns empty, fall back to describing the expected issue based on code analysis and ask the user for confirmation
+3. If it fails again, fall back to describing the expected issue based on code analysis and ask the user for confirmation
 
 ## R8: Task Decomposition — Todo List + Memory Close (Immutable Rule)
 When the user gives a task:

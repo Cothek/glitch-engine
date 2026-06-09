@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-06-08T10:25:55.4125731-05:00",
+    "lastCheck":  "2026-06-08T17:31:58.8684548-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-opus-4-8",
@@ -70,6 +70,7 @@
                                "hy3-preview"
                            ],
                     "openrouter":  [
+                                       "openrouter/nex-agi/nex-n2-pro:free",
                                        "openrouter/nvidia/nemotron-3.5-content-safety:free",
                                        "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
                                        "openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
