@@ -497,9 +497,10 @@ Main is the stable launch branch. All **Glitch core code** changes go through fe
 This rule applies ONLY to files that affect Glitch's ability to start and run:
 - `opencode.json` and `config/opencode-*.json` templates
 - `glitch-memorycore/` engine files (prompt-rules.md, CLAUDE.md, skills)
-- `scripts/launch*.ps1`, `scripts/serve-glitch.ps1`, `scripts/switch-branch.ps1`
+- `scripts/launch*.mjs`, `scripts/serve.mjs`, `scripts/switch-branch.ps1`
 - `.opencode/agents/*.md` (agent definitions)
-- `.launch-glitch*.bat`, `serve-glitch.bat`
+- `launch-glitch*.bat`, `serve-glitch.bat` (Windows)
+- `launch-glitch*.sh`, `serve-glitch.sh` (Mac/Linux)
 - `validate-config.ps1`
 
 **Everything else** (external projects, user memory files, the website, non-core scripts) can be edited directly on any branch without restriction.
