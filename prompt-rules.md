@@ -51,15 +51,20 @@ On every compaction cycle, check and save:
      - Scan `current-session.md` + `forge-log.md` for recurring errors, workaround patterns, token waste
      - Produce a structured report with BLOCKER/ISSUE/SUGGESTION severity
      - Apply action rules: BLOCKERs → report immediately; ISSUEs → include in summary; SUGGESTIONs → log in reminders.md
-   8. **Self-play curriculum** — Read the curriculum skill (`read plugins/glitch-skills/skills/curriculum/SKILL.md`) and run the autonomous challenge system:
-     - Only fire if it has been at least 2 compaction cycles since the last curriculum attempt (avoid over-challenging)
-     - Read `plugins/curriculum/curriculum-state.json` for current level and history
-     - Pick the next uncompleted challenge at the current level
-     - Dispatch to `@coder` or `@general` with the challenge description + test cases
-     - Score the result (tdd-test.mjs pass/fail for Level 1; success criteria for higher levels)
-     - Update curriculum state in `plugins/curriculum/curriculum-state.json`
-     - Auto-commit the state change (fast-lane memory rule)
-     - If 3 consecutive failures at the same level, log to scratchpad as a gap
+    8. **Self-play curriculum** — Read the curriculum skill (`read plugins/glitch-skills/skills/curriculum/SKILL.md`) and run the autonomous challenge system:
+      - Only fire if it has been at least 2 compaction cycles since the last curriculum attempt (avoid over-challenging)
+      - Read `plugins/curriculum/curriculum-state.json` for current level and history
+      - Pick the next uncompleted challenge at the current level
+      - Dispatch to `@coder` or `@general` with the challenge description + test cases
+      - Score the result (tdd-test.mjs pass/fail for Level 1; success criteria for higher levels)
+      - Update curriculum state in `plugins/curriculum/curriculum-state.json`
+      - Auto-commit the state change (fast-lane memory rule)
+      - If 3 consecutive failures at the same level, log to scratchpad as a gap
+   9. **Memory staleness scan** — Read `library/memory-maintenance/archive-stale-criteria.md` and run the auto-execution protocol:
+      - **Phase A (diary archive)**: Check `user/daily-diary/current/` for entries older than 30 days. If 3+ from the same month exist, condense into a monthly summary at `user/daily-diary/archived/YYYY-MM-monthly.md` and move raw entries to archived.
+      - **Phase B (staleness flagging)**: Scan `user/main-memory.md` for preferences/directives older than 30 days referencing deleted projects or dead infrastructure. Flag candidates in the compaction summary — do NOT auto-remove.
+      - **Phase C (diary promotion)**: If the current session was substantial (+10 turns or major work), write a diary entry.
+      - Auto-commit all archive moves (fast-lane memory rule per R12).
 
 ### Stale-Session Detection (At Conversation Start)
 If `Last Memory Update` timestamp is >2 hours stale when you first respond:
