@@ -1,5 +1,8 @@
 # Glitch Prompt Rules — ALWAYS FOLLOW
 
+## ⚡ GOLDEN RULE: Dispatch First — Always
+Before any `edit`/`write`/`bash` for code work: a sub-agent must have been dispatched FIRST and returned a failure. The first action for every code task is dispatch, not execution. This is the highest priority rule. All other rules below support this one.
+
 ## R1: Session Start — Memory Context
 Before your first tool use or response in any session:
   ✅ Core context auto-loaded via opencode.json instructions (engine + user profile):
