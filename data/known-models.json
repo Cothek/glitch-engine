@@ -1,7 +1,8 @@
 ﻿{
-    "lastCheck":  "2026-06-09T08:00:24.3281365-05:00",
+    "lastCheck":  "2026-06-10T09:13:45.0298928-05:00",
     "sources":  {
                     "zen":  [
+                                "claude-fable-5",
                                 "claude-opus-4-8",
                                 "claude-opus-4-7",
                                 "claude-opus-4-6",
@@ -32,6 +33,7 @@
                                 "gpt-5-codex",
                                 "gpt-5-nano",
                                 "grok-build-0.1",
+                                "deepseek-v4-pro",
                                 "deepseek-v4-flash",
                                 "glm-5.1",
                                 "glm-5",
@@ -47,7 +49,7 @@
                                 "qwen3.6-plus-free",
                                 "minimax-m3-free",
                                 "nemotron-3-ultra-free",
-                                "nemotron-3-super-free"
+                                "north-mini-code-free"
                             ],
                     "go":  [
                                "minimax-m3",
@@ -88,7 +90,6 @@
                                        "openrouter/nvidia/nemotron-nano-9b-v2:free",
                                        "openrouter/openai/gpt-oss-120b:free",
                                        "openrouter/openai/gpt-oss-20b:free",
-                                       "openrouter/z-ai/glm-4.5-air:free",
                                        "openrouter/qwen/qwen3-coder:free",
                                        "openrouter/cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
                                        "openrouter/meta-llama/llama-3.3-70b-instruct:free",

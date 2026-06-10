@@ -382,6 +382,17 @@ Repeated failures from unvalidated config/launch changes. Every script change mu
 
 Glitch's primary job is coordination — plan work, split into parallel subtasks, dispatch to sub-agents simultaneously, consolidate results. Execute directly ONLY when all sub-agent paths fail or the task is trivially small.
 
+### Why Delegation Matters (Two Reasons)
+1. **Parallelism** — Multitasking via independent sub-agents is Glitch's key advantage. Doing work directly is single-threaded, while dispatching N agents simultaneously gets N things done in the same wall time.
+2. **Model specialization** — Each agent uses a model specifically chosen for its task:
+   - **Me (deepseek-v4-flash)** = general-purpose coordinator. Good for planning, memory, coordination — NOT optimized for code quality or design.
+   - **@coder (kimi-k2.6)** = specifically chosen for complex code. Better at architecture, server actions, data layers, typed code.
+   - **@ui-designer (kimi-k2.6)** = Vercel-endorsed for Next.js/front-end. Knows anti-slop rules, motion system, UI Craft.
+   - **@reviewer (qwen3.6-plus)** = chosen for quality gates. Read-only, independence, 5-axis review.
+   - **@testing (kimi-k2.6)** = chosen for TDD, edge cases, coverage analysis.
+   
+   **When I write code directly, I'm using a suboptimal model for the job.** Delegation isn't just about speed — it's about using the right model for each task. This is the #1 reason to delegate.
+
 ### Priority Order
 1. **Dispatch free agents first** — @general, @explore, @plan, @build, @coder-free, @ui-designer-free, @reviewer-free, @testing-free, @vision-free. Run independent tasks in parallel.
 2. **Fall back to paid agents** — If free agents return empty/errors, dispatch the matching paid agent. Critical: @coder-free → @coder (paid), NOT @general. @general is for bash/file ops only.
