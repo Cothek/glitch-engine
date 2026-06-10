@@ -114,6 +114,11 @@ try {
 7. **Every state is handled** — loading, empty, error, success, and edge cases like "already exists"
 8. **Mobile-first breakpoints** — design for `sm` first, enhance for `md` and `lg`
 9. **DRY on first reuse** — the second occurrence of any type, utility, constant, or logic pattern is already a violation. Extract immediately. Parameterize differences rather than copy-pasting with minor tweaks.
+10. **Database query safety** — never return full records to the client. Always select specific fields. Always paginate queries that could return >50 rows.
+11. **Parallelize independent operations** — use Promise.all() for independent data fetches. Never await sequentially when operations are independent.
+12. **No unnecessary dependencies** — check native APIs (fetch, URL, Intl, crypto) first. Don't add a package for <30 lines of code.
+13. **Comments explain WHY, not WHAT** — no restated-code comments, no self-referential comments. Only explain the non-obvious.
+14. **Intellectual honesty** — verify library functions exist before using them. Never invent APIs. Say "I don't know" rather than fabricating. Distinguish compiling from working.
 
 ## File Organization
 ```
