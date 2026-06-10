@@ -113,6 +113,7 @@ try {
 6. **Don't create new UI components if existing shadcn ones work** — consistency over creativity
 7. **Every state is handled** — loading, empty, error, success, and edge cases like "already exists"
 8. **Mobile-first breakpoints** — design for `sm` first, enhance for `md` and `lg`
+9. **DRY on first reuse** — the second occurrence of any type, utility, constant, or logic pattern is already a violation. Extract immediately. Parameterize differences rather than copy-pasting with minor tweaks.
 
 ## File Organization
 ```
