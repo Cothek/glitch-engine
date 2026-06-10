@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-06-10T11:47:38.6213218-05:00",
+    "lastCheck":  "2026-06-10T14:09:17.3744925-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
@@ -78,7 +78,6 @@
                                        "openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
                                        "openrouter/poolside/laguna-xs.2:free",
                                        "openrouter/poolside/laguna-m.1:free",
-                                       "openrouter/moonshotai/kimi-k2.6:free",
                                        "openrouter/google/gemma-4-26b-a4b-it:free",
                                        "openrouter/google/gemma-4-31b-it:free",
                                        "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
@@ -112,6 +111,7 @@
                                    "nvidia/google/codegemma-1.1-7b",
                                    "nvidia/google/codegemma-7b",
                                    "nvidia/google/deplot",
+                                   "nvidia/google/diffusiongemma-26b-a4b-it",
                                    "nvidia/google/gemma-2-2b-it",
                                    "nvidia/google/gemma-2b",
                                    "nvidia/google/gemma-3-12b-it",

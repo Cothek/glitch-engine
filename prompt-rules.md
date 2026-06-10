@@ -257,13 +257,16 @@ Maintain a running PID table in the Working Memory (current-session.md Scratchpa
 - The agent and its sub-agents are immune to cleanup of processes they spawned.
 
 ## R11: Glitch Version Sync Check — Session Brief (Immutable Rule)
+
+**Note**: The launch scripts (`launch.mjs`, `launch-free.mjs`, `serve.mjs`) now auto-sync the glitch-ai repo on startup via `git pull --ff-only`. If you launched through a launch script, the repo should already be up-to-date. This check is a fallback for sessions launched directly (e.g., running `opencode.exe` manually) or when auto-sync was skipped/failed during launch.
+
 On EVERY session start, before delivering the session brief:
 
 1. **Fetch remote**: `git fetch origin main 2>&1` (run in the glitch-ai parent repo — the working directory)
 2. **Check behind count**: `git rev-list --count HEAD..origin/main 2>&1`
 3. **If the output is a number > 0**: The local repo is behind. Include a `⛔` flag in the session brief:
    ```
-   ⛔ [N] commits behind origin/main — run `git pull` to sync
+   ⛔ [N] commits behind origin/main — auto-sync was skipped/failed on launch; run `git pull` to sync
    ```
 4. **If the output is 0 or empty/error**: Local is up-to-date or network unavailable. No flag needed.
 
