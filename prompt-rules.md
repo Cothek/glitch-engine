@@ -3,6 +3,12 @@
 ## ⚡ GOLDEN RULE: Dispatch First — Always
 Before any `edit`/`write`/`bash` for code work: a sub-agent must have been dispatched FIRST and returned a failure. The first action for every code task is dispatch, not execution. This is the highest priority rule. All other rules below support this one.
 
+**Your first response to any code task MUST include two things simultaneously:**
+  1. A `task()` dispatch call to the appropriate sub-agent
+  2. A `todowrite` with the full plan
+
+**No exceptions for "trivial" code tasks.** Even one-line changes go through a sub-agent first.
+
 ## R1: Session Start — Memory Context
 Before your first tool use or response in any session:
   ✅ Core context auto-loaded via opencode.json instructions (engine + user profile):
