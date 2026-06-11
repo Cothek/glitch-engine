@@ -45,11 +45,11 @@
 | @explore | `opencode.json` | deepseek-v4-flash-free | Codebase research — read-only, find files, search code |
 | @plan | `opencode.json` | deepseek-v4-flash-free | Architecture & planning — reason without executing code |
 | @build | `opencode.json` | deepseek-v4-flash-free | Code scaffolding — generates code from prompts |
-| @coder | `.opencode/agents/coder.md` | qwen3.6-plus-free | Senior full-stack engineer — production code, typed, all states handled |
-| @ui-designer | `.opencode/agents/ui-designer.md` | qwen3.6-plus-free | Senior UI designer — shadcn/ui, Radix, Tailwind v4, anti-slop rules |
-| @reviewer | `.opencode/agents/reviewer.md` | qwen3.6-plus-free | Independent code quality gate — read-only, severity-rated reports |
-| @testing | `.opencode/agents/testing.md` | qwen3.6-plus-free | Test writer — TDD, framework detection, edge case coverage |
-| @vision | `.opencode/agents/vision.md` | qwen3.6-plus-free | Image/visual content analysis — uses read tool, bash: deny |
+| @coder | `.opencode/agents/coder.md` | nemotron-3-ultra-free | Senior full-stack engineer — production code, typed, all states handled |
+| @ui-designer | `.opencode/agents/ui-designer.md` | nemotron-3-ultra-free | Senior UI designer — shadcn/ui, Radix, Tailwind v4, anti-slop rules |
+| @reviewer | `.opencode/agents/reviewer.md` | nemotron-3-ultra-free | Independent code quality gate — read-only, severity-rated reports |
+| @testing | `.opencode/agents/testing.md` | nemotron-3-ultra-free | Test writer — TDD, framework detection, edge case coverage |
+| @vision | `.opencode/agents/vision.md` | nemotron-3-ultra-free | Image/visual content analysis — uses read tool, bash: deny |
 
 ### Paid Agents (Fallback When Free Fails)
 | Agent | File | Model | Purpose |
@@ -68,8 +68,8 @@
 | Free Model | Paid Fallback | Agents Using |
 |------------|--------------|-------------|
 | deepseek-v4-flash-free | deepseek-v4-flash (same family) | @general, @explore, @plan, @build |
-| qwen3.6-plus-free | qwen3.6-plus (same family) | @reviewer, @vision |
-| qwen3.6-plus-free | kimi-k2.6 (cross-family) | @coder, @ui-designer, @testing |
+| nemotron-3-ultra-free | qwen3.6-plus (same family) | @reviewer, @vision |
+| nemotron-3-ultra-free | kimi-k2.6 (cross-family) | @coder, @ui-designer, @testing |
 
 ---
 
