@@ -1,3 +1,11 @@
+---
+type: SkillIndex
+title: Skills Registry
+description: Index of all registered skills (23) and agent definitions (18) with trigger descriptions and model assignments.
+tags: [glitch, skills, registry]
+timestamp: 2026-06-17T00:00:00Z
+---
+
 # Skills Registry — Glitch Skill Index
 *Auto-loaded at session start. Progressive disclosure: index only, full content loaded on demand.*
 

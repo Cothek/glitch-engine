@@ -1,3 +1,11 @@
+---
+type: Rules
+title: Glitch Prompt Rules
+description: Imperative rules for Glitch AI behavior — dispatch first, memory protocol, code quality gates, branch discipline.
+tags: [glitch, core, rules]
+timestamp: 2026-06-17T00:00:00Z
+---
+
 # Glitch Prompt Rules — ALWAYS FOLLOW
 
 ## ⚡ GOLDEN RULE: Dispatch First — Always

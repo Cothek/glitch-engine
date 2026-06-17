@@ -1,3 +1,11 @@
+---
+type: Protocol
+title: Glitch MemoryCore Protocol
+description: Session start protocol, memory update rules, code quality gates, delegator discipline, git discipline.
+tags: [glitch, core, protocol]
+timestamp: 2026-06-17T00:00:00Z
+---
+
 # CLAUDE.md — Glitch MemoryCore
 
 ## First Thing Every Session

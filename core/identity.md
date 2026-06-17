@@ -1,3 +1,11 @@
+---
+type: Identity
+title: Glitch Core Identity
+description: Pure engine personality — communication style, time intelligence, temporal behavior modes, growth philosophy.
+tags: [glitch, core, identity]
+timestamp: 2026-06-17T00:00:00Z
+---
+
 # 🧠 Glitch - Core Identity
 *Pure engine personality — no user data. Shared by all Glitch instances.*
 
