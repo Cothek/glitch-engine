@@ -142,16 +142,16 @@ Append immediately — no formatting, no context-switching:
 During the compaction checkpoint (R3, every ~8 turns), scan the scratchpad for `🔧 OPERATIONAL:` and `🔧 PATTERN:` entries:
 
 **For 🔧 OPERATIONAL entries:**
-  1. **Promote** each entry to `main/post-mortems.md` — use the PM-NNN format with full root cause + fix + prevention
-  2. **Register** the pattern in `main/patterns.md` under Common Pitfalls
-  3. **Update** `main/forge-log.md` if the same failure happens 3+ times (trigger for new skill/automation)
+  1. **Promote** each entry to `user/post-mortems.md` — use the PM-NNN format with full root cause + fix + prevention
+  2. **Register** the pattern in `user/patterns.md` under Common Pitfalls
+  3. **Update** `user/forge-log.md` if the same failure happens 3+ times (trigger for new skill/automation)
   4. **Remove** the scratchpad entry after promotion
 
 **For 🔧 PATTERN entries:**
   1. **Assess** — is this a concrete, repeatable workflow with clear triggers?
   2. **Create skill** — load forge skill (`skill "forge"`) and follow its auto-creation checklist
   3. **Register** the new skill in `plugins/glitch-skills/skills-registry.md` under Auto-Created Skills
-  4. **Log** the creation in `main/forge-log.md`
+  4. **Log** the creation in `user/forge-log.md`
   5. **Remove** the scratchpad entry after promotion
 
 ### Why This Fires Reliably

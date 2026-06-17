@@ -24,7 +24,7 @@ Every tool has a lifecycle state tracked in `plugins/tools/tool-stats.json`:
 
 | Tool | Trust Level | Runs | Description | Created |
 |------|-------------|------|-------------|---------|
-| _(none yet — first tool created automatically during dev loop)_ | | | | |
+| sort-array | tested (TDD) | 0 | Sort an array of numbers ascending | 2026-06-17 |
 
 ## How Tools Are Created (TDD Workflow)
 

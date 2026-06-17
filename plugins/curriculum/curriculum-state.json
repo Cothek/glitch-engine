@@ -1,11 +1,13 @@
 {
   "level": 1,
-  "completedChallenges": [],
-  "completedDetails": [],
+  "completedChallenges": ["C001"],
+  "completedDetails": [
+    { "id": "C001", "description": "Sort an array of numbers ascending", "toolSaved": "sort-array.mjs", "timestamp": 20260617 }
+  ],
   "failedChallenges": [],
-  "toolsCreated": 0,
-  "startedAt": null,
-  "lastAttemptAt": null,
+  "toolsCreated": 1,
+  "startedAt": 20260617,
+  "lastAttemptAt": 20260617,
   "toolsAtStart": 0,
   "skillsImproved": []
 }
