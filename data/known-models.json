@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-06-11T09:49:44.9388837-05:00",
+    "lastCheck":  "2026-06-17T15:16:34.8362933-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
@@ -55,8 +55,10 @@
                                "minimax-m3",
                                "minimax-m2.7",
                                "minimax-m2.5",
+                               "kimi-k2.7-code",
                                "kimi-k2.6",
                                "kimi-k2.5",
+                               "glm-5.2",
                                "glm-5.1",
                                "glm-5",
                                "deepseek-v4-pro",
@@ -141,6 +143,7 @@
                                    "nvidia/microsoft/phi-4-mini-instruct",
                                    "nvidia/microsoft/phi-4-multimodal-instruct",
                                    "nvidia/minimaxai/minimax-m2.7",
+                                   "nvidia/minimaxai/minimax-m3",
                                    "nvidia/mistralai/codestral-22b-instruct-v0.1",
                                    "nvidia/mistralai/ministral-14b-instruct-2512",
                                    "nvidia/mistralai/mistral-7b-instruct-v0.3",
