@@ -560,3 +560,49 @@ Use `.\scripts\switch-branch.ps1` for all branch operations:
 - This rule applies only to Glitch core files (see Scope above). Non-core files can be edited freely on any branch.
 - This rule is same tier as R10 (Process Isolation) and R13 (Config Validation Gate)
 
+## R17: Mode Switching — One Command to Switch & Launch (Immutable Rule)
+
+When the user asks to switch Glitch modes (e.g., "switch to normal mode", "switch to free mode", "start in local mode", "go to safe mode"), execute this pattern immediately:
+
+### The Pattern
+```
+User says: "switch to <mode>" or "start in <mode>" or "go to <mode>"
+    ↓
+I run: node scripts/glitch.mjs <mode>
+    ↓
+Script handles: switch config → kill old OpenCode → launch new mode in new window
+    ↓
+I confirm: "Switched to <mode> and launched in new window"
+```
+
+### Valid Modes
+| Mode | Command | Description |
+|------|---------|-------------|
+| normal | `node scripts/glitch.mjs normal` | Full featured with paid models |
+| free | `node scripts/glitch.mjs free` | Free models only (OpenCode Zen, NVIDIA, OpenRouter) |
+| local | `node scripts/glitch.mjs local` | Local models via LM Studio |
+| safe | `node scripts/glitch.mjs safe` | Minimal config for troubleshooting |
+
+### Status Check
+If user asks "what mode am I in?" or "current mode":
+```
+I run: node scripts/switch-mode.mjs --status
+```
+
+### Key Points
+- **No manual steps** — the script handles config switch, process kill, and detached launch
+- **Cross-platform** — Windows (cmd.exe), macOS (osascript), Linux (gnome-terminal/xterm/nohup)
+- **Mode marker** — script updates `data/backups/.last-mode` automatically
+- **If already in that mode** — script restarts the session (useful for config changes)
+
+### Trigger Phrases (Fire Immediately)
+- "switch to normal/free/local/safe mode"
+- "start in normal/free/local/safe mode"  
+- "go to normal/free/local/safe mode"
+- "change to normal/free/local/safe mode"
+- "launch in normal/free/local/safe mode"
+- "what mode am I in?" / "current mode" / "mode status"
+
+### Execution
+Run the command directly via `bash` tool — no delegation needed (this is a direct execution task per R15).
+
