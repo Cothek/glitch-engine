@@ -20,8 +20,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Path to the sources registry
-const SOURCES_FILE = resolve(__dirname, '../library/external-sources.md');
+// Path to the sources registry (moved from glitch-memorycore/library/ to user/library/ in May 2026)
+const SOURCES_FILE = resolve(__dirname, '../../user/library/external-sources.md');
 
 // ── Parse external-sources.md ─────────────────────────────────────────────
 
