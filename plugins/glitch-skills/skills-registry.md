@@ -19,7 +19,7 @@ timestamp: 2026-06-17T00:00:00Z
 | interactive-story | Visual Novel RPG with world generation and persistence | "new adventure", "save adventure", "load adventure" |
 | mulahazah | Hook-based behavioral observation, persistent rules | Auto-triggers via hook on every tool call |
 | observation | 4-tier code awareness: Survey, Investigate, Refine, Audit | "survey project", "investigate", "refine code", "audit" |
-| post-mortem | Failure analysis — auto-detects and logs with action items | Auto-triggers on failure signals, "post-mortem" |
+| post-mortem | Failure analysis — structured root cause documentation with action items | Loaded when 🔧 tag or failure detected, "post-mortem" |
 | save-memory | Auto-saves memory on task changes, new learnings, decisions, errors — commits immediately | Auto-triggers on task changes, decisions, errors, session end; also "save", "update memory" |
 | session-briefing | Delivers context brief at session start | Auto-triggers at session start, "brief" |
 | song-creation | Visual-to-musical storytelling, Suno-ready lyrics | "create album", "create song", "muse this" |

@@ -605,3 +605,23 @@ I run: node scripts/switch-mode.mjs --status
 ### Execution
 Run the command directly via `bash` tool — no delegation needed (this is a direct execution task per R15).
 
+## R18: Agent Config Consistency — opencode.json and Agent Files Must Match (Immutable Rule)
+
+When an agent is defined in BOTH `opencode.json` AND `.opencode/agents/<name>.md`:
+
+### Hard Rules
+1. **The inline definition in opencode.json takes precedence** over the file definition for top-level fields (model, mode, permission, prompt). The agent file's `name`, `description`, and example blocks are independently useful.
+2. **Critical fields MUST match** — if `model` differs between opencode.json and the agent file, the active model (opencode.json) may not have the capabilities the file's prompt assumes (e.g., vision, tool access).
+3. **When changing either location, check the other** — a model upgrade in opencode.json without updating the agent file creates silent drift.
+
+### Enforcement
+- When reviewing agent config changes: compare opencode.json `agent.vision.model` vs `.opencode/agents/vision.md` frontmatter `model`.
+- If they differ and the agent needs a specific capability (vision, large context), flag it as a BLOCKER.
+- At self-review (R3 step 7): scan for all agents defined in both locations and report any mismatches.
+
+### Why This Exists
+A 3-way model mismatch was found for @vision (opencode.json: `nemotron-3-ultra-free`, agent file: `minimax-m3-free`, paid fallback: `qwen3.6-plus`). The active model may not support image input, effectively breaking @vision's core function. No previous rule caught this.
+
+### Exception
+- If the agent file intentionally documents a "proposed upgrade" model while opencode.json has the current model, add a comment in the agent file frontmatter: `# planned_upgrade: provider/model-name`.
+
