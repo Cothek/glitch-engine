@@ -50,38 +50,29 @@ When promoting, add a `_Category: NAME_` line after the heading (see `library/me
 - Working on a project? → Update `user/projects/project-list.md` and `user/session-dashboard.md`
 
 ## R3: Compaction Checkpoints (Every ~8 Turns)
-On every compaction cycle, check and save:
-  1. Promote any scratchpad entries to proper files
-   2. Update `Last Memory Update` timestamp in `user/current-session.md`
-   3. Append diary entry to `user/daily-diary/current/YYYY-MM-DD.md` if session was substantial since last checkpoint
-  4. Auto-commit all memory changes: `git add -A && git commit -m "memory: ..." && git push`
-  5. Summarize auto-commits made this checkpoint
-   6. **Pattern scan — forge check** — Scan the scratchpad and recent session for:
-     - Any workflow pattern that repeated 3+ times (same steps, same structure across tasks)
-     - Any crystallized reusable workflow (clear repeatable steps worth encoding as a skill)
-     - If found, read the forge skill (`read plugins/glitch-skills/skills/forge/SKILL.md`) and follow its auto-creation checklist
-     - Create the skill directly — no approval needed for clear patterns (per forge Lv.2)
-   7. **Meta-agent — system self-review** — Read the self-review skill (`read plugins/glitch-skills/skills/self-review/SKILL.md`) and perform a system health review:
-     - Scan `opencode.json` for agent config issues (model adequacy, missing agents, stale prompts)
-     - Scan `skills-registry.md` for path validity, stale skills, overlapping triggers, orphans
-     - Scan `prompt-rules.md` for dead references, contradictions, gaps
-     - Scan `current-session.md` + `forge-log.md` for recurring errors, workaround patterns, token waste
-     - Produce a structured report with BLOCKER/ISSUE/SUGGESTION severity
-     - Apply action rules: BLOCKERs → report immediately; ISSUEs → include in summary; SUGGESTIONs → log in reminders.md
-    8. **Self-play curriculum** — Read the curriculum skill (`read plugins/glitch-skills/skills/curriculum/SKILL.md`) and run the autonomous challenge system:
-      - Only fire if it has been at least 2 compaction cycles since the last curriculum attempt (avoid over-challenging)
-      - Read `plugins/curriculum/curriculum-state.json` for current level and history
-      - Pick the next uncompleted challenge at the current level
-      - Dispatch to `@coder` or `@general` with the challenge description + test cases
-      - Score the result (tdd-test.mjs pass/fail for Level 1; success criteria for higher levels)
-      - Update curriculum state in `plugins/curriculum/curriculum-state.json`
-      - Auto-commit the state change (fast-lane memory rule)
-      - If 3 consecutive failures at the same level, log to scratchpad as a gap
-   9. **Memory staleness scan** — Read `library/memory-maintenance/archive-stale-criteria.md` and run the auto-execution protocol:
-      - **Phase A (diary archive)**: Check `user/daily-diary/current/` for entries older than 30 days. If 3+ from the same month exist, condense into a monthly summary at `user/daily-diary/archived/YYYY-MM-monthly.md` and move raw entries to archived.
-      - **Phase B (staleness flagging)**: Scan `user/main-memory.md` for preferences/directives older than 30 days referencing deleted projects or dead infrastructure. Flag candidates in the compaction summary — do NOT auto-remove.
-      - **Phase C (diary promotion)**: If the current session was substantial (+10 turns or major work), write a diary entry.
-      - Auto-commit all archive moves (fast-lane memory rule per R12).
+
+**First action at every compaction checkpoint:**
+
+```bash
+node scripts/run-compaction.mjs
+```
+
+This script handles the automatable infrastructure (timestamp update, diary staleness check, curriculum status, git status) and produces a visible checklist of what still needs AI judgment.
+
+After running the script, work through any remaining items:
+
+**Required (always do):**
+- 1. Promote any scratchpad entries to proper files (if any exist)
+- 2. Append diary entry if session was substantial (+10 turns or major work)
+- 3. Auto-commit: `git add -A && git commit -m "memory: compaction YYYY-MM-DD" && git push`
+- 4. Run **Step 6 — Pattern scan**: Scan scratchpad + recent session for 3x+ repeated workflows or crystallized patterns. If found, read forge skill and create skill.
+- 5. Run **Step 7 — Self-review**: Read `read plugins/glitch-skills/skills/self-review/SKILL.md` and perform a system health review (opencode.json, skills-registry, prompt-rules, performance). Produce BLOCKER/ISSUE/SUGGESTION report.
+
+**Optional (check if needed):**
+- 6. Run **Step 8 — Curriculum**: Read the curriculum skill and run the next challenge. Only if 2+ compaction cycles since last attempt.
+- 7. Run **Step 9 — Staleness**: Phase B (scan main-memory.md for stale refs), Phase C (promote diary if substantial).
+
+**Why this exists**: The previous 9-step protocol relied entirely on active recall — steps 6-9 had no visible trigger and were frequently skipped (self-review and curriculum never fired in 18+ days). The script provides a visible, repeatable trigger that eliminates the recall problem. It handles the automatable infrastructure; the AI handles the judgment calls.
 
 ### Stale-Session Detection (At Conversation Start)
 If `Last Memory Update` timestamp is >2 hours stale when you first respond:
