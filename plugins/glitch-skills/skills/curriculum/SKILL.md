@@ -50,6 +50,7 @@ Each challenge specifies a tool to build with test cases. The agent writes code,
 | 8 | Flatten a nested array | `[1,[2,[3]]]`→`[1,2,3]`, `[]`→`[]`, `[1]`→`[1]` | array, flatten |
 | 9 | Convert CSV row to JSON object | `"name,age\nTroy,30"`→`[{name:"Troy",age:30}]`, etc. | csv, parse |
 | 10 | Validate a URL format | `"https://x.com"`→`true`, `"not-a-url"`→`false`, `""`→`false` | validate, url |
+| 11 | Check if a string is a palindrome | `"racecar"`→`true`, `"hello"`→`false`, `""`→`true`, `"a"`→`true` | string, palindrome |
 
 ### Level 2 — Tool Chains
 

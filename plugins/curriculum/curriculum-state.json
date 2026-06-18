@@ -1,6 +1,6 @@
 {
-  "level": 4,
-  "completedChallenges": ["C001", "C002", "C003", "L2C1", "L2C2", "L3C1", "L3C2", "L3C3", "L3C4"],
+  "level": 5,
+  "completedChallenges": ["C001", "C002", "C003", "L2C1", "L2C2", "L3C1", "L3C2", "L3C3", "L3C4", "L5C1"],
   "completedDetails": [
     { "id": "C001", "description": "Sort an array of numbers ascending", "toolSaved": "sort-array.mjs", "timestamp": 20260618 },
     { "id": "C002", "description": "Reverse a string", "toolSaved": "reverse-string.mjs", "timestamp": 20260618 },
@@ -10,7 +10,8 @@
     { "id": "L3C1", "description": "Fix inaccurate skill trigger (post-mortem)", "toolSaved": null, "timestamp": 20260618 },
     { "id": "L3C2", "description": "Identify suboptimal model (@vision mismatch)", "toolSaved": null, "timestamp": 20260618 },
     { "id": "L3C3", "description": "Write new rule (R18 — agent config consistency)", "toolSaved": null, "timestamp": 20260618 },
-    { "id": "L3C4", "description": "Review forge-log for undocumented triggers", "toolSaved": null, "timestamp": 20260618 }
+    { "id": "L3C4", "description": "Review forge-log for undocumented triggers", "toolSaved": null, "timestamp": 20260618 },
+    { "id": "L5C1", "description": "Add new Level 1 challenge (palindrome check) to curriculum pool", "toolSaved": null, "timestamp": 20260618 }
   ],
   "failedChallenges": [],
   "toolsCreated": 5,
