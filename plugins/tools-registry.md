@@ -24,7 +24,9 @@ Every tool has a lifecycle state tracked in `plugins/tools/tool-stats.json`:
 
 | Tool | Trust Level | Runs | Description | Created |
 |------|-------------|------|-------------|---------|
-| sort-array | tested (TDD) | 0 | Sort an array of numbers ascending | 2026-06-17 |
+| sort-array | tested (TDD) | 0 | Sort an array of numbers ascending | 2026-06-18 |
+| reverse-string | tested (TDD) | 0 | Reverse a string | 2026-06-18 |
+| extract-numbers | tested (TDD) | 0 | Extract numbers from a string | 2026-06-18 |
 
 ## How Tools Are Created (TDD Workflow)
 

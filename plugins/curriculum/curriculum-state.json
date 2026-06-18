@@ -1,13 +1,15 @@
 {
-  "level": 1,
-  "completedChallenges": ["C001"],
+  "level": 2,
+  "completedChallenges": ["C001", "C002", "C003"],
   "completedDetails": [
-    { "id": "C001", "description": "Sort an array of numbers ascending", "toolSaved": "sort-array.mjs", "timestamp": 20260617 }
+    { "id": "C001", "description": "Sort an array of numbers ascending", "toolSaved": "sort-array.mjs", "timestamp": 20260618 },
+    { "id": "C002", "description": "Reverse a string", "toolSaved": "reverse-string.mjs", "timestamp": 20260618 },
+    { "id": "C003", "description": "Extract numbers from a string", "toolSaved": "extract-numbers.mjs", "timestamp": 20260618 }
   ],
   "failedChallenges": [],
-  "toolsCreated": 1,
-  "startedAt": 20260617,
-  "lastAttemptAt": 20260617,
+  "toolsCreated": 3,
+  "startedAt": 20260618,
+  "lastAttemptAt": 20260618,
   "toolsAtStart": 0,
   "skillsImproved": []
 }
