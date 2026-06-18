@@ -1,13 +1,14 @@
 {
   "level": 2,
-  "completedChallenges": ["C001", "C002", "C003"],
+  "completedChallenges": ["C001", "C002", "C003", "L2C1"],
   "completedDetails": [
     { "id": "C001", "description": "Sort an array of numbers ascending", "toolSaved": "sort-array.mjs", "timestamp": 20260618 },
     { "id": "C002", "description": "Reverse a string", "toolSaved": "reverse-string.mjs", "timestamp": 20260618 },
-    { "id": "C003", "description": "Extract numbers from a string", "toolSaved": "extract-numbers.mjs", "timestamp": 20260618 }
+    { "id": "C003", "description": "Extract numbers from a string", "toolSaved": "extract-numbers.mjs", "timestamp": 20260618 },
+    { "id": "L2C1", "description": "CSV processing tool chain (parse, validate emails, sort)", "toolSaved": "process-csv.mjs", "timestamp": 20260618 }
   ],
   "failedChallenges": [],
-  "toolsCreated": 3,
+  "toolsCreated": 4,
   "startedAt": 20260618,
   "lastAttemptAt": 20260618,
   "toolsAtStart": 0,

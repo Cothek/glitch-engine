@@ -27,6 +27,7 @@ Every tool has a lifecycle state tracked in `plugins/tools/tool-stats.json`:
 | sort-array | tested (TDD) | 0 | Sort an array of numbers ascending | 2026-06-18 |
 | reverse-string | tested (TDD) | 0 | Reverse a string | 2026-06-18 |
 | extract-numbers | tested (TDD) | 0 | Extract numbers from a string | 2026-06-18 |
+| process-csv | tested (TDD) | 0 | Parse CSV, validate emails, sort by field | 2026-06-18 |
 
 ## How Tools Are Created (TDD Workflow)
 
