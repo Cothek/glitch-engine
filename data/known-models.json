@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-06-17T16:12:59.3858400-05:00",
+    "lastCheck":  "2026-06-18T09:02:14.5166098-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
@@ -74,6 +74,7 @@
                                "hy3-preview"
                            ],
                     "openrouter":  [
+                                       "openrouter/cohere/north-mini-code:free",
                                        "openrouter/nex-agi/nex-n2-pro:free",
                                        "openrouter/nvidia/nemotron-3.5-content-safety:free",
                                        "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
