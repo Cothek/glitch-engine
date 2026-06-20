@@ -58,6 +58,7 @@ timestamp: 2026-06-17T00:00:00Z
 | @reviewer | `.opencode/agents/reviewer.md` | nemotron-3-ultra-free | Independent code quality gate — read-only, severity-rated reports |
 | @testing | `.opencode/agents/testing.md` | nemotron-3-ultra-free | Test writer — TDD, framework detection, edge case coverage |
 | @vision | `.opencode/agents/vision.md` | nemotron-3-ultra-free | Image/visual content analysis — uses read tool, bash: deny |
+| @glitch-omni | `.opencode/agents/glitch-omni.md` | deepseek-v4-flash | Direct-execution variant — no delegation, does everything itself. Alternative primary for Normal mode. |
 
 ### Paid Agents (Fallback When Free Fails)
 | Agent | File | Model | Purpose |
@@ -81,4 +82,4 @@ timestamp: 2026-06-17T00:00:00Z
 
 ---
 
-**Total: 23 skills + 18 agent definitions** — Last updated: 2026-06-11
+**Total: 23 skills + 19 agent definitions** — Last updated: 2026-06-20
