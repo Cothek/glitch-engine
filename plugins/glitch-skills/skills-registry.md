@@ -9,7 +9,7 @@ timestamp: 2026-06-17T00:00:00Z
 # Skills Registry — Glitch Skill Index
 *Auto-loaded at session start. Progressive disclosure: index only, full content loaded on demand.*
 
-## Registered Skills (23)
+## Registered Skills (24)
 
 | Skill | Description | Trigger |
 |-------|-------------|---------|
@@ -35,6 +35,7 @@ timestamp: 2026-06-17T00:00:00Z
 | gitnexus | Code knowledge graph — query, context, impact, detect_changes, rename, cypher MCP tools | "impact", "blast radius", "what depends on", "trace this call", "graph query", "architecture map", before significant code changes |
 | self-review | Meta-agent for system self-review — scans opencode.json, skills registry, prompt rules, and performance patterns for improvement opportunities at compaction checkpoints | Auto-fires at R3 step 7, "self review", "system health", "audit config", "check agents", "meta review" |
 | curriculum | Self-play curriculum — generates leveled challenges (tool creation, tool chains, system improvement, memory consolidation, meta), dispatches attempts, scores results, progresses autonomously | Auto-fires at R3 step 8, "curriculum", "self-play", "challenge me", "run curriculum", "what can I learn" |
+| security-testing | Structured penetration testing methodology — OWASP Top 10, API security, auth testing, dependency scanning, secret detection, severity-rated reporting | "security audit", "pentest", "penetration test", "scan for vulnerabilities", "security testing", "hack my app", "find security issues", OWASP |
 
 ## Auto-Created Skills
 *Skills created autonomously by Forge Lv.2+ will appear here automatically.*
@@ -58,6 +59,7 @@ timestamp: 2026-06-17T00:00:00Z
 | @reviewer | `.opencode/agents/reviewer.md` | nemotron-3-ultra-free | Independent code quality gate — read-only, severity-rated reports |
 | @testing | `.opencode/agents/testing.md` | nemotron-3-ultra-free | Test writer — TDD, framework detection, edge case coverage |
 | @vision | `.opencode/agents/vision.md` | nemotron-3-ultra-free | Image/visual content analysis — uses read tool, bash: deny |
+| @pentester | `.opencode/agents/pentester.md` | nemotron-3-ultra-free | Application security tester — OWASP Top 10, API testing, tool-based scanning, structured reporting |
 | @glitch-omni | `.opencode/agents/glitch-omni.md` | deepseek-v4-flash | Direct-execution variant — no delegation, does everything itself. Alternative primary for Normal mode. |
 
 ### Paid Agents (Fallback When Free Fails)
@@ -72,14 +74,15 @@ timestamp: 2026-06-17T00:00:00Z
 | @reviewer-paid | `.opencode/agents/reviewer-paid.md` | qwen3.6-plus | Independent code quality gate paid fallback |
 | @testing-paid | `.opencode/agents/testing-paid.md` | kimi-k2.6 | Test writer paid fallback |
 | @vision-paid | `.opencode/agents/vision-paid.md` | qwen3.6-plus | Image/visual content analysis paid fallback |
+| @pentester-paid | `.opencode/agents/pentester-paid.md` | kimi-k2.6 | Application security tester paid fallback — OWASP Top 10, API testing, tool-based scanning |
 
 ### Free→Paid Fallback Model Chains
 | Free Model | Paid Fallback | Agents Using |
 |------------|--------------|-------------|
 | deepseek-v4-flash-free | deepseek-v4-flash (same family) | @general, @explore, @plan, @build |
 | nemotron-3-ultra-free | qwen3.6-plus (same family) | @reviewer, @vision |
-| nemotron-3-ultra-free | kimi-k2.6 (cross-family) | @coder, @ui-designer, @testing |
+| nemotron-3-ultra-free | kimi-k2.6 (cross-family) | @coder, @ui-designer, @testing, @pentester |
 
 ---
 
-**Total: 23 skills + 19 agent definitions** — Last updated: 2026-06-20
+**Total: 24 skills + 21 agent definitions** — Last updated: 2026-06-20
