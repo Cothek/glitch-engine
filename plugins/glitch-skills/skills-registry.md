@@ -9,13 +9,16 @@ timestamp: 2026-06-17T00:00:00Z
 # Skills Registry — Glitch Skill Index
 *Auto-loaded at session start. Progressive disclosure: index only, full content loaded on demand.*
 
-## Registered Skills (24)
+## Registered Skills (27)
 
 | Skill | Description | Trigger |
 |-------|-------------|---------|
 | auto-commit | Structured git commits with TECHNICAL CHANGES + SESSION CONTEXT | "commit", "save changes", "git commit", Vigilant mode |
 | forge | Self-improvement — pattern detection, skill creation, leveling | "create skill", "forge this", 3+ pattern repeats |
 | image-prompt | Midjourney/NijiJourney composition-aware prompt generation | "create a prompt", "midjourney prompt", "image prompt" |
+| imagegen-frontend-web | Image-generation for premium, conversion-aware website design reference images. Generates one horizontal image per section. | "generate website images", "create landing page images", "design website comps", "website design references" |
+| imagegen-frontend-mobile | Image-generation for premium mobile app and mobile-site design reference images. Platform-aware for iOS, Android, mobile-web. | "generate mobile screens", "create app screen images", "design mobile comps", "mobile UI reference" |
+| brandkit | Image-generation for premium brand identity comps: logo lockups, color studies, material swatches, brand pattern tiles, and visual identity boards. | "generate brand assets", "create brand identity comps", "design brand kit", "brand design references" |
 | interactive-story | Visual Novel RPG with world generation and persistence | "new adventure", "save adventure", "load adventure" |
 | mulahazah | Hook-based behavioral observation, persistent rules | Auto-triggers via hook on every tool call |
 | observation | 4-tier code awareness: Survey, Investigate, Refine, Audit | "survey project", "investigate", "refine code", "audit" |
@@ -30,7 +33,7 @@ timestamp: 2026-06-17T00:00:00Z
 | testing | Test writing & TDD — framework detection, pattern matching, edge case coverage, flaky test detection, coverage analysis, agent-specific testing. Lv.2 quality gate companion. | "write tests", "add tests", "test coverage", "run tests", "test this", "missing tests", "TDD" |
 | refactoring | Behavior-preserving code improvement, atomic changes | "refactor", "clean this up", "simplify this", "improve this code" |
 | brainstorming | Idea generation & concept development via structured phases | "brainstorm", "think of ideas", "what if", "ideate", "bounce ideas" |
-| ui-craft | Design taste skill — anti-slop rules, motion system, layout/typography/color patterns, 22 domain references | "make this not look AI-generated", "design taste", "craft", motion/animation work |
+| ui-craft | Design taste skill — anti-slop rules, motion system, layout/typography/color patterns, Design System Map, Brief Inference, image strategy, 22 domain references. Augmented with taste-skill patterns (Jun 2026). | "make this not look AI-generated", "design taste", "craft", motion/animation work |
 | ui-design | Senior UI/visual design — award-winning perspective, creative execution — now upgraded with anti-slop + motion system + UI Craft integration | "make this look better", "improve the UI", "design this", UI/frontend changes |
 | gitnexus | Code knowledge graph — query, context, impact, detect_changes, rename, cypher MCP tools | "impact", "blast radius", "what depends on", "trace this call", "graph query", "architecture map", before significant code changes |
 | self-review | Meta-agent for system self-review — scans opencode.json, skills registry, prompt rules, and performance patterns for improvement opportunities at compaction checkpoints | Auto-fires at R3 step 7, "self review", "system health", "audit config", "check agents", "meta review" |
@@ -85,4 +88,4 @@ timestamp: 2026-06-17T00:00:00Z
 
 ---
 
-**Total: 24 skills + 21 agent definitions** — Last updated: 2026-06-20
+**Total: 27 skills + 21 agent definitions** — Last updated: 2026-06-21
