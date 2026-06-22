@@ -1,20 +1,21 @@
 ---
 type: SkillIndex
 title: Skills Registry
-description: Index of all registered skills (23) and agent definitions (18) with trigger descriptions and model assignments.
+description: Index of all registered skills (28) and agent definitions (18) with trigger descriptions and model assignments.
 tags: [glitch, skills, registry]
-timestamp: 2026-06-17T00:00:00Z
+timestamp: 2026-06-22T00:00:00Z
 ---
 
 # Skills Registry — Glitch Skill Index
 *Auto-loaded at session start. Progressive disclosure: index only, full content loaded on demand.*
 
-## Registered Skills (27)
+## Registered Skills (29)
 
 | Skill | Description | Trigger |
 |-------|-------------|---------|
 | auto-commit | Structured git commits with TECHNICAL CHANGES + SESSION CONTEXT | "commit", "save changes", "git commit", Vigilant mode |
 | forge | Self-improvement — pattern detection, skill creation, leveling | "create skill", "forge this", 3+ pattern repeats |
+| image-generation | Image generation via local ComfyUI — prompt pipeline, SDXL, MCP-based tool calls | "generate an image", "make a picture", "draw something", "create artwork", ComfyUI setup |
 | image-prompt | Midjourney/NijiJourney composition-aware prompt generation | "create a prompt", "midjourney prompt", "image prompt" |
 | imagegen-frontend-web | Image-generation for premium, conversion-aware website design reference images. Generates one horizontal image per section. | "generate website images", "create landing page images", "design website comps", "website design references" |
 | imagegen-frontend-mobile | Image-generation for premium mobile app and mobile-site design reference images. Platform-aware for iOS, Android, mobile-web. | "generate mobile screens", "create app screen images", "design mobile comps", "mobile UI reference" |
@@ -38,7 +39,8 @@ timestamp: 2026-06-17T00:00:00Z
 | gitnexus | Code knowledge graph — query, context, impact, detect_changes, rename, cypher MCP tools | "impact", "blast radius", "what depends on", "trace this call", "graph query", "architecture map", before significant code changes |
 | self-review | Meta-agent for system self-review — scans opencode.json, skills registry, prompt rules, and performance patterns for improvement opportunities at compaction checkpoints | Auto-fires at R3 step 7, "self review", "system health", "audit config", "check agents", "meta review" |
 | curriculum | Self-play curriculum — generates leveled challenges (tool creation, tool chains, system improvement, memory consolidation, meta), dispatches attempts, scores results, progresses autonomously | Auto-fires at R3 step 8, "curriculum", "self-play", "challenge me", "run curriculum", "what can I learn" |
-| security-testing | Structured penetration testing methodology — OWASP Top 10, API security, auth testing, dependency scanning, secret detection, severity-rated reporting | "security audit", "pentest", "penetration test", "scan for vulnerabilities", "security testing", "hack my app", "find security issues", OWASP |
+| security-testing | Structured penetration testing methodology -- OWASP Top 10, API security, auth testing, dependency scanning, secret detection, severity-rated reporting | "security audit", "pentest", "penetration test", "scan for vulnerabilities", "security testing", "hack my app", "find security issues", OWASP |
+| writing | Remove AI telltales from written communication - no em dashes, no filler words (delve/leverage/utilize), direct openings, contractions, active voice, sentence variety, specificity over abstraction | "write", "draft", "document", "remove AI telltales", "no AI tells", "writing style", any text generation |
 
 ## Auto-Created Skills
 *Skills created autonomously by Forge Lv.2+ will appear here automatically.*
@@ -88,4 +90,4 @@ timestamp: 2026-06-17T00:00:00Z
 
 ---
 
-**Total: 27 skills + 21 agent definitions** — Last updated: 2026-06-21
+**Total: 28 skills + 21 agent definitions** — Last updated: 2026-06-22
