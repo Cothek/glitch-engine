@@ -159,46 +159,44 @@ During the compaction checkpoint (R3, every ~8 turns), scan the scratchpad for `
 - **Persistence is guaranteed**: promoted entries get auto-committed (R3 step 4)
 - **No new triggers needed**: piggybacks on existing infrastructure
 
-## R7: Visual Content — Always Dispatch to @vision First (Immutable Rule)
+## R7: Image → @vision Dispatch Reflex (Immutable — Hardest Rule)
 
-When the user shares an image, screenshot, or any visual content: **Step 1 is always save-to-disk + dispatch to @vision**. You may NOT fall back to text-only interpretation until @vision and @vision-paid have both been dispatched and returned failures.
+**I DO NOT PROCESS IMAGES. Period. @vision IS my vision capability.**
 
-### Hard Trigger — Fire Immediately on ANY Image
-When the user pastes or shares an image in chat, execute this sequence without skipping or deliberating:
+When ANY user message mentions an image, screenshot, visual content, or asks me to "view" / "look at" / "analyze" / "see" anything visual, the following fires before any other response logic:
 
-**Step 1 — Check auto-saved image (fast path):**
-The `save-images.js` plugin (registered in `.opencode/opencode.json`) auto-saves pasted images to `screenshots/chat-image-{ts}-{n}.{ext}` and writes the latest path to `screenshots/manifest.json`. Read `screenshots/manifest.json` to get the absolute file path.
+### ⚡ THE REFLEX (Execute in Order, No Skipping)
+
+**Step 0 — Read screenshots/.new-image (if exists):**
+If `screenshots/.new-image` exists (written by save-images.js plugin), read it. It contains the absolute path of the latest saved image. This is the TRIGGER FILE — its existence means an image was just pasted.
+
+**Step 1 — Read screenshots/manifest.json:**
+Read `screenshots/manifest.json` to get the absolute file path of the latest saved image. The save-images.js plugin writes this automatically when an image is pasted.
 
 **Step 2 — Dispatch to @vision:**
-Dispatch to @vision with the absolute file path and the directive to use the `read` tool to view the image.
+Immediately dispatch to @vision with the absolute file path and the directive: "Use the `read` tool to view this image and provide analysis."
 
-**Step 3 — If manifest.json is stale or missing (fallback):**
-Query the opencode SQLite DB directly to extract the image:
-- DB location: `~/.local/share/opencode/opencode.db`
-- Query: `SELECT data FROM part WHERE json_extract(data, '$.mime') LIKE 'image/%' ORDER BY ROWID DESC LIMIT 1`
-- Extract base64 from the `url` field, save to `screenshots/`, then dispatch to @vision
+**Step 3 — Read `screenshots/.new-image` to clear it:**
+After dispatching, delete `screenshots/.new-image` (or read it and let the next dispatch handle it) to prevent re-dispatching the same image.
 
-**Step 4 — If image is already on disk (Playwright screenshot, existing file):**
-Skip Steps 1-3. Dispatch directly to @vision with the absolute file path.
+### 🚫 FORBIDDEN RESPONSES
+Never, under any circumstances, say any of these:
+- "I can't view images" — FORBIDDEN. @vision IS my vision.
+- "I cannot process images" — FORBIDDEN. I delegate to @vision.
+- "Unfortunately I can't see images" — FORBIDDEN. See Step 2.
 
-### Fallback Chain (Only When @vision Fails)
-1. **Retry with @vision-paid** — If @vision (nemotron-3-ultra-free) returns empty/error, dispatch to @vision-paid (qwen3.6-plus)
-2. **Text-only mode** — Only if BOTH @vision AND @vision-paid fail:
-   - Extract all information from the user's text description
-   - If the user provides HTML or code markup, use that as the primary specification
-   - Implement based on text description and iterate on feedback
-   - Never claim to have "seen" the image — state clearly you're working from text
-3. **If feedback is unclear** after text-only implementation:
-   - Ask specific yes/no questions
-   - Offer 2-3 concrete options based on your best interpretation
-   - Do NOT re-dispatch to @vision without a new image save
+The correct response when an image is shared: "Let me dispatch to @vision to analyze that." Then do it.
 
-### Why This Exists
-- **This model has NO vision capability** — any attempt to interpret images directly is hallucination (confirmed: deepseek-v4-flash rejects image input at model level)
-- **OpenCode's sub-agent system does NOT forward image attachments** from the parent conversation. Only text passes through `task()` calls. Images must be on disk for @vision to access them via the `read` tool
-- **The `save-images.js` plugin handles the save-to-disk step automatically** for clipboard-pasted images. It writes to `screenshots/` + `screenshots/manifest.json`
-- **The `cleanup-opencode-images.mjs` script** confirms the DB stores image data in the `part` table — the SQLite DB is a reliable fallback if the plugin hasn't fired
-- **Prior R7 (text-only) contradicted main-memory.md (DB-extract + @vision)** . This rule is the single source of truth. main-memory.md defers here.
+### Fallback Chain (Only If @vision Fails)
+1. **@vision (nemotron-3-ultra-free)** returns empty/error → dispatch to @vision-paid (qwen3.6-plus)
+2. **BOTH fail** → text-only mode: extract info from user's description, state clearly I'm working from text
+3. **Feedback unclear** → ask specific yes/no questions, do NOT re-dispatch without a new image
+
+### Why This Rule Exists
+- **This model has NO vision** — deepseek-v4-flash rejects image input at model level
+- **task() does NOT forward attachments** — images must be on disk for @vision via `read` tool
+- **save-images.js plugin auto-saves to `screenshots/`** and writes `manifest.json` + `.new-image` trigger
+- **I was repeatedly saying "I can't" instead of delegating.** This rule eliminates that failure mode.
 
 ## R8: Task Decomposition — Todo List + Memory Close (Immutable Rule)
 When the user gives a task:
