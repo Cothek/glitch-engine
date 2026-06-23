@@ -3,7 +3,7 @@ type: Rules
 title: Glitch Prompt Rules
 description: Imperative rules for Glitch AI behavior — dispatch first, memory protocol, code quality gates, branch discipline.
 tags: [glitch, core, rules]
-timestamp: 2026-06-17T00:00:00Z
+timestamp: 2026-06-23T00:00:00Z
 ---
 
 # Glitch Prompt Rules — ALWAYS FOLLOW
@@ -631,4 +631,102 @@ A 3-way model mismatch was found for @vision (opencode.json: `nemotron-3-ultra-f
 
 ### Exception
 - If the agent file intentionally documents a "proposed upgrade" model while opencode.json has the current model, add a comment in the agent file frontmatter: `# planned_upgrade: provider/model-name`.
+
+## R19: Skill Reflex — Load Before Execution (Omni Mode Only)
+
+**Scope: Applies ONLY when running as `glitch-omni` agent (direct execution mode, `task: deny`). Does NOT apply in default Glitch mode where delegation to sub-agents is the primary workflow.**
+
+When in Omni mode, before ANY delegation-domain task (code, design, review, test, security, debug, refactor, image, write), the following reflex fires:
+
+### ⚡ THE REFLEX (Execute in Order, No Skipping)
+
+**Step 1 — Check available_skills for matching trigger:**
+Scan the Trigger Matrix below. If the task matches any skill's trigger keywords, that skill MUST be loaded first via `skill("name")`.
+
+**Step 2 — Load the skill:**
+Call `skill("name")` and wait for the full skill content to load. Do not proceed until loaded.
+
+**Step 3 — Execute following the skill's protocol:**
+Use the loaded skill's workflow, checklists, and standards for the task.
+
+**Step 4 — Log if no skill matched:**
+If no skill trigger matches, add `🔧 OPERATIONAL: No skill matched for [task description] — executed without skill` to scratchpad.
+
+### Trigger Matrix (Skill → When to Load)
+
+| Skill | Trigger Keywords / Task Types |
+|-------|-------------------------------|
+| `code-review` | "review", "quality gate", "check this", 3+ files, logic/API/security changes |
+| `testing` | "write tests", "test coverage", "TDD", "add tests", "run tests" |
+| `ui-craft` | "design", "UI", "component", "page", "screen", "layout", "make it look" |
+| `ui-design` | "improve UI", "design this", "visual design", "frontend changes" |
+| `security-testing` | "security audit", "pentest", "vulnerability", "OWASP", "hack my app" |
+| `image-generation` | "generate image", "create artwork", "make a picture", "draw" |
+| `gitnexus` | "impact", "blast radius", "what depends on", "trace call", "architecture map" |
+| `refactoring` | "refactor", "clean up", "simplify", "improve code" |
+| `debugging` | "debug", "bug", "crashed", "not working", error output |
+| `dev-loop` | "build feature", "autonomous mode", "end-to-end implementation" |
+| `observation` | "survey", "investigate", "refine code", "audit" |
+| `forge` | "create skill", "forge this", pattern detected 3x+ |
+| `work-plan` | "copy plan", "append plan", "resume plan" |
+| `auto-commit` | "commit", "save changes", "git commit" |
+| `post-mortem` | failure detected, 🔧 tag, "post-mortemortem" |
+| `save-memory` | task change, decision, error, reminder, session end |
+| `session-briefing` | session start, "brief" |
+| `image-prompt` | "create prompt", "midjourney prompt" |
+| `song-creation` | "create album", "create song", "muse this" |
+| `interactive-story` | "new adventure", "save adventure", "load adventure" |
+| `mulahazah` | auto-triggers via hook |
+| `adapt` | "adapt", "responsive", "mobile", "tablet", "desktop" |
+| `animate` | "animate", "motion", "animation" |
+| `audit` | "audit", "a11y", "performance", "technical audit" |
+| `brandkit` | "brand assets", "brand identity", "logo", "visual identity" |
+| `brief` | "brief", "design brief" |
+| `clarify` | "UX copy", "buttons", "errors", "empty states", "form hints" |
+| `colorize` | "colorize", "introduce color", "accent color" |
+| `critique` | "critique", "UX review", "hierarchy", "clarity" |
+| `delight` | "delight", "micro-interaction", "joy" |
+| `distill` | "distill", "strip to essence", "cut sections" |
+| `extract` | "extract", "component", "tokens", "magic values" |
+| `finalize` | "finalize", "pre-ship", "finish bar" |
+| `harden` | "harden", "error states", "edge cases", "when things go wrong" |
+| `heuristic` | "heuristic", "Nielsen", "design laws", "scorecard" |
+| `imagegen-frontend-web` | "website images", "landing page images", "design comps" |
+| `imagegen-frontend-mobile` | "mobile screens", "app screens", "mobile UI" |
+| `shape` | "shape", "wireframe", "new screen", "ambiguous brief" |
+| `tokens` | "tokens", "token spine", "design tokens" |
+| `typeset` | "typeset", "typography", "fonts", "scale", "hierarchy" |
+| `unhappy` | "unhappy", "loading", "empty", "error", "partial", "offline states" |
+| `writing` | "write", "draft", "document", "remove AI telltales" |
+
+### Integration with R8 (Todo List)
+
+When creating a todowrite (R8), for each subtask:
+1. Add a `skill` field with the matching skill name (or `null` if none)
+2. Add a `type` field: `CODE`, `DESIGN`, `REVIEW`, `TEST`, `SECURITY`, `DEBUG`, `REFACTOR`, `PLAN`, `IMAGE`, `WRITE`, `MEMORY`, `CONFIG`, `GIT`, `READ`
+3. First action for each subtask = load the skill (if any) then execute
+
+**Example todowrite with skills:**
+```json
+{
+  "todos": [
+    {"content": "Review auth.ts changes", "status": "pending", "priority": "high", "skill": "code-review", "type": "REVIEW"},
+    {"content": "Write tests for formula-validator", "status": "pending", "priority": "high", "skill": "testing", "type": "TEST"},
+    {"content": "Design SettingsPanel UI", "status": "pending", "priority": "medium", "skill": "ui-craft", "type": "DESIGN"},
+    {"content": "Security scan on new API route", "status": "pending", "priority": "high", "skill": "security-testing", "type": "SECURITY"}
+  ]
+}
+```
+
+### Enforcement (At Compaction Checkpoints — R3)
+
+During the compaction checkpoint (R3, every ~8 turns), scan completed tasks since last checkpoint:
+
+1. For each completed task: did it match a skill trigger? Was the skill loaded?
+2. If missed: log `🔧 OPERATIONAL: Missed skill [name] for [task] — add to reflex` to scratchpad
+3. If pattern (3+ misses of same skill): create a skill-router rule or update this trigger matrix
+
+### Why This Rule Exists
+
+In Omni mode, there are no sub-agents to provide specialized methodology. Skills are the ONLY portable methodology layer. Without this reflex, Omni mode reverts to ad-hoc execution with no quality gates, no design standards, no review protocol — exactly the failure mode that delegation was designed to prevent. This rule makes skill usage as automatic as the R7 vision reflex.
 
