@@ -63,7 +63,7 @@ timestamp: 2026-06-22T00:00:00Z
 | @ui-designer | `.opencode/agents/ui-designer.md` | nemotron-3-ultra-free | Senior UI designer — shadcn/ui, Radix, Tailwind v4, anti-slop rules |
 | @reviewer | `.opencode/agents/reviewer.md` | nemotron-3-ultra-free | Independent code quality gate — read-only, severity-rated reports |
 | @testing | `.opencode/agents/testing.md` | nemotron-3-ultra-free | Test writer — TDD, framework detection, edge case coverage |
-| @vision | `.opencode/agents/vision.md` | nemotron-3-ultra-free | Image/visual content analysis — uses read tool, bash: deny |
+| @vision | `.opencode/agents/vision.md` | minimax-m3-free | Image/visual content analysis — uses read tool, bash: deny |
 | @pentester | `.opencode/agents/pentester.md` | nemotron-3-ultra-free | Application security tester — OWASP Top 10, API testing, tool-based scanning, structured reporting |
 | @glitch-omni | `.opencode/agents/glitch-omni.md` | deepseek-v4-flash | Direct-execution variant — no delegation, does everything itself. Alternative primary for Normal mode. |
 
@@ -85,7 +85,8 @@ timestamp: 2026-06-22T00:00:00Z
 | Free Model | Paid Fallback | Agents Using |
 |------------|--------------|-------------|
 | deepseek-v4-flash-free | deepseek-v4-flash (same family) | @general, @explore, @plan, @build |
-| nemotron-3-ultra-free | qwen3.6-plus (same family) | @reviewer, @vision |
+| nemotron-3-ultra-free | qwen3.6-plus (same family) | @reviewer |
+| minimax-m3-free | qwen3.6-plus (cross-family) | @vision |
 | nemotron-3-ultra-free | kimi-k2.6 (cross-family) | @coder, @ui-designer, @testing, @pentester |
 
 ---
