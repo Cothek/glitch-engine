@@ -1,7 +1,8 @@
 ﻿{
-    "lastCheck":  "2026-06-05T14:59:31.7906577-05:00",
+    "lastCheck":  "2026-06-24T15:09:37.2876720-05:00",
     "sources":  {
                     "zen":  [
+                                "claude-fable-5",
                                 "claude-opus-4-8",
                                 "claude-opus-4-7",
                                 "claude-opus-4-6",
@@ -32,7 +33,9 @@
                                 "gpt-5-codex",
                                 "gpt-5-nano",
                                 "grok-build-0.1",
+                                "deepseek-v4-pro",
                                 "deepseek-v4-flash",
+                                "glm-5.2",
                                 "glm-5.1",
                                 "glm-5",
                                 "minimax-m2.7",
@@ -47,14 +50,16 @@
                                 "qwen3.6-plus-free",
                                 "minimax-m3-free",
                                 "nemotron-3-ultra-free",
-                                "nemotron-3-super-free"
+                                "north-mini-code-free"
                             ],
                     "go":  [
                                "minimax-m3",
                                "minimax-m2.7",
                                "minimax-m2.5",
+                               "kimi-k2.7-code",
                                "kimi-k2.6",
                                "kimi-k2.5",
+                               "glm-5.2",
                                "glm-5.1",
                                "glm-5",
                                "deepseek-v4-pro",
@@ -70,12 +75,12 @@
                                "hy3-preview"
                            ],
                     "openrouter":  [
+                                       "openrouter/cohere/north-mini-code:free",
                                        "openrouter/nvidia/nemotron-3.5-content-safety:free",
                                        "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
                                        "openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
                                        "openrouter/poolside/laguna-xs.2:free",
                                        "openrouter/poolside/laguna-m.1:free",
-                                       "openrouter/moonshotai/kimi-k2.6:free",
                                        "openrouter/google/gemma-4-26b-a4b-it:free",
                                        "openrouter/google/gemma-4-31b-it:free",
                                        "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
@@ -87,7 +92,6 @@
                                        "openrouter/nvidia/nemotron-nano-9b-v2:free",
                                        "openrouter/openai/gpt-oss-120b:free",
                                        "openrouter/openai/gpt-oss-20b:free",
-                                       "openrouter/z-ai/glm-4.5-air:free",
                                        "openrouter/qwen/qwen3-coder:free",
                                        "openrouter/cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
                                        "openrouter/meta-llama/llama-3.3-70b-instruct:free",
@@ -110,6 +114,7 @@
                                    "nvidia/google/codegemma-1.1-7b",
                                    "nvidia/google/codegemma-7b",
                                    "nvidia/google/deplot",
+                                   "nvidia/google/diffusiongemma-26b-a4b-it",
                                    "nvidia/google/gemma-2-2b-it",
                                    "nvidia/google/gemma-2b",
                                    "nvidia/google/gemma-3-12b-it",
@@ -139,6 +144,7 @@
                                    "nvidia/microsoft/phi-4-mini-instruct",
                                    "nvidia/microsoft/phi-4-multimodal-instruct",
                                    "nvidia/minimaxai/minimax-m2.7",
+                                   "nvidia/minimaxai/minimax-m3",
                                    "nvidia/mistralai/codestral-22b-instruct-v0.1",
                                    "nvidia/mistralai/ministral-14b-instruct-2512",
                                    "nvidia/mistralai/mistral-7b-instruct-v0.3",
@@ -199,7 +205,6 @@
                                    "nvidia/vila",
                                    "nvidia/openai/gpt-oss-120b",
                                    "nvidia/openai/gpt-oss-20b",
-                                   "nvidia/qwen/qwen3-coder-480b-a35b-instruct",
                                    "nvidia/qwen/qwen3-next-80b-a3b-instruct",
                                    "nvidia/qwen/qwen3.5-122b-a10b",
                                    "nvidia/qwen/qwen3.5-397b-a17b",
