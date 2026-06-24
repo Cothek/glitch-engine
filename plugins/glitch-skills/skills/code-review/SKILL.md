@@ -38,10 +38,10 @@ Skip quality gate if ALL of:
 | # | File | Launches Affected | What Breaks |
 |---|------|-------------------|-------------|
 | 1 | `opencode.json` | all | Invalid JSON, missing brackets, bad agents — opencode can't start |
-| 2 | `launch.ps1` | normal | PowerShell parse error → no TUI mode |
-| 3 | `launch-safe.ps1` | safe | PowerShell parse error → no safe mode (worst: can't recover) |
-| 4 | `launch-free.ps1` | free | PowerShell parse error → no free mode |
-| 5 | `serve-glitch.ps1` | server/web | PowerShell parse error → no web/server mode |
+| 2 | `launch.mjs` | normal | Node.js import error → no TUI mode |
+| 3 | `launch-safe.mjs` | safe | Node.js import error → no safe mode (worst: can't recover) |
+| 4 | `launch-free.mjs` | free | Node.js import error → no free mode |
+| 5 | `serve.mjs` | server/web | Node.js import error → no web/server mode |
 | 6 | `launch-glitch.bat` | normal | Batch parse error → no normal mode |
 | 7 | `launch-glitch-safe.bat` | safe | Batch parse error → no safe mode |
 | 8 | `launch-glitch-free.bat` | free | Batch parse error → no free mode |
@@ -64,13 +64,13 @@ Skip quality gate if ALL of:
 - **Step 3 — Agent configs**: New agents need valid models. Prompts can't reference missing files.
 - **Step 4 — MCP servers**: Must have degraded mode (no crash when deps missing). **BLOCKER** if they crash on init.
 
-**For `.ps1` files (launch.ps1, launch-safe.ps1, launch-free.ps1, serve-glitch.ps1, validate-config.ps1):**
+**For `.ps1` files (validate-config.ps1):**
 - **Step 0 — ASCII purity**: Check EVERY byte is 0x7F or below. **BLOCKER** if any byte > 0x7F exists.
 - **Why**: PowerShell 5.1 on Windows reads BOM-less UTF-8 as Windows-1252. The em dash `—` (U+2014, UTF-8 bytes `E2 80 94`) has byte `0x94` which maps to `"` (RIGHT DOUBLE QUOTATION MARK) in Windows-1252. This silently opens an unintended string, cascading into random parse errors across the entire file.
 - **Step 1 — Syntax parse**: Run `powershell -NoProfile -Command "& { . 'path\to\file.ps1' }"` or use AST parser. **BLOCKER** if it fails to parse.
 - **Step 2 — Failure modes**: Can the script survive a missing binary? Port conflict? Missing submodule? Each hard failure should have a clear error message and suggest a recovery path (e.g., "run bootstrap" or "run safe mode").
-- **Step 3 — Backup/restore integrity** (launch-safe.ps1 only): Verify the backup-create, restore, and hash-check logic is intact. If the backup chain breaks, fixes made during safe mode are lost.
-- **Step 4 — Leftover detection** (launch.ps1, serve-glitch.ps1 only): Verify the `.bak` detection logic is intact. If a crash orphaned a .bak file, normal mode must still handle it gracefully (auto-restore or auto-delete).
+- **Step 3 — Backup/restore integrity** (launch-safe.mjs only): Verify the backup-create, restore, and hash-check logic is intact. If the backup chain breaks, fixes made during safe mode are lost.
+- **Step 4 — Leftover detection** (launch.mjs, serve.mjs only): Verify the `.bak` detection logic is intact. If a crash orphaned a .bak file, normal mode must still handle it gracefully (auto-restore or auto-delete).
 
 **For `.bat` files (launch-glitch.bat, launch-glitch-safe.bat, launch-glitch-free.bat, serve-glitch.bat):**
 - **Step 0 — Syntax**: Run the batch file or parse with cmd.exe. Check for unclosed `if` blocks, missing `)`, bad labels.
@@ -86,7 +86,7 @@ Skip quality gate if ALL of:
 - **Step 2 — Token budget**: Memory files should not grow unbounded. If a file exceeds ~300 lines, flag for compaction.
 
 **For skill files (`plugins/glitch-skills/skills/*/SKILL.md`):**
-- **Step 0 — Registration**: Is the skill listed in `skills-registry.md`? If not, the delegator can't discover it.
+- **Step 0 — Registration**: Is the skill listed in `skills-registry.md`? If not, Glitch can't discover it.
 - **Step 1 — References**: Does the skill reference scripts/files that exist? Dead references cause confusion but not crashes.
 
 #### Verdict Rules for This Phase

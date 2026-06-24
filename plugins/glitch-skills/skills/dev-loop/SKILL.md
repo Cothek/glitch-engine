@@ -2,36 +2,36 @@
 name: dev-loop
 description: "MUST load when running autonomous development — building features end-to-end without user interaction.
               Activates when: user says 'build this feature', 'implement X', 'run the dev loop', 'autonomous mode',
-              or when the delegator needs to continuously iterate on code with write → review → render → interact → verify cycles.
+              or when running autonomously — continuously iterating on code with write → review → render → interact → verify cycles.
               NOT for single-file edits, simple changes, or one-off tasks."
 ---
 
-# Autonomous Dev Loop — Write → Review → Build → Interact → Verify → Iterate
+# Autonomous Dev Loop — Write → Review → Security Scan → Build → Interact → Verify → Iterate
 
 ## Activation
 When this skill activates, output:
-"🔄 Running autonomous dev loop [write → review → build → interact → verify → iterate]..."
+"🔄 Running autonomous dev loop [write → review → security scan → build → interact → verify → iterate]..."
 
 ## Architecture
 
 The dev loop orchestrates sub-agents in a strict sequence for each feature:
 
 ```
-┌──────────────────────────────────────────────────────┐
-│                   DELEGATOR (me)                      │
-│  Orchestrates phases, evaluates results, loops back  │
-└──┬──────┬──────┬──────┬──────┬──────┬──────┬────────┘
-   │      │      │      │      │      │      │
-   ▼      ▼      ▼      ▼      ▼      ▼      ▼
- Write  Review  Build  Interact Verify Iterate Complete
-  │       │       │       │       │       │       │
-  ▼       ▼       ▼       ▼       ▼       ▼       ▼
-@coder  @reviewer @general @coder  @vision  delegator
-@general          +        +       checks   evaluates
-                  wait     @general screens  pass/fail
-                  -for-    runs     hots    loops back
-                  server   browser-        or finishes
-                           interact
+┌──────────────────────────────────────────────────────────┐
+│                     DELEGATOR (me)                        │
+│    Orchestrates phases, evaluates results, loops back    │
+└───┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬─────┘
+    │      │      │      │      │      │      │      │
+    ▼      ▼      ▼      ▼      ▼      ▼      ▼      ▼
+ Write  Review  Secure  Build  Interact Verify Iterate Complete
+  │       │     Scan    │       │       │       │       │
+  ▼       ▼       ▼    ▼       ▼       ▼       ▼       ▼
+@coder  @reviewer @pent- @general @coder  @vision  Glitch
+@general          ester          +       checks   evaluates
+                   +             @general screens  pass/fail
+                  snyk    wait   runs     hots    loops back
+                  truffle -for-  browser-         or finishes
+                  nuclei  server interact
 ```
 
 ### Sub-agent Roles in the Loop
@@ -40,10 +40,11 @@ The dev loop orchestrates sub-agents in a strict sequence for each feature:
 |-------|-------|--------|--------|
 | **Write** | @coder or @general | Writes code files for the feature | Code changes |
 | **Review** | @reviewer | Quality + security audit | Structured report with pass/fail verdict |
+| **Security Scan** | @pentester or @pentester-paid | Static scans: snyk, trufflehog, code pattern grep for OWASP issues | Security findings report with severity |
 | **Build** | @general | Start dev server, wait for readiness | Server running on port |
-| **Interact** | @coder (plan) + @general (execute) | Write JSON plan, run browser-interact.mjs | Screenshots + results.json |
+| **Interact** | @coder (plan) + @general (execute) | Write JSON plan, run browser-interact.mjs + dynamic nuclei scan | Screenshots + results.json + nuclei findings |
 | **Verify** | @vision | Analyze screenshots against expectations | Visual pass/fail report |
-| **Iterate** | Delegator | Evaluate all results, decide loop or finish | Next phase instructions |
+| **Iterate** | Delegator | Evaluate all results (code, security, visual), decide loop or finish | Next phase instructions |
 
 ## Tool Creation (CodeAct-lite)
 
@@ -169,9 +170,50 @@ When the same tool gets created in 3+ different dev loops, that's a Forge trigge
 3. Check gate verdict:
    - **FAIL** (BLOCKER found) → Immediately loop back to **Phase 1: Write** with the BLOCKER details. Do NOT proceed.
    - **PASS with changes required** (MAJOR findings) → Loop back to **Phase 1: Write** with MAJOR findings to fix.
-   - **PASS** (only MINORs/NITs) → Proceed to Phase 3.
+   - **PASS** (only MINORs/NITs) → Proceed to Phase 3: Security Scan.
 
-### Phase 3: Build
+### Phase 3: Security Scan
+
+**Goal**: Catch security vulnerabilities, secrets, and dependency risks before the app runs.
+
+**Tool locations**:
+- **snyk**: global npm install (`snyk test`)
+- **nuclei**: `tools/security/nuclei.exe` (dynamic scanning — used in Interact phase below)
+- **trufflehog**: `tools/security/trufflehog.exe`
+
+1. **Dependency vulnerability scan** — Delegate to @pentester or run directly:
+   ```bash
+   # npm audit for quick check
+   cd <project-dir> && npm audit
+
+   # snyk for deeper analysis
+   snyk test --all-projects
+   ```
+   Check results for CRITICAL or HIGH severity CVEs.
+
+2. **Secret scan** — Check git history and current files for hardcoded credentials:
+   ```bash
+   tools/security/trufflehog.exe filesystem --directory=<project-dir> --results=verified
+   ```
+   If verified secrets found → BLOCKER.
+
+3. **Code pattern scan** — Grep for high-risk patterns in changed files:
+   - `innerHTML|dangerouslySetInnerHTML` → XSS risk
+   - `exec\(|spawn\(` in user-facing code → command injection risk
+   - `\.env` or hardcoded keys in committed files
+   - Auth checks that live only in client code, not on server
+   - SQL string interpolation in DB queries
+
+4. **Evaluate findings**:
+   - **CRITICAL finding** (credential leak, hardcoded API key in committed code, SQL injection) → **BLOCKER**. Immediately loop back to **Phase 1: Write** with full details. Do NOT proceed.
+   - **HIGH finding** (XSS, outdated dep with known exploit, exposed internal path) → Flag as MAJOR. Loop back to **Phase 1: Write** with findings.
+   - **MEDIUM/LOW** → Log for the final report, proceed to Phase 4: Build.
+
+5. **Run dynamic scanning later**: The nuclei vulnerability scanner runs against the live server in Phase 5: Interact. You don't need to run it here.
+
+**Output check**: Security findings report with severity levels. No CRITICAL/HIGH blocking findings, or they are already fed back to Write phase.
+
+### Phase 4: Build
 
 **Goal**: Get the app running so we can interact with it.
 
@@ -188,7 +230,7 @@ When the same tool gets created in 3+ different dev loops, that's a Forge trigge
 
 **Output check**: Server responds with HTTP 200 at the expected URL.
 
-### Phase 4: Interact
+### Phase 5: Interact
 
 **Goal**: Verify the app works through actual browser interaction — clicking, typing, navigating.
 
@@ -213,9 +255,15 @@ When the same tool gets created in 3+ different dev loops, that's a Forge trigge
 
 4. If interaction tests fail:
    - If step-level failures → include failure details in loop-back to Phase 1
-   - If browser crash → check server is still running, retry Phase 3
+   - If browser crash → check server is still running, retry Phase 4: Build
 
-### Phase 5: Verify
+5. **Dynamic security scan** — While the server is running, run nuclei against it:
+   ```bash
+   tools/security/nuclei.exe -u http://localhost:3000 -o reports/security/dev-loop-nuclei.txt
+   ```
+   Parse results for any CRITICAL/HIGH findings. Add them to the failure context if found.
+
+### Phase 6: Verify
 
 **Goal**: Visually confirm the UI looks correct and matches expectations.
 
@@ -232,16 +280,18 @@ When the same tool gets created in 3+ different dev loops, that's a Forge trigge
 
 3. If visual defects found → loop back to Phase 1 with @vision's descriptions of what's wrong
 
-### Phase 6: Iterate
+### Phase 7: Iterate
 
 **Goal**: Decide whether to loop or finish.
 
-1. **Collect all failure context**: Gather results from Review, Interact, and Verify phases
+1. **Collect all failure context**: Gather results from Review, Security Scan, Interact, and Verify phases
 2. **Make a decision**:
    - All phases passed → Feature complete. Move to next feature or notify user.
    - Phase failed → Loop back to **Phase 1: Write** with ALL failure context:
-     - @reviewer's findings (quality/security issues)
+     - @reviewer's findings (quality issues)
+     - @pentester's findings (security vulnerabilities, CVEs, secrets)
      - Interaction test failures (which steps failed, error messages)
+     - nuclei scan results (dynamic vulnerability findings)
      - @vision's visual analysis (what doesn't look right)
      - Console errors captured during interaction
 3. **Loop budget**: Maximum 3 iterations per feature before escalating
@@ -346,6 +396,6 @@ Check for: Proper spacing, visible text, no layout breaks."
 ### Fallback on Failure
 
 - **Server won't start**: Check for port conflicts, kill existing processes with `stop-dev.ps1`, retry
-- **Browser crashes**: Restart server, relaunch browser, retry from Phase 3
+- **Browser crashes**: Restart server, relaunch browser, retry from Phase 4: Build
 - **Selector not found**: The @reviewer may have missed something — check the actual rendered HTML (use `evaluate` action to dump HTML)
 - **Intermittent failures**: Add `waitForTimeout` or `waitForSelector` before dependent actions

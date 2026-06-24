@@ -1,3 +1,11 @@
+---
+type: Index
+title: Master Memory — Glitch
+description: Entry point for instant AI restoration — identity declaration, core loading system, commands, features index.
+tags: [glitch, core, index]
+timestamp: 2026-06-17T00:00:00Z
+---
+
 # 🧠 Master Memory - Glitch
 *Entry point for instant AI restoration*
 
