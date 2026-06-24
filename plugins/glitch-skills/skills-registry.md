@@ -3,13 +3,13 @@ type: SkillIndex
 title: Skills Registry
 description: Index of all registered skills (28) and agent definitions (18) with trigger descriptions and model assignments.
 tags: [glitch, skills, registry]
-timestamp: 2026-06-22T00:00:00Z
+timestamp: 2026-06-24T00:00:00Z
 ---
 
 # Skills Registry — Glitch Skill Index
 *Auto-loaded at session start. Progressive disclosure: index only, full content loaded on demand.*
 
-## Registered Skills (29)
+## Registered Skills (30)
 
 | Skill | Description | Trigger |
 |-------|-------------|---------|
@@ -40,6 +40,7 @@ timestamp: 2026-06-22T00:00:00Z
 | self-review | Meta-agent for system self-review — scans opencode.json, skills registry, prompt rules, and performance patterns for improvement opportunities at compaction checkpoints | Auto-fires at R3 step 7, "self review", "system health", "audit config", "check agents", "meta review" |
 | curriculum | Self-play curriculum — generates leveled challenges (tool creation, tool chains, system improvement, memory consolidation, meta), dispatches attempts, scores results, progresses autonomously | Auto-fires at R3 step 8, "curriculum", "self-play", "challenge me", "run curriculum", "what can I learn" |
 | security-testing | Structured penetration testing methodology -- OWASP Top 10, API security, auth testing, dependency scanning, secret detection, severity-rated reporting | "security audit", "pentest", "penetration test", "scan for vulnerabilities", "security testing", "hack my app", "find security issues", OWASP |
+| shape | Project goal definition — asks clarifying questions to define what you're actually building before writing any code. Works for UI screens, features, CLI tools, and backend APIs. | "shape this", ambiguous brief, starting something new, "what should I build", goal definition, UI/frontend/workflow/CLI/API work |
 | writing | Remove AI telltales from written communication - no em dashes, no filler words (delve/leverage/utilize), direct openings, contractions, active voice, sentence variety, specificity over abstraction | "write", "draft", "document", "remove AI telltales", "no AI tells", "writing style", any text generation |
 
 ## Auto-Created Skills
@@ -91,4 +92,4 @@ timestamp: 2026-06-22T00:00:00Z
 
 ---
 
-**Total: 28 skills + 21 agent definitions** — Last updated: 2026-06-22
+**Total: 29 skills + 21 agent definitions** — Last updated: 2026-06-24
