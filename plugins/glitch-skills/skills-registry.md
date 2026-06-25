@@ -3,13 +3,13 @@ type: SkillIndex
 title: Skills Registry
 description: Index of all registered skills (28) and agent definitions (18) with trigger descriptions and model assignments.
 tags: [glitch, skills, registry]
-timestamp: 2026-06-24T00:00:00Z
+timestamp: 2026-06-25T00:00:00Z
 ---
 
 # Skills Registry — Glitch Skill Index
 *Auto-loaded at session start. Progressive disclosure: index only, full content loaded on demand.*
 
-## Registered Skills (30)
+## Registered Skills (31)
 
 | Skill | Description | Trigger |
 |-------|-------------|---------|
@@ -34,6 +34,7 @@ timestamp: 2026-06-24T00:00:00Z
 | testing | Test writing & TDD — framework detection, pattern matching, edge case coverage, flaky test detection, coverage analysis, agent-specific testing. Lv.2 quality gate companion. | "write tests", "add tests", "test coverage", "run tests", "test this", "missing tests", "TDD" |
 | refactoring | Behavior-preserving code improvement, atomic changes | "refactor", "clean this up", "simplify this", "improve this code" |
 | brainstorming | Idea generation and concept development — 4-phase protocol with mode branching (feature, problem, design, strategy), active sparring, and bridge to the goal skill | "brainstorm", "think of ideas", "what if", "ideate", "bounce ideas", "spitball", "explore options", "generate ideas" |
+| breakthrough | Overcome hard problems — reframe, check assumptions, research, simplify, lateral thinking. Use when debugging isn't working and you need a new angle. | "breakthrough", "stuck", "hard problem", "can't figure out", "going in circles", "not working and I don't know why", "need a fresh perspective" |
 | ui-craft | Design taste skill — anti-slop rules, motion system, layout/typography/color patterns, Design System Map, Brief Inference, image strategy, 22 domain references. Augmented with taste-skill patterns (Jun 2026). | "make this not look AI-generated", "design taste", "craft", motion/animation work |
 | ui-design | Senior UI/visual design — award-winning perspective, creative execution — now upgraded with anti-slop + motion system + UI Craft integration | "make this look better", "improve the UI", "design this", UI/frontend changes |
 | gitnexus | Code knowledge graph — query, context, impact, detect_changes, rename, cypher MCP tools | "impact", "blast radius", "what depends on", "trace this call", "graph query", "architecture map", before significant code changes |
