@@ -24,7 +24,7 @@ timestamp: 2026-06-25T00:00:00Z
 | mulahazah | Hook-based behavioral observation, persistent rules | Auto-triggers via hook on every tool call |
 | observation | 4-tier code awareness: Survey, Investigate, Refine, Audit | "survey project", "investigate", "refine code", "audit" |
 | post-mortem | Failure analysis — structured root cause documentation with action items | Loaded when 🔧 tag or failure detected, "post-mortem" |
-| save-memory | Auto-saves memory on task changes, new learnings, decisions, errors — commits immediately | Auto-triggers on task changes, decisions, errors, session end; also "save", "update memory" |
+| save-memory | Memory writing methodology for @memory agent — file map, append formats, category taxonomy, format rules. @memory loads this on activation. | Loaded by @memory agent on dispatch only. Not used by Glitch directly. |
 | session-briefing | Delivers context brief at session start | Auto-triggers at session start, "brief" |
 | song-creation | Visual-to-musical storytelling, Suno-ready lyrics | "create album", "create song", "muse this" |
 | work-plan | Plan capture → checkbox execution → per-task commits | "copy plan", "append plan", "resume plan" |
@@ -68,6 +68,7 @@ timestamp: 2026-06-25T00:00:00Z
 | @vision | `.opencode/agents/vision.md` | mimo-v2.5-free | Image/visual content analysis — uses read tool, bash: deny |
 | @pentester | `.opencode/agents/pentester.md` | nemotron-3-ultra-free | Application security tester — OWASP Top 10, API testing, tool-based scanning, structured reporting |
 | @glitch-omni | `.opencode/agents/glitch-omni.md` | deepseek-v4-flash | Direct-execution variant — no delegation, does everything itself. Alternative primary for Normal mode. |
+| @memory | `.opencode/agents/memory.md` | nvidia/minimaxai/minimax-m3 | Memory writer — reads and appends to `user/*.md` files only. Loads save-memory skill. |
 
 ### Paid Agents (Fallback When Free Fails)
 | Agent | File | Model | Purpose |

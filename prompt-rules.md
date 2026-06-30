@@ -318,43 +318,56 @@ On EVERY session start, before delivering the session brief:
 ### Rationale
 This ensures every deployment of Glitch AI knows when updates are available. The session brief is the per-session heartbeat — if there are un-pulled changes, the AI flags them immediately. This prevents silent drift between machines. The dependency check extends this to all external tools (opencode, GitNexus, cloudflared, Handy, etc.) so nothing falls behind silently. The model check extends this to the LLM provider landscape — if new models appear that could upgrade our agents, we know about it.
 
-## R12: Immediate Memory Integration — Glitch Handles Memory (Immutable Rule)
+## R12: Memory Capture Protocol — Dispatch to @memory (Immutable Rule)
 
-Glitch processes ALL memory writes directly — never delegate memory file edits to sub-agents.
+Glitch handles TRIGGER DETECTION and GIT COMMITS. @memory handles ALL file writes.
+Glitch NEVER writes memory files directly.
 
 ### Trigger Conditions (Fire Immediately)
-When ANY of these happen during conversation, stop and write the update immediately:
+When ANY of these happen, immediately dispatch to @memory with the content to write:
 
-| Trigger | Target File |
-|---------|-------------|
-| User expresses a preference or changes their mind | `user/main-memory.md` → User Profile |
-| A decision is made | Append to `user/decisions.md` |
-| Something breaks or an error is fixed | Append to `user/post-mortems.md` |
-| A pattern is noticed (2+ occurrences) | Update `user/patterns.md` |
-| A follow-up is needed | Append to `user/reminders.md` |
-| A project progresses | Update `user/projects/project-list.md` and `user/session-dashboard.md` |
-| A session is substantial | Append to `user/daily-diary/current/YYYY-MM-DD.md` |
+| Trigger | Target File | Dispatch Instruction |
+|---------|-------------|---------------------|
+| User expresses a preference or changes their mind | `user/main-memory.md` → User Profile | "Append preference to main-memory.md" |
+| A decision is made | `user/decisions.md` | "Append decision entry" |
+| Something breaks or an error is fixed | `user/post-mortems.md` | "Append post-mortem PM-NNN" |
+| A follow-up is needed | `user/reminders.md` | "Append reminder" |
+| A pattern is noticed (2+ occurrences) | `user/patterns.md` | "Append pattern entry" |
+| A project progresses | `user/projects/project-list.md` and `user/session-dashboard.md` | "Update project entry" |
+| A session is substantial | `user/daily-diary/current/YYYY-MM-DD.md` | "Append diary entry" |
+| Scratchpad accumulates (compaction) | various | "Promote scratchpad entries" |
 
-### Write-Then-Commit Protocol
-After EVERY memory write:
+### Dispatch Protocol
+On every trigger:
+1. **Immediately** call `task()` to @memory with:
+   - The exact file path(s) to update
+   - The content to write (pre-formatted per file conventions)
+   - The category tag where applicable
+   - Reference to `skill("save-memory")` for format methodology
+2. Do NOT batch memory writes — dispatch each trigger as it fires
+3. @memory writes the file and returns confirmation
+4. If @memory returns an error or empty result, log `🔧 FAILURE: @memory dispatch failed — [reason]` to scratchpad and retry once
+5. If still failing after retry, escalate to Troy — do not attempt to write the file directly (you no longer have `edit`/`write` tools)
+6. After confirmation (or at compaction if rapid-fire), run git commit/push
+
+### Git Commit Protocol
+After @memory confirms a write:
 1. Run `git add -A && git commit -m "memory: [brief description]" && git push` in the glitch-ai parent repo
-2. If `user/` is a separate git repo (e.g., private user submodule), also commit and push there:
+2. If `user/` is a separate git repo, also commit there:
    ```
    cd user && git add -A && git commit -m "memory: [brief description]" && git push
    ```
    Or use the helper: `.\scripts\sync-user.ps1 -Push`
-3. This happens in one uninterrupted sequence — no waiting, no batching
+3. For rapid-fire triggers (multiple dispatches in short succession), batch at next compaction checkpoint
 
 ### Why This Exists
-- Memory is Glitch's unique responsibility — sub-agents have no context of the full relationship
+- Memory persistence is Glitch's responsibility — @memory is the writing instrument
 - Real-time capture prevents forgetfulness and stale memory
+- Structural enforcement: Glitch has no `edit`/`write` tools — delegation is the only path
 - Auto-commit prevents data loss between sessions
-- The compaction checkpoint (R3) still runs for bulk consolidation, but capture is always immediate
 
-### Bypass Allowed
-Only skip the auto-commit if:
-- You are mid-task and plan to commit everything at the next compaction checkpoint (within ~8 turns)
-- BUT the memory write itself must still happen immediately — never defer the capture
+### Exception: Automation Scripts
+Scripts invoked by Glitch (e.g., `run-compaction.mjs`) that write to `user/*.md` are automation tools, not direct writes — they are exempt from the dispatch requirement. These scripts perform mechanical tasks (timestamp updates, diary checks) as side effects of broader automation. All conversational memory triggers (preferences, decisions, errors, etc.) MUST still go through @memory.
 
 ## R13: Config Validation Gate — opencode.json Safety (Immutable Rule)
 
@@ -422,8 +435,8 @@ Glitch's primary job is coordination — plan work, split into parallel subtasks
 3. **Execute directly** — Only when both free AND paid have been dispatched AND returned actual failures. Never skip to direct execution because of hypothetical failure.
 
 ### What Glitch Always Does Directly
-- **Memory writes**: All memory file updates (current-session.md, main-memory.md, decisions.md, reminders.md, etc.) — per R12
-- **User preference storage**: All user-specific preferences (model choices, config overrides, personal settings) go in `user/` — never in `data/` or `glitch-memorycore/`. The `user/` directory is the single source of truth for Troy's personal configuration.
+- **Memory trigger detection + git commits**: Detect memory events, dispatch to @memory (per R12), then git add/commit/push after @memory confirms
+- **User preference storage**: All user-specific preferences (model choices, config overrides, personal settings) go in `user/` — never in `data/` or `glitch-memorycore/`. The `user/` directory is the single source of truth for Troy's personal configuration. (Dispatch to @memory to write.)
 - **Planning**: Task decomposition, todo list creation, architecture decisions
 - **Coordination**: Dispatching work to sub-agents, consolidating results
 - **Reading**: Reading files for context, searching code, investigating issues
@@ -447,7 +460,7 @@ Task arrives
   → Step 1: Plan & decompose into subtasks (todowrite)
   → Step 2: Label each subtask as "DELEGATE" or "DIRECT"
      DELEGATE = code, bash, file ops, tests, reviews, design, images
-     DIRECT   = memory writes, config edits, git, planning, reading
+      DIRECT   = memory dispatch (to @memory), config edits, git, planning, reading
   → Step 3: DISPATCH all "DELEGATE" subtasks to sub-agents IN PARALLEL 
             (before doing a single line of work yourself)
   → Step 4: While agents work, do your "DIRECT" work (planning, reading, git)

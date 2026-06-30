@@ -1,64 +1,133 @@
 ---
 name: save-memory
-description: "MUST use when user says 'save', 'save memory', 'save progress',
-             'update memory',
-             or when any of these auto-triggers fire:
-             task/topic change, new preference learned, decision made,
-             something broke, reminder needed, pattern discovered,
-             or end of session."
+description: "MUST use when @memory agent is dispatched for any memory write.
+              Load this skill on activation.
+              Provides the methodology for writing all Glitch memory files."
 ---
 
-# Save Memory
+# Save Memory — @memory Agent Methodology
 
 ## Activation
-When this skill activates, output:
-"Saving memory..."
+Load this skill on activation. Follow the protocol below for every memory write.
 
-## Auto-Triggers (Lv.2)
-Fire autonomously (no command needed) when ANY of these occur:
+## Scope
+You write files in `user/*.md` only. You do NOT:
+- Run git commands (Glitch handles this)
+- Write code or config files
+- Delete files unless explicitly instructed
+- Modify YAML frontmatter unless updating timestamps
 
-- **Task/topic changes** → Update `current-session.md` with new focus
-- **New preference learned** about the user → Update `main/main-memory.md` User Profile
-- **Decision made** → Append to `main/decisions.md` now
-- **Something breaks** → Append to `main/post-mortems.md` now
-- **Reminder needed** → Append to `main/reminders.md` now
-- **Pattern discovered** (2+ occurrences) → Save to `library/` relevant section
-- **Project work happens** → Update `projects/project-list.md`
-- **Session timestamp >2 hours stale** → Refresh `current-session.md`
-- **End of session** → Recap + diary entry + commit all
+## File Map (What Goes Where)
 
-## Manual Trigger
-User says "save" / "save memory" / "update memory":
-1. Identify what to save from current conversation
-2. Update relevant memory files
-3. Display summary of what was saved
+| Trigger | Target File | Action |
+|---------|-------------|--------|
+| User expresses a preference | `user/main-memory.md` → User Profile section | Append new section under **Preferences** |
+| A decision is made | `user/decisions.md` | Append new entry (date + category + decision + rationale + implications) |
+| Something breaks or an error is fixed | `user/post-mortems.md` | Append new PM-NNN entry |
+| A follow-up is needed | `user/reminders.md` | Append new reminder with date |
+| A project progresses | `user/projects/project-list.md` | Update existing entry or add new |
+| Workstream status changes | `user/session-dashboard.md` | Update the matching workstream row |
+| A session is substantial | `user/daily-diary/current/YYYY-MM-DD.md` | Append diary section |
+| Pattern discovered (2+ occurrences) | `user/patterns.md` | Append new pattern entry |
+| Repeated workflow (3x+) | `user/forge-log.md` | Append forge entry |
+| Scratchpad accumulation | `user/current-session.md` → Working Memory | Append scratchpad bullet |
 
-## Protocol
+## Append Format Per File
 
-### What Gets Saved (and Where)
-| Trigger | File Updated |
-|---------|-------------|
-| User states a preference | main-memory.md → User Profile |
-| A decision is made | decisions.md |
-| Something goes wrong | post-mortems.md |
-| A follow-up is needed | reminders.md |
-| Session ends / task changes | current-session.md |
-| Project work happens | projects/project-list.md |
-| Useful pattern discovered | library/ (relevant section) |
-| Repeated workflow (3x+) | forge-log.md → propose new skill |
-| Diary-worthy session | daily-diary/current/YYYY-MM-DD.md |
+### decisions.md
+```
+## YYYY-MM-DD — Title of Decision
+_Category: CATEGORY_NAME_
 
-### After Every Save
-1. Run `git add -A && git commit -m "memory: [what changed]"` immediately
-2. Refresh `Last Memory Update` timestamp in current-session.md
+**Decision**: [one-sentence decision]
 
-## Mandatory Rules
-1. Save immediately — never wait to be asked
-2. Append, don't overwrite — preserve existing content
-3. Timestamp everything — every entry gets a date
-4. Keep session RAM lean — under 500 lines, reset preserves only recap
-5. Commit after every save — no exceptions
+**Rationale**: [why this decision was made]
 
-## Level History
-- **Lv.1** — Base: Save conversation insights to memory files on command
-- **Lv.2** — Auto-Save: Fires autonomously on task changes, new learnings, decisions, errors, reminders, patterns, session end
+**Implications**: [what this means going forward]
+```
+
+### post-mortems.md
+```
+## PM-NNN: Title
+_Category: KNOWN_ISSUES_
+
+**Incident**: [what happened]
+
+**Root cause**: [why it happened]
+
+**Fix**: [what was done to fix it]
+
+**Prevention**: [how to prevent recurrence]
+```
+
+### reminders.md
+Use the existing frontmatter format. Append under `## Open` with:
+```
+### YYYY-MM-DD — Title
+_Category: CATEGORY_NAME_
+[Description]
+```
+
+### main-memory.md
+Do NOT overwrite. Find the appropriate section (Troy Profile, Preferences, etc.) and append a new bullet or subsection.
+
+### current-session.md
+- **Session Recap**: Append a new `## Session Recap (YYYY-MM-DD)` section at the top of the file if none exists for today, or add bullet points to today's section.
+- **Working Memory (Scratchpad)**: Append `### Scratchpad (Real-time)` or add to it with bullet points prefixed by type (`#### 🔧 FAILURE`, `#### 🔧 OPERATIONAL`, `#### 🔧 PATTERN`, `#### 🔧 FALLBACK`, `#### 🔧 DIRECTIVE`, `#### 🔧 FIX`).
+- **Last Memory Update**: Update the timestamp at the top.
+
+### patterns.md
+```
+## YYYY-MM-DD — Pattern Title
+_Category: WORKFLOW_RULES_ (or appropriate category)
+
+[Description of the pattern]
+
+**Frequency**: N occurrences
+**Filed as**: skill, rule, or preference
+```
+
+### forge-log.md
+```
+## YYYY-MM-DD — Entry
+[Description]
+```
+
+## Format Rules
+1. **Timestamp format**: `YYYY-MM-DD` for dates, `YYYY-MM-DDT00:00:00Z` for ISO timestamps
+2. **Category tags**: Use `_Category: NAME_` on the line after the heading. Valid values:
+   - `ARCHITECTURE_DECISIONS` — design decisions
+   - `CONSTRAINTS` — limitations or requirements
+   - `CONFIG_DEFAULTS` — configuration choices
+   - `NAMING` — naming conventions
+   - `USER_PREFERENCES` — Troy's preferences
+   - `USER_DIRECTIVES` — hard rules Troy set
+   - `ENVIRONMENT` — environment/OS specifics
+   - `WORKFLOW_RULES` — operational patterns
+   - `KNOWN_ISSUES` — bugs and failures
+3. **Append, don't overwrite** — never modify or remove existing entries
+4. **Timestamp everything** — every entry gets a date
+5. **Preserve YAML frontmatter** — do not remove or modify the `---\n...\n---` block at the top of files
+6. **Update `timestamp` field** in YAML frontmatter to current date when appending
+
+## Entry Hierarchy
+- Files use Markdown headings: `##` for dated entries, `###` for subsections under entries
+- Within entries, use bold labels (`**Decision:**`, `**Rationale:**`)
+- Bullet lists for implications, steps, or options
+
+## Session Dashboard Format
+Find the matching workstream in `## Active Workstreams` and update its Status, Progress, or Next Step cell. The table format is:
+```
+| Status | Progress | Next Step |
+|--------|----------|-----------|
+```
+Use checkmark (✅) for completed, 🔲 for pending, or other emoji for in-progress.
+
+## What NOT to Do
+- Do not run git add/commit/push — Glitch handles this
+- Do not edit files outside `user/`
+- Do not delete content from files
+- Do not change YAML frontmatter `type` or `title` fields
+- Do not add entries without a date
+- Note: `user/` is a separate nested git repo (`Cothek/glitch-user-troy`). When you write to `user/*.md`, Glitch commits in both the parent repo and the user repo. You don't need to do anything special.
+- Note: Your permission block denies `edit`. You can only `write` (overwrites the file) and `read`. When appending, read the file first, then write the combined content.
