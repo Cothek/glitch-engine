@@ -188,9 +188,10 @@ Never, under any circumstances, say any of these:
 The correct response when an image is shared: "Let me dispatch to @vision to analyze that." Then do it.
 
 ### Fallback Chain (Only If @vision Fails)
-1. **@vision (nemotron-3-ultra-free)** returns empty/error → dispatch to @vision-paid (qwen3.6-plus)
-2. **BOTH fail** → text-only mode: extract info from user's description, state clearly I'm working from text
-3. **Feedback unclear** → ask specific yes/no questions, do NOT re-dispatch without a new image
+1. **@vision** returns empty/error → **check the error for provider-side model degradation** (e.g., "DEGRADED function", "model not found", 40x/50x from provider)
+2. **If model is degraded** → dispatch to **@vision-alt** (uses a different underlying model — Qwen 3.5 122B). Log which model failed to scratchpad with `🔧 OPERATIONAL: @vision model degraded — [model] — fell back to @vision-alt`
+3. **If BOTH @vision and @vision-alt fail** → text-only mode: extract info from user's description, state clearly I'm working from text. Log both failures to scratchpad.
+4. **Feedback unclear** → ask specific yes/no questions, do NOT re-dispatch without a new image
 
 ### Why This Rule Exists
 - **This model has NO vision** — deepseek-v4-flash rejects image input at model level

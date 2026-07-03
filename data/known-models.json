@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-06-29T13:27:56.8027804-05:00",
+    "lastCheck":  "2026-07-02T22:16:57.6997433-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
@@ -8,6 +8,7 @@
                                 "claude-opus-4-6",
                                 "claude-opus-4-5",
                                 "claude-opus-4-1",
+                                "claude-sonnet-5",
                                 "claude-sonnet-4-6",
                                 "claude-sonnet-4-5",
                                 "claude-sonnet-4",
@@ -38,8 +39,10 @@
                                 "glm-5.2",
                                 "glm-5.1",
                                 "glm-5",
+                                "minimax-m3",
                                 "minimax-m2.7",
                                 "minimax-m2.5",
+                                "kimi-k2.7-code",
                                 "kimi-k2.6",
                                 "kimi-k2.5",
                                 "qwen3.6-plus",
@@ -47,8 +50,6 @@
                                 "big-pickle",
                                 "deepseek-v4-flash-free",
                                 "mimo-v2.5-free",
-                                "qwen3.6-plus-free",
-                                "minimax-m3-free",
                                 "nemotron-3-ultra-free",
                                 "north-mini-code-free"
                             ],
@@ -75,6 +76,7 @@
                                "hy3-preview"
                            ],
                     "openrouter":  [
+                                       "openrouter/poolside/laguna-xs-2.1:free",
                                        "openrouter/cohere/north-mini-code:free",
                                        "openrouter/nvidia/nemotron-3.5-content-safety:free",
                                        "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
@@ -218,7 +220,7 @@
                                    "nvidia/writer/palmyra-fin-70b-32k",
                                    "nvidia/writer/palmyra-med-70b",
                                    "nvidia/writer/palmyra-med-70b-32k",
-                                   "nvidia/z-ai/glm-5.1",
+                                   "nvidia/z-ai/glm-5.2",
                                    "nvidia/zyphra/zamba2-7b-instruct"
                                ]
                 }
