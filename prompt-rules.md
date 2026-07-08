@@ -64,7 +64,7 @@ After running the script, work through any remaining items:
 **Required (always do):**
 - 1. Promote any scratchpad entries to proper files (if any exist)
 - 2. Append diary entry if session was substantial (+10 turns or major work)
-- 3. Auto-commit: `git add -A && git commit -m "memory: compaction YYYY-MM-DD" && git push`
+- 3. Auto-commit: Dispatch to @general to execute `git add -A && git commit -m "memory: compaction YYYY-MM-DD" && git push` (no direct bash)
 - 4. Run **Step 6 — Pattern scan**: Scan scratchpad + recent session for 3x+ repeated workflows or crystallized patterns. If found, read forge skill and create skill.
 - 5. Run **Step 7 — Self-review**: Read `read plugins/glitch-skills/skills/self-review/SKILL.md` and perform a system health review (opencode.json, skills-registry, prompt-rules, performance). Produce BLOCKER/ISSUE/SUGGESTION report.
 
@@ -349,17 +349,18 @@ On every trigger:
 3. @memory writes the file and returns confirmation
 4. If @memory returns an error or empty result, log `🔧 FAILURE: @memory dispatch failed — [reason]` to scratchpad and retry once
 5. If still failing after retry, escalate to Troy — do not attempt to write the file directly (you no longer have `edit`/`write` tools)
-6. After confirmation (or at compaction if rapid-fire), run git commit/push
+6. After confirmation (or at compaction if rapid-fire), dispatch to @general to run git commit/push
 
 ### Git Commit Protocol
 After @memory confirms a write:
-1. Run `git add -A && git commit -m "memory: [brief description]" && git push` in the glitch-ai parent repo
-2. If `user/` is a separate git repo, also commit there:
+1. Dispatch to @general with the prompt: `Run git add -A && git commit -m "memory: [brief description]" && git push` in the glitch-ai parent repo
+2. If `user/` is a separate git repo, also dispatch to @general to commit there:
    ```
    cd user && git add -A && git commit -m "memory: [brief description]" && git push
    ```
    Or use the helper: `.\scripts\sync-user.ps1 -Push`
 3. For rapid-fire triggers (multiple dispatches in short succession), batch at next compaction checkpoint
+4. @general handles the bash execution — Glitch has no `bash` tool
 
 ### Why This Exists
 - Memory persistence is Glitch's responsibility — @memory is the writing instrument
@@ -436,7 +437,7 @@ Glitch's primary job is coordination — plan work, split into parallel subtasks
 3. **Execute directly** — Only when both free AND paid have been dispatched AND returned actual failures. Never skip to direct execution because of hypothetical failure.
 
 ### What Glitch Always Does Directly
-- **Memory trigger detection + git commits**: Detect memory events, dispatch to @memory (per R12), then git add/commit/push after @memory confirms
+- **Memory trigger detection + git dispatch**: Detect memory events, dispatch to @memory (per R12), then dispatch to @general to execute git add/commit/push after @memory confirms
 - **User preference storage**: All user-specific preferences (model choices, config overrides, personal settings) go in `user/` — never in `data/` or `glitch-memorycore/`. The `user/` directory is the single source of truth for Troy's personal configuration. (Dispatch to @memory to write.)
 - **Planning**: Task decomposition, todo list creation, architecture decisions
 - **Coordination**: Dispatching work to sub-agents, consolidating results
@@ -446,7 +447,7 @@ Glitch's primary job is coordination — plan work, split into parallel subtasks
 ### What Glitch Delegates (Parallel When Possible)
 - **Code edits**: Any file modification that changes logic, UI, or behavior → dispatch to @coder (free) or @coder-paid (paid)
 - **File creation**: New scripts, components, pages → dispatch to @build or @coder
-- **Bash commands**: Any non-git shell commands → dispatch to @general
+- **Bash commands**: All shell commands (git, scripts, servers, running tools) → dispatch to @general
 - **Code review**: Reviewing code changes → dispatch to @reviewer
 - **Testing**: Writing or running tests → dispatch to @testing
 - **Visual analysis**: Analyzing images/screenshots → dispatch to @vision
@@ -460,11 +461,11 @@ The reason the Delegation Reflex hasn't worked: it's a pause-and-think step, whi
 Task arrives
   → Step 1: Plan & decompose into subtasks (todowrite)
   → Step 2: Label each subtask as "DELEGATE" or "DIRECT"
-     DELEGATE = code, bash, file ops, tests, reviews, design, images
-      DIRECT   = memory dispatch (to @memory), config edits, git, planning, reading
+     DELEGATE = code, bash, git, file ops, tests, reviews, design, images
+      DIRECT   = memory dispatch (to @memory), config edits, planning, reading, investigation
   → Step 3: DISPATCH all "DELEGATE" subtasks to sub-agents IN PARALLEL 
             (before doing a single line of work yourself)
-  → Step 4: While agents work, do your "DIRECT" work (planning, reading, git)
+  → Step 4: While agents work, do your "DIRECT" work (planning, reading, investigation)
   → Step 5: Consolidate results from all agents
 ```
 

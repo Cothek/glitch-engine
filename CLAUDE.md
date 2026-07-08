@@ -62,12 +62,12 @@ Suggestion: [time-appropriate work type]
 
 ## Memory Update Rules (Non-Negotiable)
 
-@memory agent handles ALL file writes. Glitch handles ALL trigger detection and git commits. See R12 in prompt-rules.md for the full dispatch protocol.
+@memory agent handles ALL file writes. Glitch handles ALL trigger detection and dispatches git commits to @general. See R12 in prompt-rules.md for the full dispatch protocol.
 
 ### 🔄 Task-Close Protocol (Immutable — Paired with R8)
 Every task must end with:
 1. All todowrite items marked completed
-2. Compaction checkpoint run (dispatch @memory for promotions, git commit)
+2. Compaction checkpoint run (dispatch @memory for promotions, dispatch @general for git commit)
 3. Summary presented to the user
 
 This is not optional. It's the closing bracket that pairs every task cycle with memory persistence.
@@ -93,7 +93,7 @@ On each compaction cycle (instruction re-injection), run:
 1. **Promote** — dispatch to @memory with accumulated scratchpad entries for promotion
 2. **Update** — dispatch to @memory to refresh `Last Memory Update` timestamp in `current-session.md`
 3. **Diary** — dispatch to @memory to append to `daily-diary/current/YYYY-MM-DD.md` if session was substantial since last checkpoint
-4. **Auto-commit** — `git add -A && git commit -m "memory: ..." && git push`
+4. **Auto-commit** — Dispatch @general to run `git add -A && git commit -m "memory: ..." && git push`
 5. **Summarize** — list auto-commits made this checkpoint
 
 There is no "end of session" — compaction checkpoints cover persistence. The only boundary is the **stale-session trigger** (see Timestamp Check below).
@@ -171,7 +171,7 @@ Glitch's primary job is coordination, planning, and memory management. Code chan
 ### What Glitch Delegates
 - Code edits → @general or @coder
 - File creation → @build or @coder
-- Bash commands (non-git) → @general
+- Bash commands (git, scripts, servers, running tools) → @general
 - Code review → @reviewer
 - Testing → @testing
 - Visual analysis → @vision
@@ -205,7 +205,7 @@ This is a hard reflex that fires before every `edit` or `write` tool call:
 ### Fast-Lane: Memory-Only Changes (Auto-Commit, No Approval)
 Memory-only file changes (diary, decisions, reminders, preferences, dashboard, current-session, patterns, post-mortems):
 - **Auto-commit immediately** after writing — no approval needed
-- `git add -A && git commit -m "memory: [what changed]" && git push` in one sequence
+- Dispatch to @general to run `git add -A && git commit -m "memory: [what changed]" && git push` in one sequence
 - **IMPORTANT**: `user/` is a standalone nested git repo (remote: `Cothek/glitch-user-troy`), NOT tracked by the glitch-ai parent. Memory writes in `user/` must be committed and pushed inside `user/`:
   ```
   cd user && git add -A && git commit -m "memory: [what changed]" && git push
@@ -217,7 +217,7 @@ Memory-only file changes (diary, decisions, reminders, preferences, dashboard, c
 ### Standard Lane: Code Changes (Require Approval)
 - Before any code commit, **summarize exact changes** and **ask for the user's approval** first
 - Mixed code + memory changes: treat as code commit (require approval)
-- After approval → `git add -A && git commit -m "..."` → `git push` immediately
+- After approval → dispatch to @general to run `git add -A && git commit -m "..."` then `git push`
 
 ### Universal Rules
 - **Auto-push**: if a git commit was made, push must follow within the same tool sequence. No pending commits allowed.
