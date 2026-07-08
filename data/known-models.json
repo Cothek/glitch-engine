@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-07-02T22:29:03.3799992-05:00",
+    "lastCheck":  "2026-07-08T09:41:59.9976577-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
@@ -50,6 +50,7 @@
                                 "big-pickle",
                                 "deepseek-v4-flash-free",
                                 "mimo-v2.5-free",
+                                "hy3-free",
                                 "nemotron-3-ultra-free",
                                 "north-mini-code-free"
                             ],
@@ -76,6 +77,7 @@
                                "hy3-preview"
                            ],
                     "openrouter":  [
+                                       "openrouter/tencent/hy3:free",
                                        "openrouter/poolside/laguna-xs-2.1:free",
                                        "openrouter/cohere/north-mini-code:free",
                                        "openrouter/nvidia/nemotron-3.5-content-safety:free",

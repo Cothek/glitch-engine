@@ -523,7 +523,7 @@ If Troy catches me using `edit`/`write`/`bash` for delegation-domain work withou
 | Reading/searching/investigating | Execute directly | - |
 | Git commands (status, add, commit, push, pull) | Execute directly | - |
 
-**Critical distinction**: @coder → @coder-paid for code/component work. @general is ONLY for bash, file ops, and simple edits. NEVER use @general for component design, complex logic, or multi-file code changes.
+**Critical distinction**: @coder → @coder-paid for code/component work. @general is ONLY for bash, file ops, and simple edits. NEVER use @general for code work — even 1-file edits go to @coder. @coder is the correct agent for all code changes regardless of complexity.
 
 **Failure fallback chain**:
 - Code work: @coder → @coder-paid → execute directly
