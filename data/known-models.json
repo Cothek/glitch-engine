@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-07-08T09:41:59.9976577-05:00",
+    "lastCheck":  "2026-07-09T09:56:55.8690120-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
@@ -34,6 +34,7 @@
                                 "gpt-5-codex",
                                 "gpt-5-nano",
                                 "grok-build-0.1",
+                                "grok-4.5",
                                 "deepseek-v4-pro",
                                 "deepseek-v4-flash",
                                 "glm-5.2",
@@ -83,7 +84,6 @@
                                        "openrouter/nvidia/nemotron-3.5-content-safety:free",
                                        "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
                                        "openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-                                       "openrouter/poolside/laguna-xs.2:free",
                                        "openrouter/poolside/laguna-m.1:free",
                                        "openrouter/google/gemma-4-26b-a4b-it:free",
                                        "openrouter/google/gemma-4-31b-it:free",
