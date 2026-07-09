@@ -78,12 +78,12 @@ timestamp: 2026-06-25T00:00:00Z
 | @explore-paid | `.opencode/agents/explore-paid.md` | deepseek-v4-flash | Codebase research paid fallback — when @explore fails |
 | @plan-paid | `.opencode/agents/plan-paid.md` | deepseek-v4-flash | Planning paid fallback — when @plan exhausts free quota |
 | @build-paid | `.opencode/agents/build-paid.md` | deepseek-v4-flash | Scaffolding paid fallback — when @build exhausts free quota |
-| @coder-paid | `.opencode/agents/coder-paid.md` | kimi-k2.6 | Senior full-stack engineer paid fallback |
-| @ui-designer-paid | `.opencode/agents/ui-designer-paid.md` | kimi-k2.6 | Senior UI designer paid fallback |
+| @coder-paid | `.opencode/agents/coder-paid.md` | qwen3.7-plus | Senior full-stack engineer paid fallback |
+| @ui-designer-paid | `.opencode/agents/ui-designer-paid.md` | qwen3.7-plus | Senior UI designer paid fallback |
 | @reviewer-paid | `.opencode/agents/reviewer-paid.md` | qwen3.6-plus | Independent code quality gate paid fallback |
-| @testing-paid | `.opencode/agents/testing-paid.md` | kimi-k2.6 | Test writer paid fallback |
+| @testing-paid | `.opencode/agents/testing-paid.md` | qwen3.7-plus | Test writer paid fallback |
 | @vision-paid | `.opencode/agents/vision-paid.md` | qwen3.6-plus | Image/visual content analysis paid fallback |
-| @pentester-paid | `.opencode/agents/pentester-paid.md` | kimi-k2.6 | Application security tester paid fallback — OWASP Top 10, API testing, tool-based scanning |
+| @pentester-paid | `.opencode/agents/pentester-paid.md` | qwen3.7-plus | Application security tester paid fallback — OWASP Top 10, API testing, tool-based scanning |
 
 ### Free→Paid Fallback Model Chains
 | Free Model | Paid Fallback | Agents Using |
@@ -91,7 +91,7 @@ timestamp: 2026-06-25T00:00:00Z
 | deepseek-v4-flash-free | deepseek-v4-flash (same family) | @general, @explore, @plan, @build |
 | nemotron-3-ultra-free | qwen3.6-plus (same family) | @reviewer |
 | mimo-v2.5-free | qwen3.6-plus (cross-family) | @vision |
-| nemotron-3-ultra-free | kimi-k2.6 (cross-family) | @coder, @ui-designer, @testing, @pentester |
+| nemotron-3-ultra-free | qwen3.7-plus (cross-family) | @coder, @ui-designer, @testing, @pentester |
 
 ---
 
