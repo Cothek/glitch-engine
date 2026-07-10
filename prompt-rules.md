@@ -77,6 +77,7 @@ After running the script, work through any remaining items:
 ### Stale-Session Detection (At Conversation Start)
 If `Last Memory Update` timestamp is >2 hours stale when you first respond:
   - Treat as a session boundary — promote all remaining entries, write diary recap, update current-session recap, commit
+  - **Touch-timestamp catch-up**: Dispatch @memory to update timestamps on all active user files (`current-session.md`, `main-memory.md`, `decisions.md`, `patterns.md`, `post-mortems.md`, `reminders.md`, `project-list.md`, `session-dashboard.md`, `forge-log.md`). This prevents mass-stale timestamps like the current 22-day gap.
   - This catches sessions that ran long or were left idle without closure
 
 ## R4: Code Quality Gates
@@ -367,6 +368,9 @@ After @memory confirms a write:
 - Real-time capture prevents forgetfulness and stale memory
 - Structural enforcement: Glitch has no `edit`/`write` tools — delegation is the only path
 - Auto-commit prevents data loss between sessions
+
+### Heartbeat Guarantee
+Every dispatch to @memory automatically updates `user/current-session.md`'s `Last Memory Update` timestamp and the target file's YAML frontmatter `timestamp` field before performing the write. This is the save-memory skill's "Mandatory First Action" and is non-negotiable. It means timestamps stay current during active sessions without Glitch needing to explicitly remember to update them.
 
 ### Exception: Automation Scripts
 Scripts invoked by Glitch (e.g., `run-compaction.mjs`) that write to `user/*.md` are automation tools, not direct writes — they are exempt from the dispatch requirement. These scripts perform mechanical tasks (timestamp updates, diary checks) as side effects of broader automation. All conversational memory triggers (preferences, decisions, errors, etc.) MUST still go through @memory.

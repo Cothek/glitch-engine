@@ -10,12 +10,27 @@ description: "MUST use when @memory agent is dispatched for any memory write.
 ## Activation
 Load this skill on activation. Follow the protocol below for every memory write.
 
+## Mandatory First Action — Heartbeat (Always)
+
+Before ANY write operation (even if the task seems trivial):
+
+1. **Update `user/current-session.md`** — Set the `Last Memory Update` field to the current ISO timestamp: `YYYY-MM-DDTHH:mm:ssZ` (e.g., `2026-07-09T22:00:00Z`)
+2. **Update the target file's YAML frontmatter** — Set the `timestamp` field to the current date: `YYYY-MM-DDT00:00:00Z`
+3. **Do NOT skip** this step even if you think timestamps are recent. This is the heartbeat that prevents stale-session gaps. Every dispatch keeps the system alive.
+4. **Exception**: If `current-session.md` itself is the target file, you only need to update the frontmatter timestamp (the Last Memory Update line is being written as part of the content update).
+
+**Format for timestamp updates:**
+- `Last Memory Update` in current-session.md: `YYYY-MM-DDTHH:mm:ssZ` (with hours/minutes)
+- Frontmatter `timestamp` in all files: `YYYY-MM-DDT00:00:00Z` (date only, consistent with existing format)
+
+**Rationale**: Without this, memory timestamps only get updated when Glitch explicitly remembers to do it during compaction. This leads to files showing 22-day-old timestamps even during active sessions. By making timestamp updates mandatory on every @memory dispatch, timestamps stay current naturally.
+
 ## Scope
 You write files in `user/*.md` only. You do NOT:
 - Run git commands (Glitch handles this)
 - Write code or config files
 - Delete files unless explicitly instructed
-- Modify YAML frontmatter unless updating timestamps
+- Modify YAML frontmatter — EXCEPT you MUST update `timestamp` as part of the Heartbeat (see Mandatory First Action above)
 
 ## File Map (What Goes Where)
 
