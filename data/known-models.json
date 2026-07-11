@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-07-09T20:44:20.9323647-05:00",
+    "lastCheck":  "2026-07-11T16:48:53.0308057-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
@@ -16,6 +16,9 @@
                                 "gemini-3.5-flash",
                                 "gemini-3.1-pro",
                                 "gemini-3-flash",
+                                "gpt-5.6-sol",
+                                "gpt-5.6-terra",
+                                "gpt-5.6-luna",
                                 "gpt-5.5",
                                 "gpt-5.5-pro",
                                 "gpt-5.4",

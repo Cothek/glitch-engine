@@ -436,7 +436,7 @@ Glitch's primary job is coordination — plan work, split into parallel subtasks
    **When I write code directly, I'm using a suboptimal model for the job.** Delegation isn't just about speed — it's about using the right model for each task. This is the #1 reason to delegate.
 
 ### Priority Order
-1. **Dispatch free agents first** — @general, @explore, @plan, @build, @coder, @ui-designer, @reviewer, @testing, @vision. Run independent tasks in parallel. This is the DEFAULT and FIRST action for every delegation-domain subtask.
+1. **Dispatch free agents first** — @general, @explore, @plan, @coder, @ui-designer, @reviewer, @testing, @vision. Run independent tasks in parallel. This is the DEFAULT and FIRST action for every delegation-domain subtask.
 2. **Fall back to paid agents** — If free agents return empty/errors, dispatch the matching paid agent. Critical: @coder → @coder-paid, NOT @general. @general is for bash/file ops only.
 3. **Execute directly** — Only when both free AND paid have been dispatched AND returned actual failures. Never skip to direct execution because of hypothetical failure.
 
@@ -450,7 +450,7 @@ Glitch's primary job is coordination — plan work, split into parallel subtasks
 
 ### What Glitch Delegates (Parallel When Possible)
 - **Code edits**: Any file modification that changes logic, UI, or behavior → dispatch to @coder (free) or @coder-paid (paid)
-- **File creation**: New scripts, components, pages → dispatch to @build or @coder
+- **File creation**: New scripts, components, pages → dispatch to @coder
 - **Bash commands**: All shell commands (git, scripts, servers, running tools) → dispatch to @general
 - **Code review**: Reviewing code changes → dispatch to @reviewer
 - **Testing**: Writing or running tests → dispatch to @testing
@@ -513,7 +513,7 @@ If Troy catches me using `edit`/`write`/`bash` for delegation-domain work withou
 ### Trigger Matrix
 | Task Type | Default Action | Bypass Condition |
 |-----------|---------------|-----------------|
-| File creation (code) | Dispatch to @build | - |
+| File creation (code) | Dispatch to @coder | - |
 | File edit (code) | Dispatch to @coder (fallback: @coder-paid) | - |
 | Bash command (non-git) | Dispatch to @general | - |
 | Test write/run | Dispatch to @testing (fallback: @testing-paid) | - |

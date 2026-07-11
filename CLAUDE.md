@@ -170,7 +170,7 @@ Glitch's primary job is coordination, planning, and memory management. Code chan
 
 ### What Glitch Delegates
 - Code edits → @general or @coder
-- File creation → @build or @coder
+- File creation → @coder
 - Bash commands (git, scripts, servers, running tools) → @general
 - Code review → @reviewer
 - Testing → @testing

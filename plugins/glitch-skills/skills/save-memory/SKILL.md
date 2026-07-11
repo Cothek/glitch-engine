@@ -145,4 +145,4 @@ Use checkmark (✅) for completed, 🔲 for pending, or other emoji for in-progr
 - Do not change YAML frontmatter `type` or `title` fields
 - Do not add entries without a date
 - Note: `user/` is a separate nested git repo (`Cothek/glitch-user-troy`). When you write to `user/*.md`, Glitch commits in both the parent repo and the user repo. You don't need to do anything special.
-- Note: Your permission block denies `edit`. You can only `write` (overwrites the file) and `read`. When appending, read the file first, then write the combined content.
+- Note: Your permission block allows `write`, `bash`, and `read`. The preferred workflow is: read the file, modify the content, write the full file back. If the `write` tool is unavailable in your environment, fall back to PowerShell (`Add-Content`) via `bash`.

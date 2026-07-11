@@ -538,9 +538,9 @@ $ search-memory.mjs -q "saving my work to the repo" --hybrid
   <tr><td>@general</td><td>deepseek-v4-flash-free</td><td>Free</td><td>$0</td><td>Bash, file ops, simple edits, 1-5 file code</td></tr>
   <tr><td>@explore</td><td>deepseek-v4-flash-free</td><td>Free</td><td>$0</td><td>Codebase research, file discovery</td></tr>
   <tr><td>@plan</td><td>deepseek-v4-flash-free</td><td>Free</td><td>$0</td><td>Architecture planning</td></tr>
-  <tr><td>@build</td><td>deepseek-v4-flash-free</td><td>Free</td><td>$0</td><td>Code scaffolding</td></tr>
+
   <tr><td>@general-paid</td><td>deepseek-v4-flash</td><td>Paid</td><td>$0.14/$0.28</td><td>Fallback for free quota exhausted</td></tr>
-  <tr><td>@build-paid</td><td>deepseek-v4-flash</td><td>Paid</td><td>$0.14/$0.28</td><td>Fallback for @build</td></tr>
+
   <tr><td>@coder</td><td>kimi-k2.6</td><td>Paid</td><td>$0.50/$3.00</td><td>Complex code, 5+ files, auth, API</td></tr>
   <tr><td>@ui-designer</td><td>kimi-k2.6</td><td>Paid</td><td>$0.95/$4.00</td><td>UI/design system (vision-capable)</td></tr>
   <tr><td>@vision</td><td>qwen3.6-plus</td><td>Paid</td><td>$0.50/$3.00</td><td>Image/screenshot analysis</td></tr>
@@ -550,8 +550,8 @@ $ search-memory.mjs -q "saving my work to the repo" --hybrid
 <h2 id="agents-models">Model Assignments</h2>
 <table>
   <tr><th>Model</th><th>Used By</th><th>Context</th></tr>
-  <tr><td><code>opencode/deepseek-v4-flash-free</code></td><td>@general, @explore, @plan, @build</td><td>Free tier — general purpose</td></tr>
-  <tr><td><code>opencode-go/deepseek-v4-flash</code></td><td>Delegator, @general-paid, @build-paid</td><td>Paid — 1M context, fallback</td></tr>
+  <tr><td><code>opencode/deepseek-v4-flash-free</code></td><td>@general, @explore, @plan</td><td>Free tier — general purpose</td></tr>
+  <tr><td><code>opencode-go/deepseek-v4-flash</code></td><td>Delegator, @general-paid</td><td>Paid — 1M context, fallback</td></tr>
   <tr><td><code>opencode-go/kimi-k2.6</code></td><td>@coder, @ui-designer</td><td>Strong reasoning + vision</td></tr>
   <tr><td><code>opencode-go/qwen3.6-plus</code></td><td>@vision, @reviewer</td><td>Vision-capable, read-only review</td></tr>
 </table>

@@ -60,7 +60,6 @@ timestamp: 2026-06-25T00:00:00Z
 | @general | `opencode.json` | deepseek-v4-flash-free | General-purpose — bash, file ops, simple edits, standard code |
 | @explore | `opencode.json` | deepseek-v4-flash-free | Codebase research — read-only, find files, search code |
 | @plan | `opencode.json` | deepseek-v4-flash-free | Architecture & planning — reason without executing code |
-| @build | `opencode.json` | deepseek-v4-flash-free | Code scaffolding — generates code from prompts |
 | @coder | `.opencode/agents/coder.md` | nemotron-3-ultra-free | Senior full-stack engineer — production code, typed, all states handled |
 | @ui-designer | `.opencode/agents/ui-designer.md` | nemotron-3-ultra-free | Senior UI designer — shadcn/ui, Radix, Tailwind v4, anti-slop rules |
 | @reviewer | `.opencode/agents/reviewer.md` | nemotron-3-ultra-free | Independent code quality gate — read-only, severity-rated reports |
@@ -77,7 +76,6 @@ timestamp: 2026-06-25T00:00:00Z
 | @general-paid | `.opencode/agents/general-paid.md` | deepseek-v4-flash | General-purpose paid fallback — when @general exhausts free quota |
 | @explore-paid | `.opencode/agents/explore-paid.md` | deepseek-v4-flash | Codebase research paid fallback — when @explore fails |
 | @plan-paid | `.opencode/agents/plan-paid.md` | deepseek-v4-flash | Planning paid fallback — when @plan exhausts free quota |
-| @build-paid | `.opencode/agents/build-paid.md` | deepseek-v4-flash | Scaffolding paid fallback — when @build exhausts free quota |
 | @coder-paid | `.opencode/agents/coder-paid.md` | qwen3.7-plus | Senior full-stack engineer paid fallback |
 | @ui-designer-paid | `.opencode/agents/ui-designer-paid.md` | qwen3.7-plus | Senior UI designer paid fallback |
 | @reviewer-paid | `.opencode/agents/reviewer-paid.md` | qwen3.6-plus | Independent code quality gate paid fallback |
@@ -88,7 +86,7 @@ timestamp: 2026-06-25T00:00:00Z
 ### Free→Paid Fallback Model Chains
 | Free Model | Paid Fallback | Agents Using |
 |------------|--------------|-------------|
-| deepseek-v4-flash-free | deepseek-v4-flash (same family) | @general, @explore, @plan, @build |
+| deepseek-v4-flash-free | deepseek-v4-flash (same family) | @general, @explore, @plan |
 | nemotron-3-ultra-free | qwen3.6-plus (same family) | @reviewer |
 | mimo-v2.5-free | qwen3.6-plus (cross-family) | @vision |
 | nemotron-3-ultra-free | qwen3.7-plus (cross-family) | @coder, @ui-designer, @testing, @pentester |
