@@ -9,7 +9,7 @@ timestamp: 2026-06-25T00:00:00Z
 # Skills Registry — Glitch Skill Index
 *Auto-loaded at session start. Progressive disclosure: index only, full content loaded on demand.*
 
-## Registered Skills (31)
+## Registered Skills (32)
 
 | Skill | Description | Trigger |
 |-------|-------------|---------|
@@ -29,14 +29,15 @@ timestamp: 2026-06-25T00:00:00Z
 | song-creation | Visual-to-musical storytelling, Suno-ready lyrics | "create album", "create song", "muse this" |
 | work-plan | Plan capture → checkbox execution → per-task commits | "copy plan", "append plan", "resume plan" |
 | debugging | Root cause analysis — reproduce, evidence, fix, verify | "debug", "bug", "it crashed", "not working", error output |
-| dev-loop | Autonomous dev loop: Write → Review → Build → Interact → Verify → Iterate | "build this feature", "run the dev loop", "autonomous mode", implementing features end-to-end |
-| code-review | Systematic 5-axis review (correctness/security/readability/architecture/performance) — severity-rated, dead code hunting, dependency discipline, "demand evidence" rule, honesty directives. Lv.4 quality gate. | "review this", "code review", "check this PR", "review changes", "quality gate" |
+| dev-loop | Autonomous dev loop: Write → Select (PPT) → Review → Security Scan → Build → Interact → Verify → Iterate — with multi-candidate generation, continuous scoring, and VOC progress monitoring | "build this feature", "run the dev loop", "autonomous mode", implementing features end-to-end |
+| code-review | Systematic 5-axis review (correctness/security/readability/architecture/performance) — severity-rated, dead code hunting, dependency discipline, "demand evidence" rule, honesty directives. Lv.5 quality gate — now with continuous scoring, repeated evaluation (K=3), criteria ensemble, multi-candidate PPT comparison, and VOC progress tracking. | "review this", "code review", "check this PR", "review changes", "quality gate" |
 | testing | Test writing & TDD — framework detection, pattern matching, edge case coverage, flaky test detection, coverage analysis, agent-specific testing. Lv.2 quality gate companion. | "write tests", "add tests", "test coverage", "run tests", "test this", "missing tests", "TDD" |
 | refactoring | Behavior-preserving code improvement, atomic changes | "refactor", "clean this up", "simplify this", "improve this code" |
 | brainstorming | Idea generation and concept development — 4-phase protocol with mode branching (feature, problem, design, strategy), active sparring, and bridge to the goal skill | "brainstorm", "think of ideas", "what if", "ideate", "bounce ideas", "spitball", "explore options", "generate ideas" |
 | breakthrough | Overcome hard problems — reframe, check assumptions, research, simplify, lateral thinking. Use when debugging isn't working and you need a new angle. | "breakthrough", "stuck", "hard problem", "can't figure out", "going in circles", "not working and I don't know why", "need a fresh perspective" |
 | ui-craft | Design taste skill — anti-slop rules, motion system, layout/typography/color patterns, Design System Map, Brief Inference, image strategy, 22 domain references. Augmented with taste-skill patterns (Jun 2026). | "make this not look AI-generated", "design taste", "craft", motion/animation work |
 | ui-design | Senior UI/visual design — award-winning perspective, creative execution — now upgraded with anti-slop + motion system + UI Craft integration | "make this look better", "improve the UI", "design this", UI/frontend changes |
+| verifier | General-purpose verification framework — continuous scoring, repeated evaluation, criteria decomposition, Probabilistic Pivot Tournament (PPT) for multi-candidate selection, ring pass for positional bias cancellation, VOC progress monitoring. Based on arXiv:2607.05391v1. | "verify", "verifier", "continuous scoring", "compare candidates", "pick best", "PPT", "ring pass", "select best solution", "multi-candidate", "progress monitoring", "VOC", verification-focused evaluation tasks |
 | gitnexus | Code knowledge graph — query, context, impact, detect_changes, rename, cypher MCP tools | "impact", "blast radius", "what depends on", "trace this call", "graph query", "architecture map", before significant code changes |
 | self-review | Meta-agent for system self-review — scans opencode.json, skills registry, prompt rules, and performance patterns for improvement opportunities at compaction checkpoints | Auto-fires at R3 step 7, "self review", "system health", "audit config", "check agents", "meta review" |
 | curriculum | Self-play curriculum — generates leveled challenges (tool creation, tool chains, system improvement, memory consolidation, meta), dispatches attempts, scores results, progresses autonomously | Auto-fires at R3 step 8, "curriculum", "self-play", "challenge me", "run curriculum", "what can I learn" |
