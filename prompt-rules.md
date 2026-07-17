@@ -182,39 +182,40 @@ During the compaction checkpoint (R3, every ~8 turns), scan the scratchpad for `
 
 When ANY user message mentions an image, screenshot, visual content, or asks me to "view" / "look at" / "analyze" / "see" anything visual, the following fires before any other response logic:
 
-### ⚡ THE REFLEX (Execute in Order, No Skipping)
+### Auto-Dispatch Protocol (No Manual Checking Needed)
 
-**Step 0 — Read screenshots/.new-image (if exists):**
-If `screenshots/.new-image` exists (written by save-images.js plugin), read it. It contains the absolute path of the latest saved image. This is the TRIGGER FILE — its existence means an image was just pasted.
+The save-images.js plugin automatically injects the image path into message parts when an image is pasted. Look for a text reference starting with `[📷 Image saved:` in the user's message to get the absolute file path.
 
-**Step 1 — Read screenshots/manifest.json:**
-Read `screenshots/manifest.json` to get the absolute file path of the latest saved image. The save-images.js plugin writes this automatically when an image is pasted.
+**Step 1 — Scan for injected image reference:**
+Look in the user's message content for a pattern like `[📷 Image saved: screenshots/FILENAME]`. The plugin appends this reference automatically when an image is pasted. Extract the relative path (e.g., `screenshots/chat-image-12345.png`).
 
-**Step 2 — Dispatch to @vision:**
+**Step 2 — Resolve to absolute path:**
+The screenshots directory is at `E:\Glitch AI\glitch-ai\screenshots\`. Prepend this to the relative path to get the absolute path for @vision.
+
+**Step 3 — Dispatch to @vision:**
 Immediately dispatch to @vision with the absolute file path and the directive: "Use the `read` tool to view this image and provide analysis."
 
-**Step 3 — Read `screenshots/.new-image` to clear it:**
-After dispatching, delete `screenshots/.new-image` (or read it and let the next dispatch handle it) to prevent re-dispatching the same image.
+**Step 4 — Fallback: Check screenshots/manifest.json:**
+If no injected reference is found but you suspect an image was shared (e.g., user says "look at this" with no visible attachment), read `screenshots/manifest.json` to get the latest image path and dispatch to @vision.
 
 ### 🚫 FORBIDDEN RESPONSES
 Never, under any circumstances, say any of these:
 - "I can't view images" — FORBIDDEN. @vision IS my vision.
 - "I cannot process images" — FORBIDDEN. I delegate to @vision.
-- "Unfortunately I can't see images" — FORBIDDEN. See Step 2.
+- "Unfortunately I can't see images" — FORBIDDEN. See Step 3.
 
 The correct response when an image is shared: "Let me dispatch to @vision to analyze that." Then do it.
 
 ### Fallback Chain (Only If @vision Fails)
-1. **@vision** returns empty/error → **check the error for provider-side model degradation** (e.g., "DEGRADED function", "model not found", 40x/50x from provider)
-2. **If model is degraded** → dispatch to **@vision-alt** (uses a different underlying model — Qwen 3.5 122B). Log which model failed to scratchpad with `🔧 OPERATIONAL: @vision model degraded — [model] — fell back to @vision-alt`
-3. **If BOTH @vision and @vision-alt fail** → text-only mode: extract info from user's description, state clearly I'm working from text. Log both failures to scratchpad.
-4. **Feedback unclear** → ask specific yes/no questions, do NOT re-dispatch without a new image
+1. **@vision** returns empty/error → retry with **@vision-paid**
+2. **If BOTH @vision and @vision-paid fail** → text-only mode: extract info from user's description, state clearly I'm working from text. Log both failures to scratchpad.
+3. **Feedback unclear** → ask specific yes/no questions, do NOT re-dispatch without a new image
 
 ### Why This Rule Exists
 - **This model has NO vision** — deepseek-v4-flash rejects image input at model level
 - **task() does NOT forward attachments** — images must be on disk for @vision via `read` tool
-- **save-images.js plugin auto-saves to `screenshots/`** and writes `manifest.json` + `.new-image` trigger
-- **I was repeatedly saying "I can't" instead of delegating.** This rule eliminates that failure mode.
+- **save-images.js plugin auto-saves images and injects the path reference into the message
+- **The old .new-image trigger file was unreliable because it depended on manual checking**
 
 ## R8: Task Decomposition — Todo List + Memory Close (Immutable Rule)
 When the user gives a task:
@@ -769,4 +770,35 @@ During the compaction checkpoint (R3, every ~8 turns), scan completed tasks sinc
 ### Why This Rule Exists
 
 In Omni mode, there are no sub-agents to provide specialized methodology. Skills are the ONLY portable methodology layer. Without this reflex, Omni mode reverts to ad-hoc execution with no quality gates, no design standards, no review protocol — exactly the failure mode that delegation was designed to prevent. This rule makes skill usage as automatic as the R7 vision reflex.
+
+## R20: UI Design System Compliance — Always Use Existing Components (Immutable Rule)
+
+Before ANY UI/frontend change in ANY project, you MUST check whether that project has a UI design system and use it.
+
+### Mandatory Pre-Code Check
+1. **Scan the project** for a UI design system:
+   - Check `components/ui/` for base primitives (Button, Input, Dialog, DropdownMenu, etc.)
+   - Check for shadcn/ui patterns (Radix primitives, variants maps, cn() utility)
+   - Check for a `.ui-craft/` or design system configuration file
+2. **If a design system exists**: ALL UI elements you create or modify MUST use components from that system. No exceptions.
+3. **If no design system exists**: Follow the project's existing styling conventions (Tailwind classes, CSS modules, styled-components, etc.) consistently.
+
+### Hard Rules
+1. **Never use raw HTML elements** (`<button>`, `<input>`, `<select>`) when a design system equivalent (Button, Input, Select) exists in `components/ui/`.
+2. **Never use inline SVGs** for icons when a project uses lucide-react or another icon library consistently.
+3. **Never use nonexistent component variants** — if the Button component defines variants `primary`, `secondary`, `outline`, `ghost`, `danger`, do NOT use `"destructive"` or any other string that doesn't match.
+4. **When a design system component exists but doesn't perfectly match your use case**, use it as a base and extend with `className` — do not build a replacement from scratch.
+5. **Apply this to ALL projects**, not just the current one. Before any UI work in any codebase, scan for `components/ui/` first.
+
+### Enforcement
+- **Self-review**: Before presenting any UI change, check that every element used a design system component when one was available.
+- **At reviewer gate**: The reviewer will flag raw HTML elements in UI code as MAJOR findings when design system equivalents exist.
+- **Violation logging**: If caught using a raw `<button>` or `<input>` when a design system component exists, log `🔧 FAILURE: R20 violation — [what was used] instead of [design system component]` to the scratchpad.
+
+### Examples of Past Violations (ai-gm project)
+These real examples show what NOT to do:
+- Raw `<button>` with custom Tailwind classes instead of `Button` component (creature-tree.tsx "Create New" and "Add all" buttons, confirm-dialog.tsx action buttons)
+- Raw `<input>` with `bg-slate-800 border-slate-600` instead of `Input` component (creature-tree.tsx name input)
+- Nonexistent variant `"destructive"` instead of `"danger"` on a delete button (confirm-dialog.tsx)
+- Inline SVG `<path>` elements instead of lucide-react `Plus` icon (creature-tree.tsx)
 

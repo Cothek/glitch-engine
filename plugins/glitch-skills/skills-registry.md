@@ -65,7 +65,7 @@ timestamp: 2026-06-25T00:00:00Z
 | @ui-designer | `.opencode/agents/ui-designer.md` | nemotron-3-ultra-free | Senior UI designer — shadcn/ui, Radix, Tailwind v4, anti-slop rules |
 | @reviewer | `.opencode/agents/reviewer.md` | nemotron-3-ultra-free | Independent code quality gate — read-only, severity-rated reports |
 | @testing | `.opencode/agents/testing.md` | nemotron-3-ultra-free | Test writer — TDD, framework detection, edge case coverage |
-| @vision | `.opencode/agents/vision.md` | nemotron-3-nano-omni-30b-a3b-reasoning | Image/visual content analysis — uses read tool, bash: deny |
+| @vision | `.opencode/agents/vision.md` | mimo-v2.5-free | Image/visual content analysis — uses read tool, bash: deny |
 | @vision-alt | `.opencode/agents/vision-alt.md` | qwen/qwen3.5-122b-a10b | Fallback image analysis — different model, same protocol. Used when @vision fails with model/API errors |
 | @pentester | `.opencode/agents/pentester.md` | nemotron-3-ultra-free | Application security tester — OWASP Top 10, API testing, tool-based scanning, structured reporting |
 | @glitch-omni | `.opencode/agents/glitch-omni.md` | deepseek-v4-flash | Direct-execution variant — no delegation, does everything itself. Alternative primary for Normal mode. |
