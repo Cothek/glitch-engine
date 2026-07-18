@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-07-16T15:42:56.8338283-05:00",
+    "lastCheck":  "2026-07-17T17:44:07.9839726-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
@@ -62,6 +62,7 @@
                                "minimax-m3",
                                "minimax-m2.7",
                                "minimax-m2.5",
+                               "kimi-k3",
                                "kimi-k2.7-code",
                                "kimi-k2.6",
                                "kimi-k2.5",
@@ -78,7 +79,8 @@
                                "mimo-v2-omni",
                                "mimo-v2.5-pro",
                                "mimo-v2.5",
-                               "hy3-preview"
+                               "hy3-preview",
+                               "grok-4.5"
                            ],
                     "openrouter":  [
                                        "openrouter/tencent/hy3:free",

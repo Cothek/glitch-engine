@@ -184,19 +184,16 @@ When ANY user message mentions an image, screenshot, visual content, or asks me 
 
 ### Auto-Dispatch Protocol (No Manual Checking Needed)
 
-The save-images.js plugin automatically injects the image path into message parts when an image is pasted. Look for a text reference starting with `[📷 Image saved:` in the user's message to get the absolute file path.
+The save-images.js plugin saves pasted images to the screenshots/ directory and writes a trigger file. Look for `screenshots/.new-image` in the screenshots directory to detect newly pasted images and get the absolute file path.
 
-**Step 1 — Scan for injected image reference:**
-Look in the user's message content for a pattern like `[📷 Image saved: screenshots/FILENAME]`. The plugin appends this reference automatically when an image is pasted. Extract the relative path (e.g., `screenshots/chat-image-12345.png`).
+**Step 1 — Check .new-image trigger file:**
+Read `E:\Glitch AI\glitch-ai\screenshots\.new-image` to get the absolute path of the latest saved image. If the file exists, read its content (the absolute path), then delete the file to prevent re-processing.
 
-**Step 2 — Resolve to absolute path:**
-The screenshots directory is at `E:\Glitch AI\glitch-ai\screenshots\`. Prepend this to the relative path to get the absolute path for @vision.
+**Step 2 — Fallback: Check screenshots/manifest.json:**
+If `.new-image` doesn't exist but you suspect an image was shared, read `screenshots/manifest.json` to get the latest image path and dispatch to @vision.
 
 **Step 3 — Dispatch to @vision:**
 Immediately dispatch to @vision with the absolute file path and the directive: "Use the `read` tool to view this image and provide analysis."
-
-**Step 4 — Fallback: Check screenshots/manifest.json:**
-If no injected reference is found but you suspect an image was shared (e.g., user says "look at this" with no visible attachment), read `screenshots/manifest.json` to get the latest image path and dispatch to @vision.
 
 ### 🚫 FORBIDDEN RESPONSES
 Never, under any circumstances, say any of these:
@@ -214,8 +211,8 @@ The correct response when an image is shared: "Let me dispatch to @vision to ana
 ### Why This Rule Exists
 - **This model has NO vision** — deepseek-v4-flash rejects image input at model level
 - **task() does NOT forward attachments** — images must be on disk for @vision via `read` tool
-- **save-images.js plugin auto-saves images and injects the path reference into the message
-- **The old .new-image trigger file was unreliable because it depended on manual checking**
+- **save-images.js plugin auto-saves images to disk and writes a `.new-image` trigger file**
+- **.new-image is the canonical trigger — check it first before other detection methods**
 
 ## R8: Task Decomposition — Todo List + Memory Close (Immutable Rule)
 When the user gives a task:

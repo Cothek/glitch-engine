@@ -3,7 +3,7 @@ type: SkillIndex
 title: Skills Registry
 description: Index of all registered skills (28) and agent definitions (18) with trigger descriptions and model assignments.
 tags: [glitch, skills, registry]
-timestamp: 2026-06-25T00:00:00Z
+timestamp: 2026-07-17T00:00:00Z
 ---
 
 # Skills Registry — Glitch Skill Index
@@ -82,6 +82,7 @@ timestamp: 2026-06-25T00:00:00Z
 | @reviewer-paid | `.opencode/agents/reviewer-paid.md` | qwen3.6-plus | Independent code quality gate paid fallback |
 | @testing-paid | `.opencode/agents/testing-paid.md` | qwen3.7-plus | Test writer paid fallback |
 | @vision-paid | `.opencode/agents/vision-paid.md` | qwen3.6-plus | Image/visual content analysis paid fallback |
+| @memory-paid | `.opencode/agents/memory-paid.md` | deepseek-v4-flash | Memory writer paid fallback — when @memory quota is exhausted |
 | @pentester-paid | `.opencode/agents/pentester-paid.md` | qwen3.7-plus | Application security tester paid fallback — OWASP Top 10, API testing, tool-based scanning |
 
 ### Free→Paid Fallback Model Chains
@@ -91,7 +92,8 @@ timestamp: 2026-06-25T00:00:00Z
 | nemotron-3-ultra-free | qwen3.6-plus (same family) | @reviewer |
 | mimo-v2.5-free | qwen3.6-plus (cross-family) | @vision |
 | nemotron-3-ultra-free | qwen3.7-plus (cross-family) | @coder, @ui-designer, @testing, @pentester |
+| minimax-m3 (free) | deepseek-v4-flash (cross-family) | @memory |
 
 ---
 
-**Total: 29 skills + 21 agent definitions** — Last updated: 2026-06-24
+**Total: 29 skills + 22 agent definitions** — Last updated: 2026-07-17
