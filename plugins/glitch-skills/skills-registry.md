@@ -14,7 +14,7 @@ timestamp: 2026-07-17T00:00:00Z
 | Skill | Description | Trigger |
 |-------|-------------|---------|
 | auto-commit | Structured git commits with TECHNICAL CHANGES + SESSION CONTEXT | "commit", "save changes", "git commit", Vigilant mode |
-| forge | Self-improvement — pattern detection, skill creation, leveling | "create skill", "forge this", 3+ pattern repeats |
+| forge | Self-improvement — pattern detection, skill creation, leveling, accumulated feedback → level-up | "create skill", "forge this", 3+ pattern repeats, accumulated user feedback |
 | image-generation | Image generation via local ComfyUI — prompt pipeline, SDXL, MCP-based tool calls | "generate an image", "make a picture", "draw something", "create artwork", ComfyUI setup |
 | image-prompt | Midjourney/NijiJourney composition-aware prompt generation | "create a prompt", "midjourney prompt", "image prompt" |
 | imagegen-frontend-web | Image-generation for premium, conversion-aware website design reference images. Generates one horizontal image per section. | "generate website images", "create landing page images", "design website comps", "website design references" |

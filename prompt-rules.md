@@ -67,12 +67,13 @@ After running the script, work through any remaining items:
 - 3. Auto-commit: Dispatch to @general to execute `git add -A && git commit -m "memory: compaction YYYY-MM-DD" && git push` (no direct bash)
 - 4. Run **Step 6 — Pattern scan**: Scan scratchpad + recent session for 3x+ repeated workflows or crystallized patterns. If found, read forge skill and create skill.
 - 5. Run **Step 7 — Self-review**: Read `read plugins/glitch-skills/skills/self-review/SKILL.md` and perform a system health review (opencode.json, skills-registry, prompt-rules, performance). Produce BLOCKER/ISSUE/SUGGESTION report.
+- 5.5 Run **Skill improvement review**: Read `user/pending-skill-improvements.md`. For each skill with 2+ pending entries or 1 high-significance entry, load the skill file, generate candidate diff(s) incorporating the proposed fixes, and present to the user for approval. If approved, dispatch the appropriate agent to apply the changes and update the entry status to "applied". If the user is not available (end of session), leave entries as `pending` for next session.
 
 **Optional (check if needed):**
 - 6. Run **Step 8 — Curriculum**: Read the curriculum skill and run the next challenge. Only if 2+ compaction cycles since last attempt.
 - 7. Run **Step 9 — Staleness**: Phase B (scan main-memory.md for stale refs), Phase C (promote diary if substantial).
 
-**Why this exists**: The previous 9-step protocol relied entirely on active recall — steps 6-9 had no visible trigger and were frequently skipped (self-review and curriculum never fired in 18+ days). The script provides a visible, repeatable trigger that eliminates the recall problem. It handles the automatable infrastructure; the AI handles the judgment calls.
+**Why this exists**: The previous 9-step protocol relied entirely on active recall — steps 6-9 had no visible trigger and were frequently skipped (self-review and curriculum never fired in 18+ days). The script provides a visible, repeatable trigger that eliminates the recall problem. It handles the automatable infrastructure; the AI handles the judgment calls. Step 5.5 closes the feedback loop — user corrections during sessions now have a structural path to durable skill improvements.
 
 ### Stale-Session Detection (At Conversation Start)
 If `Last Memory Update` timestamp is >2 hours stale when you first respond:
@@ -145,17 +146,26 @@ When ANY of these happen, append a `🔧 PATTERN:` bullet to the Working Memory 
   - You notice yourself giving the same instructions to a sub-agent repeatedly
   - The same solution pattern appeared across 2+ different tasks
 
+### Feedback Trigger Events (Fire Immediately)
+When ANY of these happen, append a `🔧 FEEDBACK:` bullet to the Working Memory scratchpad:
+  - The user gives corrective feedback about output produced while a skill was loaded
+  - The user says "this is the third time" or "we talked about this" — indicating a repeat pattern
+  - The user explicitly says "remember this for next time" or "make this a rule"
+  - The user corrects a behavior that a skill is supposed to govern (UI design choices, writing style, code patterns)
+
 ### Capture Format (Scratchpad)
 Append immediately — no formatting, no context-switching:
   ```
   🔧 OPERATIONAL: [what failed] — root cause (if known) — fix/workaround
   🔧 PATTERN: [workflow description] — appeared N times — skill candidate
+  🔧 FEEDBACK: [skill name] — [what was wrong] — "[user's words]" — [proposed skill change]
   ```
   Example: `🔧 OPERATIONAL: @general hung on npx next dev — bash tool waits for exit — use Start-Process -WindowStyle Hidden`
   Example: `🔧 PATTERN: Dispatching @general for server start + verify — appeared 3 times — should be a dev-loop step skill`
+  Example: `🔧 FEEDBACK: ui-craft — dense overlay dialog had 5 sections visible at once — "this is too busy, collapse into steps" — add anti-slip rule about overlays >4 sections needing progressive disclosure`
 
 ### Enforcement (At Compaction Checkpoints — Reliable)
-During the compaction checkpoint (R3, every ~8 turns), scan the scratchpad for `🔧 OPERATIONAL:` and `🔧 PATTERN:` entries:
+During the compaction checkpoint (R3, every ~8 turns), scan the scratchpad for `🔧 OPERATIONAL:`, `🔧 PATTERN:`, and `🔧 FEEDBACK:` entries:
 
 **For 🔧 OPERATIONAL entries:**
   1. **Promote** each entry to `user/post-mortems.md` — use the PM-NNN format with full root cause + fix + prevention
@@ -169,6 +179,13 @@ During the compaction checkpoint (R3, every ~8 turns), scan the scratchpad for `
   3. **Register** the new skill in `plugins/glitch-skills/skills-registry.md` under Auto-Created Skills
   4. **Log** the creation in `user/forge-log.md`
   5. **Remove** the scratchpad entry after promotion
+
+**For 🔧 FEEDBACK entries:**
+  1. **Assess** — Is this a one-off nitpick or a pattern signal? Judge by language ("try something else" vs "stop doing this").
+  2. **Categorize** — Note the skill name and whether this is a new or repeat issue for this skill.
+  3. **Promote** — Append the entry to `user/pending-skill-improvements.md` in the structured format (date, skill, what happened, user's words, proposed fix, significance).
+  4. **Group** — If 2+ FEEDBACK entries exist for the same skill, increment a counter. At the end of enforcement, report the count.
+  5. **Remove** the scratchpad entry after promotion.
 
 ### Why This Fires Reliably
 - **Capture is zero-friction**: scratchpad is already habit (R2) — just add a bullet
