@@ -49,6 +49,13 @@ When promoting, add a `_Category: NAME_` line after the heading (see `library/me
 - Found a reusable pattern? → Save to `glitch-memorycore/library/` · _Category: WORKFLOW_RULES_
 - Working on a project? → Update `user/projects/project-list.md` and `user/session-dashboard.md`
 
+### R2.1: Memory Recall Tool
+When you need to FIND information from past sessions (preferences, decisions, patterns, reminders), call the `recall` tool instead of grepping memory files directly:
+- The `recall` tool runs FTS5 full-text search across ALL indexed memory files
+- Use natural language queries: "Troy's UI design preferences", "decisions about memory compaction", "Node.js install location"
+- The index covers 61 files with 423 chunks — much faster and more thorough than grep
+- To rebuild the index: `node glitch-memorycore/plugins/embed-search/index-memory.mjs`
+
 ## R3: Compaction Checkpoints (Every ~8 Turns)
 
 **First action at every compaction checkpoint:**
@@ -123,10 +130,13 @@ These rules prevent the most common failure modes of AI: false confidence, inven
 
 8. **Hard trigger phrase — "Let me check" before unverified claims** — When ANY question involves a claim about code, infrastructure, technology, or existence (e.g., "we use X", "we don't use Y", "there is no Z", "that file doesn't exist"), the first response MUST be "Let me check" followed by a verification tool call (grep, glob, read, webfetch). No confidence statement — not even "I think" — before verification. This is the highest-priority rule in this protocol. A confident unverified claim that turns out wrong is worse than "I don't know" or "Let me check."
 
+9. **Use verify_claim tool for high-stakes claims** — Before making ANY claim about code, infrastructure, technology, or file existence (rule 8 trigger), call the `verify_claim` custom tool. Pass the claim as a string argument. The tool runs grep/glob across the project and returns VERIFIED, UNVERIFIED, or CONTRADICTED with supporting evidence and confidence scores. "Let me check" followed by a `verify_claim` call is the mandatory pattern. Do NOT skip the tool call. If `verify_claim` is not available (running without plugin support), fall back to manual grep/glob/read.
+
 ### Enforcement
 - These rules are same tier as R5 — non-negotiable, never violated
 - If caught violating (false confidence, unverified claims, sycophantic agreement, stating unverified facts as truth without 'Let me check'), log the failure to the scratchpad with `🔧 FAILURE: Intellectual Honesty — [what happened]`
 - At compaction checkpoints, review for patterns of sycophancy or false confidence
+- The verify_claim plugin tool provides structural enforcement. When running with full plugin support, calling verify_claim before high-stakes claims is mandatory. Not calling it when it's available is a violation.
 
 ## R6: Operational Learning — 🔧 Tag Protocol
 When a tool, command, or approach produces a surprising result (failure or repeatable pattern), document it immediately so you learn from it. This rule piggybacks on the existing scratchpad (R2) and compaction checkpoint (R3) to ensure reliable firing — no new process needed.
@@ -815,4 +825,19 @@ These real examples show what NOT to do:
 - Raw `<input>` with `bg-slate-800 border-slate-600` instead of `Input` component (creature-tree.tsx name input)
 - Nonexistent variant `"destructive"` instead of `"danger"` on a delete button (confirm-dialog.tsx)
 - Inline SVG `<path>` elements instead of lucide-react `Plus` icon (creature-tree.tsx)
+
+## R21: Stuck Detection — Breakthrough Signal
+
+The `stuck-detector.js` plugin monitors tool call patterns and writes `data/.stuck-signal.json` when it detects:
+- Same tool called 3+ times with similar arguments (tool repetition)
+- 3+ consecutive errors (error cascade)
+- Same bash command repeated 2+ times (command repetition)
+
+**When you see `data/.stuck-signal.json` exists:**
+1. Read the signal file to understand why you were flagged as stuck
+2. Load `skill("breakthrough")` immediately
+3. Delete the signal file
+4. Reframe the problem using a different approach
+
+**Important**: The stuck detector is a safety net, not a judgment. If it fires, it means you're repeating yourself — take it as a signal to step back, not as criticism.
 
