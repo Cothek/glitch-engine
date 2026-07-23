@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-07-17T21:44:24.2085607-05:00",
+    "lastCheck":  "2026-07-23T09:41:08.5783110-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
@@ -13,6 +13,8 @@
                                 "claude-sonnet-4-5",
                                 "claude-sonnet-4",
                                 "claude-haiku-4-5",
+                                "gemini-3.6-flash",
+                                "gemini-3.5-flash-lite",
                                 "gemini-3.5-flash",
                                 "gemini-3.1-pro",
                                 "gemini-3-flash",
@@ -54,9 +56,9 @@
                                 "big-pickle",
                                 "deepseek-v4-flash-free",
                                 "mimo-v2.5-free",
-                                "hy3-free",
                                 "nemotron-3-ultra-free",
-                                "north-mini-code-free"
+                                "north-mini-code-free",
+                                "laguna-s-2.1-free"
                             ],
                     "go":  [
                                "minimax-m3",
@@ -79,11 +81,12 @@
                                "mimo-v2-omni",
                                "mimo-v2.5-pro",
                                "mimo-v2.5",
+                               "hy3",
                                "hy3-preview",
                                "grok-4.5"
                            ],
                     "openrouter":  [
-                                       "openrouter/tencent/hy3:free",
+                                       "openrouter/poolside/laguna-s-2.1:free",
                                        "openrouter/poolside/laguna-xs-2.1:free",
                                        "openrouter/cohere/north-mini-code:free",
                                        "openrouter/nvidia/nemotron-3.5-content-safety:free",
@@ -95,14 +98,8 @@
                                        "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
                                        "openrouter/nvidia/nemotron-3-nano-30b-a3b:free",
                                        "openrouter/nvidia/nemotron-nano-12b-v2-vl:free",
-                                       "openrouter/qwen/qwen3-next-80b-a3b-instruct:free",
                                        "openrouter/nvidia/nemotron-nano-9b-v2:free",
-                                       "openrouter/openai/gpt-oss-20b:free",
-                                       "openrouter/qwen/qwen3-coder:free",
-                                       "openrouter/cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
-                                       "openrouter/meta-llama/llama-3.3-70b-instruct:free",
-                                       "openrouter/meta-llama/llama-3.2-3b-instruct:free",
-                                       "openrouter/nousresearch/hermes-3-llama-3.1-405b:free"
+                                       "openrouter/openai/gpt-oss-20b:free"
                                    ],
                     "nvidia":  [
                                    "nvidia/01-ai/yi-large",
@@ -210,7 +207,6 @@
                                    "nvidia/openai/gpt-oss-20b",
                                    "nvidia/poolside/laguna-xs-2.1",
                                    "nvidia/qwen/qwen3-next-80b-a3b-instruct",
-                                   "nvidia/qwen/qwen3.5-122b-a10b",
                                    "nvidia/qwen/qwen3.5-397b-a17b",
                                    "nvidia/sarvamai/sarvam-m",
                                    "nvidia/snowflake/arctic-embed-l",

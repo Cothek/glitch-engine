@@ -69,7 +69,7 @@ timestamp: 2026-07-17T00:00:00Z
 | @vision-alt | `.opencode/agents/vision-alt.md` | qwen/qwen3.5-122b-a10b | Fallback image analysis — different model, same protocol. Used when @vision fails with model/API errors |
 | @pentester | `.opencode/agents/pentester.md` | nemotron-3-ultra-free | Application security tester — OWASP Top 10, API testing, tool-based scanning, structured reporting |
 | @glitch-omni | `.opencode/agents/glitch-omni.md` | deepseek-v4-flash | Direct-execution variant — no delegation, does everything itself. Alternative primary for Normal mode. |
-| @memory | `.opencode/agents/memory.md` | nvidia/minimaxai/minimax-m3 | Memory writer — reads and appends to `user/*.md` files only. Loads save-memory skill. |
+| @memory | `.opencode/agents/memory.md` | opencode/deepseek-v4-flash-free | Memory writer — reads and appends to `user/*.md` files only. Loads save-memory skill. |
 
 ### Paid Agents (Fallback When Free Fails)
 | Agent | File | Model | Purpose |
@@ -92,7 +92,7 @@ timestamp: 2026-07-17T00:00:00Z
 | nemotron-3-ultra-free | qwen3.6-plus (same family) | @reviewer |
 | mimo-v2.5-free | qwen3.6-plus (cross-family) | @vision |
 | nemotron-3-ultra-free | qwen3.7-plus (cross-family) | @coder, @ui-designer, @testing, @pentester |
-| minimax-m3 (free) | deepseek-v4-flash (cross-family) | @memory |
+| deepseek-v4-flash-free (free) | deepseek-v4-flash (same family) | @memory |
 
 ---
 
