@@ -6,14 +6,14 @@ tags: [glitch, core, protocol]
 timestamp: 2026-06-17T00:00:00Z
 ---
 
-# CLAUDE.md — Glitch MemoryCore
+# glitch.md — Glitch MemoryCore
 
 ## First Thing Every Session
 
 ### ✅ Auto-Loaded Context (already in your system prompt)
 The following are injected automatically via `opencode.json` instructions — you already have their content:
 - `glitch-memorycore/prompt-rules.md` — imperative rules
-- `glitch-memorycore/CLAUDE.md` — this document
+- `glitch-memorycore/glitch.md` — this document
 - `glitch-memorycore/master-memory.md` — entry point + commands
 - `glitch-memorycore/core/identity.md` — Glitch personality (no user data)
 - `glitch-memorycore/plugins/glitch-skills/skills-registry.md` — skill index
@@ -181,7 +181,7 @@ This is a hard reflex that fires before every `edit` or `write` tool call:
 
 **Step 1 — Pause.** Before reaching for `edit`/`write`, stop and ask: "Is this memory/planning/coordination work (mine) or code work (delegate)?"
   - 📝 Memory files (decisions, diary, reminders, main-memory, current-session): **Dispatch to @memory** per R12 — I no longer have `edit`/`write` tools.
-  - 📝 Config files (prompt-rules.md, CLAUDE.md, opencode.json, launch scripts): **My domain** — execute directly (config edits are direct per R15).
+  - 📝 Config files (prompt-rules.md, glitch.md, opencode.json, launch scripts): **My domain** — execute directly (config edits are direct per R15).
   - 🔧 Everything else (application code, scripts, bash commands, file creation, test writing): **Delegation domain** — dispatch to sub-agent.
 
 **Step 2 — Dispatch.** If the task belongs to delegation domain:
@@ -294,3 +294,49 @@ GitNexus is a code knowledge graph MCP server available to all agents. It has in
 | Quick file read | Regular `read` (faster) |
 
 **GitNexus skills** are also installed in each project under `.claude/skills/gitnexus/`. For detailed tool usage guidance, read the relevant skill file when starting a task that matches. On session start, read `skills-registry.md` which lists all GitNexus and Glitch skills together.
+
+## Structural Enforcement Plugins
+
+Six plugins and tools were built to enforce Glitch's rules at the tool-execution level rather than relying on AI recall. All are registered in `opencode.json` and the 4 config templates (`config/opencode-*.json`).
+
+### Plugin: dispatch-reflex.js
+`tool.execute.before/after` hooks. Blocks `edit`/`write` on code files (*.ts, *.js, *.py, etc.) unless a `task()` call was made in the last 120 seconds. Exempts memory files (`user/*.md`), config files, and git operations.
+- **Location**: `.opencode/plugins/dispatch-reflex.js`
+- **Trigger**: Every tool call — checks if action is code write without prior dispatch
+- **On block**: Returns "Cannot modify code files directly. Dispatch a sub-agent first."
+
+### Plugin: compaction.js
+`experimental.session.compacting` hook. Reads the scratchpad section of `user/current-session.md` plus reminders and pending skill improvements, then injects the R3 protocol prompt into the next system message.
+- **Location**: `.opencode/plugins/compaction.js`
+- **Trigger**: `experimental.session.compacting` event
+- **Action**: Injects 9-step R3 checklist prompt for AI to execute
+
+### Plugin: verify-claim.js
+Custom `verify_claim` tool. Accepts a natural language claim about code or infrastructure, runs grep/glob to find evidence, and returns VERIFIED / UNVERIFIED / CONTRADICTED with supporting evidence and confidence scores.
+- **Location**: `.opencode/plugins/verify-claim.js`
+- **Trigger**: Called when the AI needs to verify a claim before stating it as fact (R5 rule 8/9)
+- **Output**: Structured result with evidence lines, confidence score, and verdict
+
+### Plugin: recall.js
+Custom `recall` tool wrapping the FTS5 memory search CLI (`glitch-memorycore/plugins/embed-search/search-memory.mjs`). Accepts natural language queries and returns ranked results from indexed memory files (61 files, 423 chunks).
+- **Location**: `.opencode/plugins/recall.js`
+- **Trigger**: Called when the AI needs to FIND information from past sessions (preferences, decisions, patterns)
+- **Output**: Ranked results with file path, section heading, content snippet, score
+- **Index rebuild**: `node glitch-memorycore/plugins/embed-search/index-memory.mjs`
+
+### Plugin: stuck-detector.js
+Monitors tool call history for stuck patterns. Detects 3 conditions:
+1. Same tool called 3+ times with similar Levenshtein-similar arguments (tool repetition)
+2. 3+ consecutive errors (error cascade)  
+3. Same exact bash command repeated 2+ times (command repetition)
+
+Writes `data/.stuck-signal.json` when stuck is detected. When the AI sees this file, load `skill("breakthrough")` to reframe the problem.
+- **Location**: `.opencode/plugins/stuck-detector.js`
+- **Trigger**: Every 2 tool calls after call #8
+- **Exempt tools**: `read`, `glob`, `grep` (normal browsing)
+
+### Script: validate-agent-alignment.mjs
+Standalone validation script that reads YAML frontmatter from `.opencode/agents/*.md` files and compares model/permissions against inline definitions in `config/opencode-*.json` templates. Prevents drift between the two config sources.
+- **Location**: `scripts/validate-agent-alignment.mjs`
+- **Trigger**: Run manually or automatically via `validate-config.ps1` (step 4.75)
+- **Exit code**: 0 = no drift, 1 = mismatches found

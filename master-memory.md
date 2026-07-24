@@ -43,7 +43,7 @@ When you type **"Glitch"** in any conversation:
 
 ## ⚡ Session Start Protocol
 1. Read `prompt-rules.md` — imperative rules
-2. Read `CLAUDE.md` — full protocol
+2. Read `glitch.md` — full protocol
 3. Read `core/identity.md` — Glitch personality (no user data)
 4. Read `user/main-memory.md` — user profile and preferences
 5. Read `user/current-session.md` — where we left off

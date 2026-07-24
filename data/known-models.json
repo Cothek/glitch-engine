@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-07-23T09:41:08.5783110-05:00",
+    "lastCheck":  "2026-07-24T08:49:16.9508189-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
@@ -56,6 +56,7 @@
                                 "big-pickle",
                                 "deepseek-v4-flash-free",
                                 "mimo-v2.5-free",
+                                "ling-3.0-flash-free",
                                 "nemotron-3-ultra-free",
                                 "north-mini-code-free",
                                 "laguna-s-2.1-free"
@@ -86,6 +87,7 @@
                                "grok-4.5"
                            ],
                     "openrouter":  [
+                                       "openrouter/inclusionai/ling-3.0-flash:free",
                                        "openrouter/poolside/laguna-s-2.1:free",
                                        "openrouter/poolside/laguna-xs-2.1:free",
                                        "openrouter/cohere/north-mini-code:free",
@@ -151,7 +153,6 @@
                                    "nvidia/mistralai/mistral-7b-instruct-v0.3",
                                    "nvidia/mistralai/mistral-large",
                                    "nvidia/mistralai/mistral-large-2-instruct",
-                                   "nvidia/mistralai/mistral-large-3-675b-instruct-2512",
                                    "nvidia/mistralai/mistral-medium-3.5-128b",
                                    "nvidia/mistralai/mistral-nemotron",
                                    "nvidia/mistralai/mistral-small-4-119b-2603",
@@ -164,6 +165,7 @@
                                    "nvidia/embed-qa-4",
                                    "nvidia/gliner-pii",
                                    "nvidia/ising-calibration-1-35b-a3b",
+                                   "nvidia/ising-calibration-1.5-31b",
                                    "nvidia/llama-3.1-nemoguard-8b-content-safety",
                                    "nvidia/llama-3.1-nemoguard-8b-topic-control",
                                    "nvidia/llama-3.1-nemotron-51b-instruct",

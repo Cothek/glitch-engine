@@ -21,7 +21,7 @@ Before any `edit`/`write`/`bash` for code work: a sub-agent must have been dispa
 Before your first tool use or response in any session:
   ✅ Core context auto-loaded via opencode.json instructions (engine + user profile):
      - `glitch-memorycore/prompt-rules.md` — these rules
-     - `glitch-memorycore/CLAUDE.md` — full protocol
+     - `glitch-memorycore/glitch.md` — full protocol
      - `glitch-memorycore/master-memory.md` — entry point + commands
      - `glitch-memorycore/core/identity.md` — Glitch personality
      - `glitch-memorycore/plugins/glitch-skills/skills-registry.md` — skill index
@@ -590,7 +590,7 @@ Main is the stable launch branch. All **Glitch core code** changes go through fe
 ### Scope: What Counts as "Glitch Core Code"
 This rule applies ONLY to files that affect Glitch's ability to start and run:
 - `opencode.json` and `config/opencode-*.json` templates
-- `glitch-memorycore/` engine files (prompt-rules.md, CLAUDE.md, skills)
+- `glitch-memorycore/` engine files (prompt-rules.md, glitch.md, skills)
 - `scripts/launch*.mjs`, `scripts/serve.mjs`, `scripts/switch-branch.ps1`
 - `.opencode/agents/*.md` (agent definitions)
 - `launch-glitch*.bat`, `serve-glitch.bat` (Windows)
