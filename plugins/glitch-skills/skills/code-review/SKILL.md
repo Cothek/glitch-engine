@@ -58,7 +58,7 @@ Skip quality gate if ALL of:
 #### Checklist for Each Core File
 
 **For `opencode.json` (all modes):**
-- **Step 0 — JSON syntax**: Run `validate-config.ps1` (or manual `ConvertFrom-Json`). **BLOCKER** if invalid — even a missing `}` blocks everything.
+- **Step 0 — JSON syntax**: Check if `validate-config.ps1` has been run (or use manual `ConvertFrom-Json`). **BLOCKER** if invalid — even a missing `}` blocks everything.
 - **Step 1 — Structural completeness**: Every agent has a `model` field. Every opening `{` has a closing `}`. Count them if unsure.
 - **Step 2 — Instructions files**: Every path in `instructions` must exist. Files in `glitch-memorycore/` need submodule init.
 - **Step 3 — Agent configs**: New agents need valid models. Prompts can't reference missing files.
