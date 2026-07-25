@@ -1,8 +1,9 @@
 ﻿{
-    "lastCheck":  "2026-07-24T08:49:16.9508189-05:00",
+    "lastCheck":  "2026-07-24T15:24:29.4670192-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
+                                "claude-opus-5",
                                 "claude-opus-4-8",
                                 "claude-opus-4-7",
                                 "claude-opus-4-6",
