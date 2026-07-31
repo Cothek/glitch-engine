@@ -211,13 +211,13 @@ When ANY user message mentions an image, screenshot, visual content, or asks me 
 
 ### Auto-Dispatch Protocol (No Manual Checking Needed)
 
-The save-images.js plugin saves pasted images to the screenshots/ directory and writes a trigger file. Look for `screenshots/.new-image` in the screenshots directory to detect newly pasted images and get the absolute file path.
+The save-images.js plugin saves pasted images to the data/screenshots/ directory and writes a trigger file. Look for `data/screenshots/NEW_IMAGE_FLAG` in the data/screenshots directory to detect newly pasted images and get the absolute file path.
 
-**Step 1 — Check .new-image trigger file:**
-Read `E:\Glitch AI\glitch-ai\screenshots\.new-image` to get the absolute path of the latest saved image. If the file exists, read its content (the absolute path), then delete the file to prevent re-processing.
+**Step 1 — Check NEW_IMAGE_FLAG trigger file:**
+Read `E:\Glitch AI\glitch-ai\data\screenshots\NEW_IMAGE_FLAG` to get the absolute path of the latest saved image. If the file exists, read its content (the absolute path), then delete the file to prevent re-processing.
 
-**Step 2 — Fallback: Check screenshots/manifest.json:**
-If `.new-image` doesn't exist but you suspect an image was shared, read `screenshots/manifest.json` to get the latest image path and dispatch to @vision.
+**Step 2 — Fallback: Check data/screenshots/manifest.json:**
+If `NEW_IMAGE_FLAG` doesn't exist but you suspect an image was shared, read `data/screenshots/manifest.json` to get the latest image path and dispatch to @vision.
 
 **Step 3 — Dispatch to @vision:**
 Immediately dispatch to @vision with the absolute file path and the directive: "Use the `read` tool to view this image and provide analysis."
@@ -235,11 +235,14 @@ The correct response when an image is shared: "Let me dispatch to @vision to ana
 2. **If BOTH @vision and @vision-paid fail** → text-only mode: extract info from user's description, state clearly I'm working from text. Log both failures to scratchpad.
 3. **Feedback unclear** → ask specific yes/no questions, do NOT re-dispatch without a new image
 
+### Post-Dispatch Cleanup
+After @vision (or @vision-paid) completes analysis, it runs `node scripts/cleanup-screenshots.mjs` as its final step. This deletes screenshots in `data/screenshots/` older than 14 days (always preserving `manifest.json` and `NEW_IMAGE_FLAG`). No manual cleanup needed.
+
 ### Why This Rule Exists
 - **This model has NO vision** — deepseek-v4-flash rejects image input at model level
 - **task() does NOT forward attachments** — images must be on disk for @vision via `read` tool
-- **save-images.js plugin auto-saves images to disk and writes a `.new-image` trigger file**
-- **.new-image is the canonical trigger — check it first before other detection methods**
+- **save-images.js plugin auto-saves images to disk and writes a `NEW_IMAGE_FLAG` trigger file**
+- **NEW_IMAGE_FLAG is the canonical trigger — check it first before other detection methods**
 
 ## R8: Task Decomposition — Todo List + Memory Close (Immutable Rule)
 When the user gives a task:
@@ -840,4 +843,39 @@ The `stuck-detector.js` plugin monitors tool call patterns and writes `data/.stu
 4. Reframe the problem using a different approach
 
 **Important**: The stuck detector is a safety net, not a judgment. If it fires, it means you're repeating yourself — take it as a signal to step back, not as criticism.
+
+## R22: Mulahazah Memory Trigger — Mechanical Memory Writes (Immutable Rule)
+
+The `mulahazah.js` plugin observes every tool call and writes `data/MEMORY_TRIGGER_FLAG` when memory should be recorded. This converts the memory update protocol from a behavioral rule into a mechanical one.
+
+### When the Flag Fires
+
+The plugin writes the flag when ANY of these conditions are met:
+- **50 tool calls** have occurred since the last trigger
+- **15 minutes** have elapsed since session start (whichever comes first)
+- A **trigger phrase** is detected in tool args: "remember that", "i prefer", "from now on", "always do", "never do", "i want", "make sure to", "don't forget"
+
+A 2-minute cooldown prevents spam between triggers.
+
+### Auto-Dispatch Protocol
+
+**At the start of every response, BEFORE any other action:**
+
+1. **Check for the flag:** Read `E:\Glitch AI\glitch-ai\data\MEMORY_TRIGGER_FLAG`
+2. **If the flag exists:**
+   a. Read its contents (a summary of tool calls and session duration)
+   b. Dispatch to `@memory` with the summary and the directive: "Record this session's observations to memory. Include any preferences, decisions, or lessons learned."
+   c. After @memory confirms, **delete the flag file** to prevent re-processing
+3. **If the flag does not exist:** proceed with normal response logic
+
+### Why This Rule Exists
+
+- The memory update protocol (R12) is behavioral — it relies on the model remembering to write
+- Behavioral rules fail under output budget pressure (per the 2026-07-27 directive)
+- Mechanical triggers via plugins are more reliable than memory tests
+- This mirrors the R7 vision-dispatch pattern: plugin writes flag, model reads and acts
+
+### Relationship to R12
+
+R12 says "memory writes happen in real time for every trigger." R22 makes that mechanical. Both rules apply — R22 is the enforcement mechanism for R12's behavioral intent.
 
