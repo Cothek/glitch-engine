@@ -9,7 +9,7 @@ timestamp: 2026-07-17T00:00:00Z
 # Skills Registry — Glitch Skill Index
 *Auto-loaded at session start. Progressive disclosure: index only, full content loaded on demand.*
 
-## Registered Skills (32)
+## Registered Skills (33)
 
 | Skill | Description | Trigger |
 |-------|-------------|---------|
@@ -38,6 +38,7 @@ timestamp: 2026-07-17T00:00:00Z
 | ui-craft | Design taste skill — anti-slop rules, motion system, layout/typography/color patterns, Design System Map, Brief Inference, image strategy, 22 domain references. Augmented with taste-skill patterns (Jun 2026). | "make this not look AI-generated", "design taste", "craft", motion/animation work |
 | ui-design | Senior UI/visual design — award-winning perspective, creative execution — now upgraded with anti-slop + motion system + UI Craft integration | "make this look better", "improve the UI", "design this", UI/frontend changes |
 | verifier | General-purpose verification framework — continuous scoring, repeated evaluation, criteria decomposition, Probabilistic Pivot Tournament (PPT) for multi-candidate selection, ring pass for positional bias cancellation, VOC progress monitoring. Based on arXiv:2607.05391v1. | "verify", "verifier", "continuous scoring", "compare candidates", "pick best", "PPT", "ring pass", "select best solution", "multi-candidate", "progress monitoring", "VOC", verification-focused evaluation tasks |
+| wayfinder | Plan huge foggy multi-session work as a map of decision tickets, resolve one per session until the route clears | "wayfinder", "too big for one session", "foggy", "map this huge work", "plan a large effort" |
 | gitnexus | Code knowledge graph — query, context, impact, detect_changes, rename, cypher MCP tools | "impact", "blast radius", "what depends on", "trace this call", "graph query", "architecture map", before significant code changes |
 | self-review | Meta-agent for system self-review — scans opencode.json, skills registry, prompt rules, and performance patterns for improvement opportunities at compaction checkpoints | Auto-fires at R3 step 7, "self review", "system health", "audit config", "check agents", "meta review" |
 | curriculum | Self-play curriculum — generates leveled challenges (tool creation, tool chains, system improvement, memory consolidation, meta), dispatches attempts, scores results, progresses autonomously | Auto-fires at R3 step 8, "curriculum", "self-play", "challenge me", "run curriculum", "what can I learn" |
@@ -94,4 +95,4 @@ timestamp: 2026-07-17T00:00:00Z
 
 ---
 
-**Total: 29 skills + 22 agent definitions** — Last updated: 2026-07-17
+**Total: 33 skills + 22 agent definitions** — Last updated: 2026-08-01

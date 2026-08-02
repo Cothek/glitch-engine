@@ -77,7 +77,45 @@ Pattern detected or user triggers Forge
 4. Minimal viable skill — start at Lv.1, evolve organically
 5. Always register new skills in the registry index
 
+## Skill-Writing Standards (from writing-great-skills)
+A skill exists to wrangle determinism out of a stochastic system. PREDICTABILITY is the root virtue — the agent taking the same process every run. Every skill Forge creates must be audited against these standards:
+
+### Information hierarchy — three tiers
+1. In-skill step — ordered action in SKILL.md; each step ends on a COMPLETION CRITERION that is checkable (agent can tell done from not-done) and exhaustive. Vague criteria invite premature completion.
+2. In-skill reference — a definition/rule consulted on demand.
+3. External reference — pushed to a linked file, reached by a context pointer, loaded on demand. Progressive disclosure: keep the top legible, push detail down.
+
+### Model-invoked vs user-invoked
+- Model-invoked: keep a description so the agent can fire it autonomously AND other skills can reach it. Costs context load (description sits in window every turn).
+- User-invoked: set `disable-model-invocation: true` — strips the description from agent reach, only user typing the name invokes it. Zero context load but spends user cognitive load.
+- Pick model-invocation only when the agent must reach the skill on its own, or another skill must. If it only ever fires by hand, make it user-invoked.
+
+### Leading words
+A leading word is a compact concept already living in the model's pretraining that the agent thinks with while running the skill (e.g. fog of war, tracer bullets, tight loop). It anchors execution in the body and invocation in the description. Hunt for restatements that collapse into a single pretrained token: "fast, deterministic, low-overhead" → "tight". Fewer tokens AND a sharper hook.
+
+### No-op test
+Run every line through the no-op test: does it change behavior versus the default? "Be thorough" is a no-op (the agent is already thorough-ish); "relentless" is not. Delete sentences that fail, don't trim them.
+
+### Negation rule
+Steering by prohibition backfires — "don't think of an elephant" names the elephant. Prompt the POSITIVE: state the target behavior so the banned one is never spoken. Keep a prohibition only as a hard guardrail you can't phrase positively, and pair it with what to do instead.
+
+### Anti-patterns to check for
+- Premature completion — ending a step before genuinely done. Fix: sharpen the completion criterion first; only if irreducibly fuzzy, hide post-completion steps by splitting the skill.
+- Duplication — same meaning in more than one place. Keep single source of truth.
+- Sediment — stale layers that settle because adding feels safe. Requires pruning discipline.
+- Sprawl — skill too long even when every line is live. Cure: disclose reference behind pointers, split by branch.
+- No-op — line the model obeys by default, paying load to say nothing.
+
+### Pre-creation audit checklist (add to the existing Auto-Creation Checklist)
+- [ ] Every step ends with a checkable completion criterion
+- [ ] Each description trigger names a genuinely distinct branch (no synonym duplication)
+- [ ] Leading words used where restatements exist
+- [ ] No no-op sentences (run the no-op test line by line)
+- [ ] No negation-heavy phrasing (prompt positive)
+- [ ] Reference material pushed below the top level (progressive disclosure)
+
 ## Level History
 - **Lv.1** — Base: Pattern detection, skill creation with human approval
 - **Lv.2** — Autonomous: Auto-creates skills on complex tasks, error recovery, user corrections
 - **Lv.3 target (Project Daedalus Phase 1-2)** — Tool creation via CodeAct-lite: agents write code, test via `execute-tool.mjs`, save as permanent tools. TDD-first methodology with sandbox testing before registration.
+- **Lv.4** — Skill-writing quality bar: information hierarchy, leading words, no-op/negation rules, premature-completion defense (writing-great-skills absorbed, 2026-08-01)
