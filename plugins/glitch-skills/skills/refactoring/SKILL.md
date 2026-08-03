@@ -67,5 +67,31 @@ Rename → Extract → Inline → Move → Split → Restructure
 5. Commit after each successful atomic change
 6. Revert on red — never pile on fixes
 
+## Deep-Module Design (from codebase-design)
+
+### The vocabulary (use these terms exactly)
+- **Module** — anything with an interface and an implementation. Scale-agnostic: a function, class, package, or tier-spanning slice. Avoid: unit, component, service.
+- **Interface** — everything a caller must know to use the module correctly: type signature, invariants, ordering constraints, error modes, required config, performance characteristics. Avoid: API, signature (too narrow).
+- **Implementation** — what's inside a module. Distinct from Adapter (a thing that satisfies an interface at a seam).
+- **Depth** — leverage at the interface: amount of behavior a caller can exercise per unit of interface they must learn. Deep = lots of behavior behind a small interface. Shallow = interface nearly as complex as the implementation (avoid).
+- **Seam** — a place where you can alter behavior without editing in that place; where a module's interface lives.
+- **Leverage** — what callers get from depth: more capability per unit of interface learned. One implementation pays back across N call sites and M tests.
+- **Locality** — what maintainers get from depth: change, bugs, knowledge, verification concentrate in one place. Fix once, fixed everywhere.
+
+### The deletion test
+Imagine deleting the module. If complexity vanishes, it was a pass-through. If complexity reappears across N callers, it was earning its keep. Apply this to anything you suspect is shallow.
+
+### Principles
+- Depth is a property of the interface, not the implementation. A deep module can be internally composed of small, mockable, swappable parts — they just aren't part of the interface.
+- The interface is the test surface. Callers and tests cross the same seam. If you want to test past the interface, the module is probably the wrong shape.
+- One adapter means a hypothetical seam. Two adapters means a real one. Don't introduce a seam unless something actually varies across it.
+- Accept dependencies, don't create them (inject the gateway, don't `new` it inside).
+- Return results, don't produce side effects.
+- Small surface area. Fewer methods = fewer tests needed.
+
+### Deepening opportunities
+When refactoring, look for: modules that are shallow (interface nearly as complex as implementation), pure functions extracted just for testability where the real bugs hide in how they're called (no locality), tightly-coupled modules leaking across seams, untested or hard-to-test modules. Deepening a module pays off by making future changes to it easier.
+
 ## Level History
 - **Lv.1** — Base: 4-phase refactoring protocol with atomic change discipline.
+- **Lv.2** — Deep-module design: depth/seam/leverage/locality vocabulary, deletion test, testability principles (Matt Pocock, 2026-08-01).

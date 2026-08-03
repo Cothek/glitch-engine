@@ -263,8 +263,40 @@ After review is complete:
 - [ ] No dead code left behind
 - [ ] Dependencies are justified, not bloated
 
+## Two-Axis Review (from Matt Pocock)
+
+### The two axes
+Review the diff between HEAD and a fixed point (commit, branch, tag, merge-base) along TWO independent axes, run as PARALLEL sub-agents so neither pollutes the other's context:
+- **Standards** — does the code conform to the repo's documented coding standards (CODING_STANDARDS.md, CONTRIBUTING.md) PLUS the Fowler smell baseline below?
+- **Spec** — does the code faithfully implement the originating issue/PRD/spec?
+
+A change can pass one axis and fail the other. Code that follows every standard but implements the wrong thing = Standards pass, Spec fail. Code that does exactly what the issue asked but breaks conventions = Spec pass, Standards fail. Report them SEPARATELY — never merge or rerank across axes.
+
+### Process
+1. Pin the fixed point (commit SHA, branch, tag, main, HEAD~5). Capture `git diff <fixed-point>...HEAD` (three-dot) and `git log <fixed-point>..HEAD --oneline`. Confirm the ref resolves and diff is non-empty before spawning sub-agents.
+2. Identify the spec source, in order: issue refs in commit messages (#123, Closes #45) → a path the user passed → a PRD/spec file under docs/, specs/, .scratch/ → ask the user. If none, the Spec axis reports "no spec available".
+3. Identify standards sources: CODING_STANDARDS.md, CONTRIBUTING.md, plus the smell baseline below.
+4. Spawn both sub-agents in parallel (use @general for both). Standards agent: report per-file/hunk (a) documented-standard violations (cite standard + rule), (b) baseline smells (name + quote hunk). Distinguish hard violations from judgement calls; documented standards override the baseline; skip what tooling enforces. Spec agent: report (a) spec requirements missing/partial, (b) behaviour not asked for (scope creep), (c) requirements that look implemented but wrong. Quote the spec line for each.
+5. Aggregate under `## Standards` and `## Spec` headings verbatim. End with one-line summary: total findings per axis + worst issue within each axis. Don't pick a single winner across axes.
+
+### Fowler smell baseline (applies even when repo documents nothing)
+Each smell: what it is → how to fix. The repo overrides; each is a judgement call, never a hard violation; skip what tooling enforces.
+- Mysterious Name — name doesn't reveal what it does → rename; if no honest name comes, design's murky
+- Duplicated Code — same logic shape in more than one hunk/file → extract shared shape
+- Feature Envy — method reaches into another object's data more than its own → move method onto the data it envies
+- Data Clumps — same few fields/params travel together → bundle into one type
+- Primitive Obsession — primitive/string standing in for a domain concept → give it its own type
+- Repeated Switches — same switch/if-cascade on same type recurs → polymorphism or one shared map
+- Shotgun Surgery — one logical change forces scattered edits → gather into one module
+- Divergent Change — one file edited for several unrelated reasons → split so each changes for one reason
+- Speculative Generality — abstraction added for needs the spec doesn't have → delete it
+- Message Chains — long a.b().c().d() navigation → hide behind one method on the first object
+- Middle Man — class that mostly delegates onward → cut it, call the target direct
+- Refused Bequest — subclass ignores most of what it inherits → drop inheritance, use composition
+
 ## Level History
 - **Lv.1** — Base: 4-phase systematic code review with severity ratings.
 - **Lv.2** — Quality Gate: auto-trigger check, bypass criteria, gate verdict, testing handoff.
 - **Lv.3** — Startup-Safety Gate: Phase 0.5 checks boot sequence changes for degraded-mode compliance, fresh-clone resilience, and startup crash prevention.
 - **Lv.4** — Enhanced Review: 5-axis framework (correctness/security/readability/architecture/performance), honesty directives, dead code hunting, dependency discipline, common rationalizations, red flags, "demand evidence" rule, verification checklist.
+- **Lv.6** — Two-axis review (Standards + Spec) with parallel sub-agents + Fowler smell baseline (Matt Pocock, 2026-08-01).
