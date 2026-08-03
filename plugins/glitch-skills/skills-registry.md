@@ -11,6 +11,8 @@ timestamp: 2026-07-17T00:00:00Z
 
 ## Registered Skills (33)
 
+> **NOTE (2026-08-02):** The runtime skill set is larger than this index — 52 skills live in `.agents/skills/` and are auto-discovered by OpenCode. This registry documents the core/legacy set; the canonical runtime tree is `.agents/skills/`. Do not enumerate all 52 here — this table is intentionally a curated subset.
+
 | Skill | Description | Trigger |
 |-------|-------------|---------|
 | auto-commit | Structured git commits with TECHNICAL CHANGES + SESSION CONTEXT | "commit", "save changes", "git commit", Vigilant mode |
@@ -57,17 +59,20 @@ timestamp: 2026-07-17T00:00:00Z
 *Agent definitions in `.opencode/agents/` — loaded automatically, no manual invocation needed.*
 
 ### Free Agents (Try First)
+
+> **NOTE (2026-08-02):** The canonical skill tree is `.agents/skills/` (52 skills, auto-discovered by OpenCode). The legacy tree at `glitch-memorycore/plugins/glitch-skills/skills/` (24 skills) is historical. Skills listed here that only exist in the legacy tree may be unavailable at runtime.
+
 | Agent | File | Model | Purpose |
 |-------|------|-------|---------|
 | @general | `opencode.json` | deepseek-v4-flash-free | General-purpose — bash, file ops, simple edits, standard code |
 | @explore | `opencode.json` | deepseek-v4-flash-free | Codebase research — read-only, find files, search code |
-| @coder | `.opencode/agents/coder.md` | nemotron-3-ultra-free | Senior full-stack engineer — production code, typed, all states handled |
-| @ui-designer | `.opencode/agents/ui-designer.md` | nemotron-3-ultra-free | Senior UI designer — shadcn/ui, Radix, Tailwind v4, anti-slop rules |
-| @reviewer | `.opencode/agents/reviewer.md` | nemotron-3-ultra-free | Independent code quality gate — read-only, severity-rated reports |
-| @testing | `.opencode/agents/testing.md` | nemotron-3-ultra-free | Test writer — TDD, framework detection, edge case coverage |
-| @vision | `.opencode/agents/vision.md` | mimo-v2.5-free | Image/visual content analysis — uses read tool, bash: deny |
-| @vision-alt | `.opencode/agents/vision-alt.md` | qwen/qwen3.5-122b-a10b | Fallback image analysis — different model, same protocol. Used when @vision fails with model/API errors |
-| @pentester | `.opencode/agents/pentester.md` | nemotron-3-ultra-free | Application security tester — OWASP Top 10, API testing, tool-based scanning, structured reporting |
+| @coder | `.opencode/agents/coder.md` | nvidia/minimaxai/minimax-m3 | Senior full-stack engineer — production code, typed, all states handled |
+| @ui-designer | `.opencode/agents/ui-designer.md` | nvidia/minimaxai/minimax-m3 | Senior UI designer — shadcn/ui, Radix, Tailwind v4, anti-slop rules |
+| @reviewer | `.opencode/agents/reviewer.md` | nvidia/minimaxai/minimax-m3 | Independent code quality gate — read-only, severity-rated reports |
+| @testing | `.opencode/agents/testing.md` | nvidia/minimaxai/minimax-m3 | Test writer — TDD, framework detection, edge case coverage |
+| @vision | `.opencode/agents/vision.md` | nvidia/moonshotai/kimi-k2.6 | Image/visual content analysis — uses read tool, bash: deny |
+| @vision-alt | `.opencode/agents/vision-alt.md` | nvidia/qwen/qwen3.5-122b-a10b | Fallback image analysis — different model, same protocol. Used when @vision fails with model/API errors |
+| @pentester | `.opencode/agents/pentester.md` | nvidia/minimaxai/minimax-m3 | Application security tester — OWASP Top 10, API testing, tool-based scanning, structured reporting |
 | @glitch-omni | `.opencode/agents/glitch-omni.md` | deepseek-v4-flash | Direct-execution variant — no delegation, does everything itself. Alternative primary for Normal mode. |
 | @memory | `.opencode/agents/memory.md` | opencode/deepseek-v4-flash-free | Memory writer — reads and appends to `user/*.md` files only. Loads save-memory skill. |
 
@@ -88,9 +93,9 @@ timestamp: 2026-07-17T00:00:00Z
 | Free Model | Paid Fallback | Agents Using |
 |------------|--------------|-------------|
 | deepseek-v4-flash-free | deepseek-v4-flash (same family) | @general, @explore |
-| nemotron-3-ultra-free | qwen3.6-plus (same family) | @reviewer |
-| mimo-v2.5-free | qwen3.6-plus (cross-family) | @vision |
-| nemotron-3-ultra-free | qwen3.7-plus (cross-family) | @coder, @ui-designer, @testing, @pentester |
+| nvidia/minimaxai/minimax-m3 | qwen3.7-plus (cross-family) | @coder, @ui-designer, @testing, @pentester |
+| nvidia/minimaxai/minimax-m3 | qwen3.6-plus (cross-family) | @reviewer |
+| nvidia/moonshotai/kimi-k2.6 | qwen3.6-plus (cross-family) | @vision |
 | deepseek-v4-flash-free (free) | deepseek-v4-flash (same family) | @memory |
 
 ---

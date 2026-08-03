@@ -1,5 +1,5 @@
 ﻿{
-    "lastCheck":  "2026-07-27T08:22:43.8778981-05:00",
+    "lastCheck":  "2026-08-02T11:31:17.3026756-05:00",
     "sources":  {
                     "zen":  [
                                 "claude-fable-5",
@@ -49,6 +49,7 @@
                                 "minimax-m3",
                                 "minimax-m2.7",
                                 "minimax-m2.5",
+                                "kimi-k3",
                                 "kimi-k2.7-code",
                                 "kimi-k2.6",
                                 "kimi-k2.5",
@@ -85,6 +86,7 @@
                                "mimo-v2.5",
                                "hy3",
                                "hy3-preview",
+                               "gpt-5.6-luna",
                                "grok-4.5"
                            ],
                     "openrouter":  [
@@ -95,7 +97,6 @@
                                        "openrouter/nvidia/nemotron-3.5-content-safety:free",
                                        "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
                                        "openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-                                       "openrouter/poolside/laguna-m.1:free",
                                        "openrouter/google/gemma-4-26b-a4b-it:free",
                                        "openrouter/google/gemma-4-31b-it:free",
                                        "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
@@ -154,7 +155,6 @@
                                    "nvidia/ai-synthetic-video-detector",
                                    "nvidia/cosmos-reason2-8b",
                                    "nvidia/embed-qa-4",
-                                   "nvidia/ising-calibration-1-35b-a3b",
                                    "nvidia/ising-calibration-1.5-31b",
                                    "nvidia/llama-3.1-nemoguard-8b-content-safety",
                                    "nvidia/llama-3.1-nemoguard-8b-topic-control",
@@ -194,6 +194,7 @@
                                    "nvidia/nvidia-nemotron-nano-9b-v2",
                                    "nvidia/riva-translate-4b-instruct",
                                    "nvidia/riva-translate-4b-instruct-v1.1",
+                                   "nvidia/riva-translate-4b-instruct-v2",
                                    "nvidia/vila",
                                    "nvidia/openai/gpt-oss-120b",
                                    "nvidia/openai/gpt-oss-20b",
