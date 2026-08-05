@@ -930,3 +930,35 @@ node scripts/set-agent-tier.mjs --status
 ### Clarifying Note
 "switch to free mode" (R17) and "switch to free agents" (R23) are DIFFERENT. R17 restarts Glitch with a new config. R23 only changes dispatch targets. When in doubt, do NOT run glitch.mjs for an agents request, and do NOT change agent-tier for a mode request.
 
+## R24: Plan Before Complex Tasks — Mandatory Plan Step (Immutable Rule)
+
+BEFORE any task() dispatch or multi-file edit on a complex task, write a plan to `data/plans/current-plan.md` using the plan-first skill template. Then dispatch.
+
+### Complexity Trigger Matrix (ANY match → mandatory plan)
+1. **3+ files touched**, or **5+ todowrite items**
+2. **Keywords in task**: feature, build, migration, refactor, integrate, architecture, auth, database, API route, full-stack, end-to-end, design system, security
+3. **Touches shared code**: API routes, security, shared utilities, or a UI design system
+4. **Troy says**: "plan this", "complex task", "plan first", "plan before"
+
+### The Mandate
+1. Load `skill("plan-first")` to get the plan template
+2. Write the plan to `data/plans/current-plan.md` with these sections:
+   - **Goal** — what success looks like
+   - **Approach** — strategy, ordering, dependencies
+   - **Files to change** — explicit list with what changes and why
+   - **Risks & mitigations** — what could go wrong, how to handle it
+   - **Verification** — how to prove it works (commands, tests, manual steps)
+3. Once the plan file exists, proceed with dispatches and code edits per R15
+
+### Mechanical Enforcement
+`plan-reflex.js` throws on complex task dispatches or code file edits without a valid plan marker (file must exist and be < 6 hours old). This is the same pattern as dispatch-reflex.js, the mechanical enforcement for R15's dispatch-first workflow.
+
+### Bypass
+Include `quick task` or `--no-plan` in the task prompt to skip the gate for intentionally simple work. This is a conscious bypass — use it only when the task is genuinely simple despite matching a trigger.
+
+### After Completion
+Rotate the plan to `data/plans/archive/<timestamp>-<task>.md` so the gate stays meaningful for the next complex task.
+
+### Why This Rule Exists
+Glitch jumps straight from receiving a task to dispatching sub-agents without an up-front planning step. For complex work, this leads to missed files, wrong ordering, and rework. A 2-minute plan prevents hours of backtracking.
+

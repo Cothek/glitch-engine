@@ -57,6 +57,7 @@ timestamp: 2026-07-17T00:00:00Z
 | Skill | Description | Trigger |
 |-------|-------------|---------|
 | senior-developer | Full-stack implementation patterns — server actions, Next.js conventions, data layer design, state handling. Auto-created by Lv.2 Forge (2026-05-23) | Building features, implementing workflows, server actions, full-stack work |
+| plan-first | Structured plan template for complex tasks — Goal/Approach/Files/Risks/Verification. Mechanical gate via plan-reflex.js blocks dispatch without a plan. | "plan this", "complex task", "plan first", "plan before", auto-loads when plan-reflex.js blocks a dispatch |
 
 ## Agent Files (Auto-Discovered by OpenCode)
 *Agent definitions in `.opencode/agents/` — loaded automatically, no manual invocation needed.*
@@ -103,4 +104,4 @@ timestamp: 2026-07-17T00:00:00Z
 
 ---
 
-**Total: 35 skills + 22 agent definitions** — Last updated: 2026-08-02
+**Total: 36 skills + 22 agent definitions** — Last updated: 2026-08-04
