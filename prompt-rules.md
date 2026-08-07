@@ -852,22 +852,22 @@ The `stuck-detector.js` plugin monitors tool call patterns and writes `data/.stu
 
 ## R22: Mulahazah Memory Trigger — Mechanical Memory Writes (Immutable Rule)
 
-The `mulahazah.js` plugin observes every tool call and writes `data/MEMORY_TRIGGER_FLAG` when memory should be recorded. This converts the memory update protocol from a behavioral rule into a mechanical one.
+The `mulahazah.js` plugin observes every tool call and writes a per-session flag `data/MEMORY_TRIGGER_FLAG.<sessionID>` when memory should be recorded. This converts the memory update protocol from a behavioral rule into a mechanical one. The plugin also injects the `[MEMORY TRIGGER PENDING]` directive into the message stream via the transform hook when it fires — the model does not need to actively poll for it, but MAY check for the flag defensively. Only the parent/dispatcher session (the one that can call `task()`) should ever act on it; sub-agents must NOT attempt dispatch (handled by sub-agent prompts).
 
 ### When the Flag Fires
 
 The plugin writes the flag when ANY of these conditions are met:
 - **50 tool calls** have occurred since the last trigger
-- **15 minutes** have elapsed since session start (whichever comes first)
+- **30 minutes** have elapsed since session start (whichever comes first)
 - A **trigger phrase** is detected in tool args: "remember that", "i prefer", "from now on", "always do", "never do", "i want", "make sure to", "don't forget"
 
-A 2-minute cooldown prevents spam between triggers.
+A 5-minute cooldown prevents spam between triggers.
 
 ### Auto-Dispatch Protocol
 
 **At the start of every response, BEFORE any other action:**
 
-1. **Check for the flag:** Read `data/MEMORY_TRIGGER_FLAG`
+1. **Check for the flag:** Read `data/MEMORY_TRIGGER_FLAG.<sessionID>` (substitute your current session ID)
 2. **If the flag exists:**
    a. Read its contents (a summary of tool calls and session duration)
    b. Dispatch to `@memory` with the summary and the directive: "Record this session's observations to memory. Include any preferences, decisions, or lessons learned."
