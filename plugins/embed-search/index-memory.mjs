@@ -166,6 +166,88 @@ function sha256(text) {
 // Database setup — create tables and triggers if they don't exist
 // ---------------------------------------------------------------------------
 
+// External-content FTS5: memory_fts mirrors memory_chunks via content='memory_chunks'.
+// The 'delete' command in the AFTER UPDATE / AFTER DELETE triggers is ONLY valid on
+// external-content tables — a standalone FTS5 table crashes with "SQL logic error".
+// This is why the initial 480-chunk insert succeeded but any re-index after a file
+// changed (UPDATE path) crashed at updateChunk.run (index-memory.mjs:284).
+const FTS_CREATE_SQL = `
+  CREATE VIRTUAL TABLE IF NOT EXISTS memory_fts USING fts5(
+    content,
+    section_heading,
+    file_path,
+    content='memory_chunks',
+    content_rowid='id',
+    tokenize='porter unicode61'
+  );
+`;
+
+const TRIGGER_SQL = `
+  CREATE TRIGGER IF NOT EXISTS mc_ai AFTER INSERT ON memory_chunks BEGIN
+    INSERT INTO memory_fts(rowid, content, section_heading, file_path)
+    VALUES (new.id, new.content, new.section_heading, new.file_path);
+  END;
+
+  CREATE TRIGGER IF NOT EXISTS mc_ad AFTER DELETE ON memory_chunks BEGIN
+    INSERT INTO memory_fts(memory_fts, rowid, content, section_heading, file_path)
+    VALUES ('delete', old.id, old.content, old.section_heading, old.file_path);
+  END;
+
+  CREATE TRIGGER IF NOT EXISTS mc_au AFTER UPDATE ON memory_chunks BEGIN
+    INSERT INTO memory_fts(memory_fts, rowid, content, section_heading, file_path)
+    VALUES ('delete', old.id, old.content, old.section_heading, old.file_path);
+    INSERT INTO memory_fts(rowid, content, section_heading, file_path)
+    VALUES (new.id, new.content, new.section_heading, new.file_path);
+  END;
+`;
+
+// Migrate a legacy standalone-schema DB to external-content.
+// CREATE VIRTUAL TABLE IF NOT EXISTS won't alter an existing table, so a DB created
+// with the old schema keeps its broken triggers. Detect legacy by checking whether the
+// memory_fts CREATE SQL contains "content='memory_chunks'"; if not, drop the FTS table
+// + the 3 triggers so the new CREATE statements recreate them, then repopulate the FTS
+// index from memory_chunks (preserves the index without a full re-walk of all .md files).
+function migrateLegacyFts(db) {
+  const ftsRow = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='memory_fts'").get();
+  if (!ftsRow) {
+    return false; // no FTS table yet — fresh DB, nothing to migrate
+  }
+
+  // External-content tables include content='memory_chunks' in their CREATE SQL.
+  const isLegacy = !ftsRow.sql.includes("content='memory_chunks'");
+  if (!isLegacy) {
+    return false; // already external-content — no migration needed
+  }
+
+  console.log('Detected legacy standalone FTS5 schema — migrating to external-content...');
+
+  // Drop legacy triggers first (they reference memory_fts), then the FTS table itself.
+  // IF EXISTS guards against partial states from a previous interrupted migration.
+  db.exec(`
+    DROP TRIGGER IF EXISTS mc_ai;
+    DROP TRIGGER IF EXISTS mc_ad;
+    DROP TRIGGER IF EXISTS mc_au;
+    DROP TABLE IF EXISTS memory_fts;
+  `);
+
+  // Recreate with the external-content schema + triggers.
+  db.exec(FTS_CREATE_SQL);
+  db.exec(TRIGGER_SQL);
+
+  // Repopulate the FTS index from existing memory_chunks rows.
+  const chunkCount = db.prepare('SELECT COUNT(*) AS c FROM memory_chunks').get().c;
+  if (chunkCount > 0) {
+    db.exec(`
+      INSERT INTO memory_fts(rowid, content, section_heading, file_path)
+      SELECT id, content, section_heading, file_path FROM memory_chunks;
+    `);
+    console.log(`  Repopulated FTS index from ${chunkCount} existing chunks.`);
+  }
+
+  console.log('Legacy FTS5 schema migration complete.');
+  return true;
+}
+
 function initDB(db) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS memory_chunks (
@@ -176,31 +258,14 @@ function initDB(db) {
       content_hash TEXT NOT NULL,
       file_mtime INTEGER NOT NULL
     );
-
-    CREATE VIRTUAL TABLE IF NOT EXISTS memory_fts USING fts5(
-      content,
-      section_heading,
-      file_path,
-      tokenize='porter unicode61'
-    );
-
-    CREATE TRIGGER IF NOT EXISTS mc_ai AFTER INSERT ON memory_chunks BEGIN
-      INSERT INTO memory_fts(rowid, content, section_heading, file_path)
-      VALUES (new.id, new.content, new.section_heading, new.file_path);
-    END;
-
-    CREATE TRIGGER IF NOT EXISTS mc_ad AFTER DELETE ON memory_chunks BEGIN
-      INSERT INTO memory_fts(memory_fts, rowid, content, section_heading, file_path)
-      VALUES ('delete', old.id, old.content, old.section_heading, old.file_path);
-    END;
-
-    CREATE TRIGGER IF NOT EXISTS mc_au AFTER UPDATE ON memory_chunks BEGIN
-      INSERT INTO memory_fts(memory_fts, rowid, content, section_heading, file_path)
-      VALUES ('delete', old.id, old.content, old.section_heading, old.file_path);
-      INSERT INTO memory_fts(rowid, content, section_heading, file_path)
-      VALUES (new.id, new.content, new.section_heading, new.file_path);
-    END;
   `);
+
+  // Migrate any legacy standalone-schema DB before creating the (correct) external-content
+  // table + triggers. Must run after memory_chunks exists (external-content references it).
+  migrateLegacyFts(db);
+
+  db.exec(FTS_CREATE_SQL);
+  db.exec(TRIGGER_SQL);
 
   initEmbeddingsTable(db);
 }
