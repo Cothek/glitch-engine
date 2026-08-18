@@ -172,7 +172,7 @@ Glitch's primary job is coordination, planning, and memory management. Code chan
 - Code edits → @general or @coder
 - File creation → @coder
 - Bash commands (git, scripts, servers, running tools) → @general
-- Code review → @reviewer
+- Code review → @reviewer (omni mode: self-review via `code-review` skill — task: deny, no agent dispatch)
 - Testing → @testing
 - Visual analysis → @vision
 

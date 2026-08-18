@@ -66,23 +66,23 @@ When you need to FIND information from past sessions (preferences, decisions, pa
 node scripts/run-compaction.mjs
 ```
 
-This script handles the automatable infrastructure (timestamp update, diary staleness check, curriculum status, git status) and produces a visible checklist of what still needs AI judgment.
+This script handles the automatable infrastructure (timestamp update, diary staleness check, curriculum status, git status) and produces a visible checklist of what still needs AI judgment. Heavy checks (image GC, data audit, data review, memory index) are throttled to once per 24h by the script itself — they report "skipped" when not due; no action needed from the AI.
 
 After running the script, work through any remaining items:
 
 **Required (always do):**
 - 1. Promote any scratchpad entries to proper files (if any exist)
 - 2. Append diary entry if session was substantial (+10 turns or major work)
-- 3. Auto-commit: Dispatch to @general to execute `git add -A && git commit -m "memory: compaction YYYY-MM-DD" && git push` (no direct bash)
+- 3. Auto-commit: Dispatch to @general to execute `git add -A && git commit -m "memory: compaction YYYY-MM-DD" && git push` (no direct bash) — ONLY if the script's git status shows dirty files. If clean, skip the dispatch entirely.
 - 4. Run **Step 6 — Pattern scan**: Scan scratchpad + recent session for 3x+ repeated workflows or crystallized patterns. If found, read forge skill and create skill.
 - 5. Run **Step 7 — Self-review**: Read `read plugins/glitch-skills/skills/self-review/SKILL.md` and perform a system health review (opencode.json, skills-registry, prompt-rules, performance). Produce BLOCKER/ISSUE/SUGGESTION report.
 - 5.5 Run **Skill improvement review**: Read `user/pending-skill-improvements.md`. For each skill with 2+ pending entries or 1 high-significance entry, load the skill file, generate candidate diff(s) incorporating the proposed fixes, and present to the user for approval. If approved, dispatch the appropriate agent to apply the changes and update the entry status to "applied". If the user is not available (end of session), leave entries as `pending` for next session.
 
-**Optional (check if needed):**
+**Throttled (steps 6-9 run every 3rd compaction OR once per day, whichever first — the compaction.js plugin omits them from the prompt on light cycles, so only act on them if they appear in the injected prompt):**
 - 6. Run **Step 8 — Curriculum**: Read the curriculum skill and run the next challenge. Only if 2+ compaction cycles since last attempt.
 - 7. Run **Step 9 — Staleness**: Phase B (scan main-memory.md for stale refs), Phase C (promote diary if substantial).
 
-**Why this exists**: The previous 9-step protocol relied entirely on active recall — steps 6-9 had no visible trigger and were frequently skipped (self-review and curriculum never fired in 18+ days). The script provides a visible, repeatable trigger that eliminates the recall problem. It handles the automatable infrastructure; the AI handles the judgment calls. Step 5.5 closes the feedback loop — user corrections during sessions now have a structural path to durable skill improvements.
+**Why this exists**: The previous 9-step protocol relied entirely on active recall — steps 6-9 had no visible trigger and were frequently skipped (self-review and curriculum never fired in 18+ days). The script provides a visible, repeatable trigger that eliminates the recall problem. It handles the automatable infrastructure; the AI handles the judgment calls. Step 5.5 closes the feedback loop — user corrections during sessions now have a structural path to durable skill improvements. (2026-08-18: steps 6-9 throttled to every 3rd cycle / daily to cut token waste — self-review, curriculum, and skill review were running ~13x/day at ~7K tokens per prompt injection.)
 
 ### Stale-Session Detection (At Conversation Start)
 If `Last Memory Update` timestamp is >2 hours stale when you first respond:
@@ -94,9 +94,11 @@ If `Last Memory Update` timestamp is >2 hours stale when you first respond:
 
 Every @coder (or @coder-paid) dispatch MUST be followed by a @reviewer dispatch before presenting results to the user. The reviewer's own bypass criteria handle trivial changes — I do not pre-judge whether review is needed.
 
+**Omni-mode exception (2026-08-18)**: In glitch-omni mode (task: deny — no sub-agent dispatch), the review is performed by Glitch itself using the `code-review` skill, which MUST be loaded and followed in full (5-axis review, severity ratings, gate verdict). The self-review must produce the same PASS/FAIL verdict and be logged the same way. This exception applies ONLY to glitch-omni mode; normal Glitch mode still dispatches @reviewer.
+
 ### Pipeline
-1. **Write**: Dispatch all coding subtasks to @coder/@coder-paid in parallel
-2. **Batch review**: After ALL @coder/@coder-paid tasks complete, dispatch @reviewer ONCE with the full change set (not N sequential coder-to-reviewer cycles)
+1. **Write**: Dispatch all coding subtasks to @coder/@coder-paid in parallel (or implement directly in omni mode)
+2. **Batch review**: After ALL @coder/@coder-paid tasks complete, dispatch @reviewer ONCE with the full change set (not N sequential coder-to-reviewer cycles). In omni mode: run the `code-review` skill on the full change set once.
 3. **Act on verdict**:
    - BLOCKER found — report immediately, do not proceed
    - MAJOR findings — fix before presenting
@@ -478,10 +480,10 @@ Glitch's primary job is coordination — plan work, split into parallel subtasks
 1. **Parallelism** — Multitasking via independent sub-agents is Glitch's key advantage. Doing work directly is single-threaded, while dispatching N agents simultaneously gets N things done in the same wall time.
 2. **Model specialization** — Each agent uses a model specifically chosen for its task:
    - **Me (deepseek-v4-flash)** = general-purpose coordinator. Good for planning, memory, coordination — NOT optimized for code quality or design.
-   - **@coder (nvidia/minimaxai/minimax-m3)** = free agent for complex code. Paid fallback: @coder-paid (qwen3.7-plus) for architecture-quality output.
-   - **@ui-designer (nvidia/minimaxai/minimax-m3)** = free agent for UI/design. Paid fallback: @ui-designer-paid (qwen3.7-plus) for design system work.
-   - **@reviewer (nvidia/minimaxai/minimax-m3)** = free agent for code review. Paid fallback: @reviewer-paid (qwen3.6-plus) for quality gates.
-   - **@testing (nvidia/minimaxai/minimax-m3)** = free agent for test writing. Paid fallback: @testing-paid (qwen3.7-plus) for complex test suites.
+   - **@coder (nvidia/nemotron-3-nano-omni-30b-a3b-reasoning)** = free agent for complex code. Paid fallback: @coder-paid (qwen3.7-plus) for architecture-quality output.
+   - **@ui-designer (nvidia/nemotron-3-nano-omni-30b-a3b-reasoning)** = free agent for UI/design. Paid fallback: @ui-designer-paid (qwen3.7-plus) for design system work.
+   - **@reviewer (nvidia/nemotron-3-nano-omni-30b-a3b-reasoning)** = free agent for code review. Paid fallback: @reviewer-paid (qwen3.6-plus) for quality gates.
+   - **@testing (nvidia/nemotron-3-nano-omni-30b-a3b-reasoning)** = free agent for test writing. Paid fallback: @testing-paid (qwen3.7-plus) for complex test suites.
    - **@vision (nvidia/moonshotai/kimi-k2.6)** = free agent for image/visual analysis. Paid fallback: @vision-paid (qwen3.6-plus) for vision tasks.
    
    **When I write code directly, I'm using a suboptimal model for the job.** Delegation isn't just about speed — it's about using the right model for each task. This is the #1 reason to delegate.
@@ -857,11 +859,13 @@ The `mulahazah.js` plugin observes every tool call and writes a per-session flag
 ### When the Flag Fires
 
 The plugin writes the flag when ANY of these conditions are met:
-- **50 tool calls** have occurred since the last trigger
-- **30 minutes** have elapsed since session start (whichever comes first)
+- **200 tool calls** have occurred since the last trigger
+- **4 hours** have elapsed since session start (whichever comes first)
 - A **trigger phrase** is detected in tool args: "remember that", "i prefer", "from now on", "always do", "never do", "i want", "make sure to", "don't forget"
 
 A 5-minute cooldown prevents spam between triggers.
+
+> **2026-08-18**: Thresholds raised from 50 calls / 30 min to 200 calls / 4 hours to cut @memory dispatch frequency (~19/day → ~3-5/day). Trigger phrases still fire immediately — preferences and decisions are captured in real time; only routine session observations are batched.
 
 ### Auto-Dispatch Protocol
 
