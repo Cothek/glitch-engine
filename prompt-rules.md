@@ -859,13 +859,13 @@ The `mulahazah.js` plugin observes every tool call and writes a per-session flag
 ### When the Flag Fires
 
 The plugin writes the flag when ANY of these conditions are met:
-- **200 tool calls** have occurred since the last trigger
-- **4 hours** have elapsed since session start (whichever comes first)
+- **15 minutes** have elapsed since the last write with **≥1 tool call** since then (heartbeat — also captures session-end state when a session goes quiet: it fires once at the 15-min mark, then stops until new activity)
+- **1M new tokens** (input + output + reasoning) have accumulated since the last write (token burst — catches token-heavy sessions under the 15-min window)
 - A **trigger phrase** is detected in tool args: "remember that", "i prefer", "from now on", "always do", "never do", "i want", "make sure to", "don't forget"
 
-A 5-minute cooldown prevents spam between triggers.
+A 5-minute cooldown prevents phrase-trigger spam between triggers. Both the heartbeat and token-burst paths reset their window on every trigger, so they never double-fire.
 
-> **2026-08-18**: Thresholds raised from 50 calls / 30 min to 200 calls / 4 hours to cut @memory dispatch frequency (~19/day → ~3-5/day). Trigger phrases still fire immediately — preferences and decisions are captured in real time; only routine session observations are batched.
+> **2026-08-19**: The 200-call / 4-hour thresholds (2026-08-18) are REPLACED by the 15-min heartbeat + 1M-token-burst model (heartbeat interval set to 15 min per Troy 2026-08-19). The heartbeat guarantees a per-session cadence (~every 15 min of activity) without counting calls; the token burst catches heavy-compute sessions early. Trigger phrases still fire immediately — preferences and decisions are captured in real time; only routine session observations are batched. glitch-omni sessions (task: deny, self-fulfilling) are now flag-capable via DB agent detection.
 
 ### Auto-Dispatch Protocol
 
