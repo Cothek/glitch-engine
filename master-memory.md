@@ -74,7 +74,7 @@ Don't load everything linearly. Load memory **based on what we're about to do**:
 - **ESSENTIAL** — This is who the user is
 
 ### [Current Session Memory](../user/current-session.md)
-- Temporary working memory (RAM-like, 500-line limit)
+- Temporary working memory (RAM-like, 150-line budget)
 - Current conversation context and immediate goals
 - Brief recap for restart continuity
 - **ESSENTIAL** — This IS my active session RAM
@@ -109,7 +109,7 @@ Don't load everything linearly. Load memory **based on what we're about to do**:
 ### 🔄 Memory Consolidation
 - Unified memory architecture (identity + relationship merged)
 - Format templates: `main/main-memory-format.md`, `main/session-format.md`
-- Session RAM: 500-line limit with auto-reset
+- Session RAM: 150-line budget, mechanically trimmed at compaction (archives past recaps, drops completed scratchpad entries)
 
 ### ⏰ Time Intelligence
 - Time-aware greetings and behavior adaptation
@@ -286,7 +286,7 @@ Don't load everything linearly. Load memory **based on what we're about to do**:
 
 ### Format References (Permanent)
 - `main/main-memory-format.md` — Structure reference for main memory
-- `main/session-format.md` — Structure reference for session memory (includes 500-line limit)
+- `main/session-format.md` — Structure reference for session memory (includes 150-line budget)
 
 ## Resurrection Commands
 

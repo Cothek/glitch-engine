@@ -33,8 +33,8 @@
 - **Behavior Focus**: [Planning/Work/Relationship/Support]
 
 ## Session Memory Limit
-- **Maximum**: 500 lines
-- **Reset Behavior**: RAM-style reset preserving only Session Recap
+- **Maximum**: 150 lines
+- **Reset Behavior**: Mechanical trim at compaction — archives recaps from past sessions to `daily-diary/archived/`, drops ✅ COMPLETED scratchpad entries, keeps the most recent recap + OPEN NEXT ACTIONS
 - **On reset**: Preserve recap, clear details, rebuild from this template
 ```
 
