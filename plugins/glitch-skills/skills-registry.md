@@ -3,7 +3,7 @@ type: SkillIndex
 title: Skills Registry
 description: Index of all registered skills (35) and agent definitions (18) with trigger descriptions and model assignments.
 tags: [glitch, skills, registry]
-timestamp: 2026-07-17T00:00:00Z
+timestamp: 2026-09-23T00:00:00Z
 ---
 
 # Skills Registry — Glitch Skill Index
@@ -11,7 +11,7 @@ timestamp: 2026-07-17T00:00:00Z
 
 ## Registered Skills (35)
 
-> **NOTE (2026-08-02):** The runtime skill set is larger than this index — 52 skills live in `.agents/skills/` and are auto-discovered by OpenCode. This registry documents the core/legacy set; the canonical runtime tree is `.agents/skills/`. Do not enumerate all 52 here — this table is intentionally a curated subset.
+> **NOTE (2026-09-23): SOURCE OF TRUTH consolidated into this repo.** Canonical tree is now `glitch-memorycore/plugins/glitch-skills/skills/` (65 skills — the former `.agents/skills/` canonical set merged in, this repo's 3 exclusives `handoff`/`resolving-merge-conflicts`/`wayfinder` retained). `.agents/skills/` is a GENERATED runtime target for OpenCode, kept in sync via `node scripts/sync-skills.mjs` (future `.pi/skills/` target activates after the glitch-pi fork — Plan 2 §12.3). Edit skills HERE, then run the sync; never edit `.agents/skills/` directly (overwritten on next sync). This table remains a curated subset — do not enumerate all 65.
 
 | Skill | Description | Trigger |
 |-------|-------------|---------|
@@ -64,7 +64,7 @@ timestamp: 2026-07-17T00:00:00Z
 
 ### Free Agents (Try First)
 
-> **NOTE (2026-08-02):** The canonical skill tree is `.agents/skills/` (52 skills, auto-discovered by OpenCode). The legacy tree at `glitch-memorycore/plugins/glitch-skills/skills/` (24 skills) is historical. Skills listed here that only exist in the legacy tree may be unavailable at runtime.
+> **NOTE (2026-09-23):** Canonical skill tree is THIS repo's `glitch-memorycore/plugins/glitch-skills/skills/` (65 skills, source of truth after consolidation). `.agents/skills/` (65) is the generated OpenCode runtime target — sync with `node scripts/sync-skills.mjs`. Edit here, never in `.agents/skills/` directly.
 
 | Agent | File | Model | Purpose |
 |-------|------|-------|---------|

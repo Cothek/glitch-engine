@@ -4,7 +4,8 @@ description: "MUST use when user says 'create skill', 'new skill', 'forge this',
              'level up', 'upgrade skill', 'self improve',
              or when Glitch detects a repeated pattern (3+ occurrences),
              or after complex task completion (5+ steps), error recovery,
-             or user corrections of approach."
+             or user corrections of approach,
+             or when accumulated user feedback for a skill reaches 2+ entries."
 ---
 
 # Forge Self-Improvement
@@ -44,10 +45,50 @@ Before creating, verify:
 8. On 3 consecutive failures → flagged as `degraded` for review
 
 #### For Skills
-1. Create `plugins/glitch-skills/skills/<name>/SKILL.md` using skill-format.md template
-2. Register in `plugins/glitch-skills/skills-registry.md` under "Auto-Created Skills"
+1. Create `.agents/skills/<name>/SKILL.md` using skill-format.md template
+2. Register in `glitch-memorycore/plugins/glitch-skills/skills-registry.md` under "Auto-Created Skills"
 3. Output: "Created new skill: [name] — triggers on [patterns]"
 4. No approval needed — skill is live immediately
+
+## Level-Up Existing Skill
+
+Triggered when `user/pending-skill-improvements.md` has 2+ entries for the same skill, or 1 entry with `major`/`critical` significance.
+
+### Level-Up Flow
+1. **Load the feedback** — Read `user/pending-skill-improvements.md` to get the accumulated feedback for the target skill
+2. **Load the target skill** — Read the skill's SKILL.md to understand current content
+3. **Group feedback** — Group entries by topic (e.g., "anti-slop rules", "trigger descriptions", "edge case handling")
+4. **Generate candidate diffs** — For each group of feedback, propose a specific change to the skill:
+   - "Add to anti-slop rules: [new rule]"
+   - "Update trigger description: [change]"
+   - "Add verification step: [new step]"
+5. **Present for approval** — Show the user: "Skill [name] has [N] accumulated feedback entries. Proposed changes: [diffs]. Apply? (Y/n)"
+6. **Apply with approval** — If approved, dispatch the appropriate agent to edit the SKILL.md and update the entry status in `pending-skill-improvements.md`
+7. **Log** — Record the level-up in `user/forge-log.md` with the skill name, what changed, and which feedback entries triggered it
+
+### Significance Thresholds
+| Pending Entries | Significance Level | Action |
+|----------------|-------------------|--------|
+| 1, minor | One-off nitpick | Hold for another occurrence |
+| 1, notable | Clear preference | Present for approval at next compaction |
+| 1, major | Explicit directive or repeat pattern | Present for approval at next compaction |
+| 1, critical | Structural problem causing repeated failure | Present for approval immediately |
+| 2+ (any significance) | Repeat feedback | Present for approval at next compaction |
+| 3+ same topic | Crystallized pattern | Auto-promote to level-up (no approval needed for mechanical changes) |
+
+### Example Level-Up
+```
+User feedback accumulated for 'ui-craft':
+  1. "This dialog is too busy" — overlay had 5+ sections visible
+  2. "Why are all the cards the same size?" — no visual hierarchy
+  → Proposed: Add 2 new anti-slop rules (progressive disclosure, visual hierarchy)
+  → Forge applies after user approval
+  → Entry status → "applied"
+```
+
+### Contrast with Creation
+- **Creation**: New skill from scratch, triggered by 3x+ workflow patterns or complex task completion
+- **Level-Up**: Existing skill improvement, triggered by user feedback accumulation or directives
 
 ## Manual Trigger
 User says "create skill" / "forge this" / "self improve":
@@ -60,8 +101,9 @@ User says "create skill" / "forge this" / "self improve":
 ```
 Pattern detected or user triggers Forge
   → Gather evidence
+  → Accumulated feedback for existing skill? → Level-Up flow (user approval required)
   → Autonomous triggers? Create directly + register in index
-  → Manual trigger? Propose → User approves → Create
+  → Manual trigger? Propose → User approves → Create or Level-Up
   → Skill is live and auto-triggers in future
 ```
 
@@ -77,45 +119,7 @@ Pattern detected or user triggers Forge
 4. Minimal viable skill — start at Lv.1, evolve organically
 5. Always register new skills in the registry index
 
-## Skill-Writing Standards (from writing-great-skills)
-A skill exists to wrangle determinism out of a stochastic system. PREDICTABILITY is the root virtue — the agent taking the same process every run. Every skill Forge creates must be audited against these standards:
-
-### Information hierarchy — three tiers
-1. In-skill step — ordered action in SKILL.md; each step ends on a COMPLETION CRITERION that is checkable (agent can tell done from not-done) and exhaustive. Vague criteria invite premature completion.
-2. In-skill reference — a definition/rule consulted on demand.
-3. External reference — pushed to a linked file, reached by a context pointer, loaded on demand. Progressive disclosure: keep the top legible, push detail down.
-
-### Model-invoked vs user-invoked
-- Model-invoked: keep a description so the agent can fire it autonomously AND other skills can reach it. Costs context load (description sits in window every turn).
-- User-invoked: set `disable-model-invocation: true` — strips the description from agent reach, only user typing the name invokes it. Zero context load but spends user cognitive load.
-- Pick model-invocation only when the agent must reach the skill on its own, or another skill must. If it only ever fires by hand, make it user-invoked.
-
-### Leading words
-A leading word is a compact concept already living in the model's pretraining that the agent thinks with while running the skill (e.g. fog of war, tracer bullets, tight loop). It anchors execution in the body and invocation in the description. Hunt for restatements that collapse into a single pretrained token: "fast, deterministic, low-overhead" → "tight". Fewer tokens AND a sharper hook.
-
-### No-op test
-Run every line through the no-op test: does it change behavior versus the default? "Be thorough" is a no-op (the agent is already thorough-ish); "relentless" is not. Delete sentences that fail, don't trim them.
-
-### Negation rule
-Steering by prohibition backfires — "don't think of an elephant" names the elephant. Prompt the POSITIVE: state the target behavior so the banned one is never spoken. Keep a prohibition only as a hard guardrail you can't phrase positively, and pair it with what to do instead.
-
-### Anti-patterns to check for
-- Premature completion — ending a step before genuinely done. Fix: sharpen the completion criterion first; only if irreducibly fuzzy, hide post-completion steps by splitting the skill.
-- Duplication — same meaning in more than one place. Keep single source of truth.
-- Sediment — stale layers that settle because adding feels safe. Requires pruning discipline.
-- Sprawl — skill too long even when every line is live. Cure: disclose reference behind pointers, split by branch.
-- No-op — line the model obeys by default, paying load to say nothing.
-
-### Pre-creation audit checklist (add to the existing Auto-Creation Checklist)
-- [ ] Every step ends with a checkable completion criterion
-- [ ] Each description trigger names a genuinely distinct branch (no synonym duplication)
-- [ ] Leading words used where restatements exist
-- [ ] No no-op sentences (run the no-op test line by line)
-- [ ] No negation-heavy phrasing (prompt positive)
-- [ ] Reference material pushed below the top level (progressive disclosure)
-
 ## Level History
 - **Lv.1** — Base: Pattern detection, skill creation with human approval
 - **Lv.2** — Autonomous: Auto-creates skills on complex tasks, error recovery, user corrections
 - **Lv.3 target (Project Daedalus Phase 1-2)** — Tool creation via CodeAct-lite: agents write code, test via `execute-tool.mjs`, save as permanent tools. TDD-first methodology with sandbox testing before registration.
-- **Lv.4** — Skill-writing quality bar: information hierarchy, leading words, no-op/negation rules, premature-completion defense (writing-great-skills absorbed, 2026-08-01)
