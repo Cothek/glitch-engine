@@ -4,3 +4,6 @@
 
 # Claude Code settings
 .claude/settings.local.json
+
+# Stale template copies — authoritative memory lives in glitch-ai/user/ (Plan 2 §12: user/ single-writer)
+/users/
