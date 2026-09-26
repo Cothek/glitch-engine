@@ -2,6 +2,8 @@
 
 When producing ANY written content (responses, documentation, comments, commit messages, code review comments, or generated text), apply these rules to avoid common AI writing tells.
 
+**Bound by default**: R23 in `.pi/agent-profiles/*.md` requires these rules on every response, so this skill is the reference for a rule that is always on, not an optional pass. Load it when you need the full table, and load `linter` to check a long draft.
+
 ## Two Modes
 
 This skill operates in two modes. Pick the one that fits the context.
