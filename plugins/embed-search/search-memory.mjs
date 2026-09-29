@@ -15,14 +15,15 @@
  *   node search-memory.mjs -q "autonomous agents" --hybrid --limit 5
  *   node search-memory.mjs -q "semantic search" --embeddings-only
  *
- * FTS5 query syntax supported:
+ * FTS5 query syntax supported (after sanitization — see buildMatchString):
  *   Simple words:  memory
  *   Phrases:       "memory update"
  *   AND:           memory AND update
  *   OR:            memory OR preference
  *   NOT:           memory NOT stale
  *   Prefix:        memo*
- *   NEAR:          NEAR(memory update, 3)
+ *   NEAR:          NEAR(memory update, 3)  — see note in buildMatchString
+ *   Hyphenated terms are safe: session-end, auth-proxy, cross-session
  */
 
 import { createRequire } from 'module';
@@ -186,6 +187,48 @@ function printJsonResults(results, memoryDir) {
   });
 
   console.log(JSON.stringify(output, null, 2));
+}
+
+// ---------------------------------------------------------------------------
+// MATCH string builder — sanitize user queries for FTS5
+// ---------------------------------------------------------------------------
+
+// FTS5 parses bare `session-end` as column-filter syntax and throws
+// "no such column: end". Every bare term is therefore double-quoted (internal
+// quotes doubled) so special characters are literal; a quoted hyphenated
+// term becomes an adjacent-token phrase, which is exactly how the unicode61
+// tokenizer indexed it. Documented syntax still works:
+//   - AND/OR/NOT operators pass through unquoted (case-insensitive)
+//   - already-quoted phrases pass through untouched
+//   - trailing `*` becomes a prefix phrase: memo* -> "memo"*
+// Note: NEAR(...) is documented for raw DB queries but is NOT special-cased
+// here — its comma/paren tokens get quoted like any other term.
+const FTS5_OPERATORS = new Set(['AND', 'OR', 'NOT', 'NEAR']);
+
+function buildMatchString(query) {
+  const tokens = query.match(/"[^"]*"|\S+/g) || [];
+  const out = [];
+  for (const tok of tokens) {
+    const upper = tok.toUpperCase();
+    if (FTS5_OPERATORS.has(upper)) {
+      out.push(upper);
+    } else if (tok.startsWith('"') || tok === '(' || tok === ')') {
+      out.push(tok);
+    } else {
+      let stem = tok;
+      let prefix = '';
+      if (stem.endsWith('*')) {
+        stem = stem.slice(0, -1);
+        prefix = '*';
+      }
+      if (stem.length === 0) {
+        out.push(tok); // lone "*" — leave as typed
+      } else {
+        out.push('"' + stem.replace(/"/g, '""') + '"' + prefix);
+      }
+    }
+  }
+  return out.join(' ');
 }
 
 // ---------------------------------------------------------------------------
@@ -427,8 +470,8 @@ async function main() {
       finalResults = await runEmbeddingsOnlySearch(db, query, limit);
       hasHybridScores = true;
     } else if (hybrid) {
-      // Run BM25 first
-      const bm25Results = runBm25Search(db, query, limit * 2); // Get more candidates for fusion
+      // Run BM25 first (sanitized MATCH string; embeddings use the raw query)
+      const bm25Results = runBm25Search(db, buildMatchString(query), limit * 2); // Get more candidates for fusion
 
       if (bm25Results.length === 0 && !jsonOutput) {
         console.log(`No BM25 results for: "${query}" — trying embedding search...`);
@@ -447,7 +490,7 @@ async function main() {
       }
     } else {
       // Standard BM25 only
-      finalResults = runBm25Search(db, query, limit);
+      finalResults = runBm25Search(db, buildMatchString(query), limit);
     }
 
     if (!finalResults || finalResults.length === 0) {
