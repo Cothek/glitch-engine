@@ -32,7 +32,13 @@ Append to `main/post-mortems.md`:
 **Prevention**: [Specific action]
 ```
 
-### Step 3: Reference
+### Step 3: Standards feedback (mandatory)
+Ask: "Should `docs/engineering-standards.md` change because of this?"
+If yes, apply the rule change in the same session and append one line to its
+"Change log of standards" section linking back to this post-mortem entry.
+Standards that do not absorb lessons decay.
+
+### Step 4: Reference
 When starting work in a domain, check `main/post-mortems.md` for relevant past lessons.
 
 ## Rules
