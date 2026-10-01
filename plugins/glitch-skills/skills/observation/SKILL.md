@@ -64,6 +64,12 @@ Any tier finds code → Refine specific files
 Refine finds systemic → Audit full system
 ```
 
+## Repo Hygiene (Survey + Audit tiers)
+Run `node scripts/repo-hygiene.mjs` (report-only) and include its three-repo summary in the output:
+untracked files, backup/temp litter, stale tracked files, memory frontmatter staleness, orphaned skills.
+Never delete on findings: report, get Troy's confirmation, then `scripts/janitor.mjs --apply` or a human deletes.
+Repo purposes and the file-category rule live in the root `AGENTS.md` ("Repo purpose & file hygiene").
+
 ## Mandatory Rules
 1. Always dependency scan first
 2. Never assume standard library behavior
