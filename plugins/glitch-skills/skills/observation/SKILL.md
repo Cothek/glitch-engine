@@ -70,6 +70,16 @@ untracked files, backup/temp litter, stale tracked files, memory frontmatter sta
 Never delete on findings: report, get Troy's confirmation, then `scripts/janitor.mjs --apply` or a human deletes.
 Repo purposes and the file-category rule live in the root `AGENTS.md` ("Repo purpose & file hygiene").
 
+## Standards Compliance Checklist (Audit tier)
+Run against the project and report pass/fail per row with evidence:
+1. AGENTS.md exists and points to `engineering-standards.md`
+2. Definition-of-done rules visible: plan-first, impact-before-edit, review marker before commit
+3. Branch discipline (R16): no core edits on main since last audit
+4. No secrets/tokens in tracked files (scan config + recent diffs)
+5. Test setup used for new behavior, or gaps named out loud (R5)
+6. Repo hygiene report has no unactioned flags older than 30 days (`scripts/repo-hygiene.mjs`)
+7. Conventional commits in last 20 commits
+
 ## Mandatory Rules
 1. Always dependency scan first
 2. Never assume standard library behavior
