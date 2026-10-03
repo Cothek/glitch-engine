@@ -1,3 +1,8 @@
+---
+name: linter
+description: "Deterministic AI-slop checklist for any text. MUST use before publishing docs, READMEs, PR descriptions, comments, or commit messages, and whenever the user says lint, check for slop, or verify writing. Flags filler, hedging, padding, and formatting tics."
+---
+
 # Linter - AI Slop Detector
 
 Run a deterministic checklist against any text (drafts, docs, PR descriptions, error messages, comments, commit messages) to flag AI slop patterns. Verification skill, not a generation skill.

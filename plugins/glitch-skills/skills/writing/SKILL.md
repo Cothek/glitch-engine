@@ -1,3 +1,8 @@
+---
+name: writing
+description: "Reference rules for removing AI writing tells from any written output (responses, docs, comments, commit messages, PR text). Bound by default via R23 in the Pi agent profiles; load when you need the full rule table or the linter pass."
+---
+
 # Writing Craft - Remove AI Telltales
 
 When producing ANY written content (responses, documentation, comments, commit messages, code review comments, or generated text), apply these rules to avoid common AI writing tells.
