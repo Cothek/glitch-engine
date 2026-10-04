@@ -1,7 +1,7 @@
 ---
 name: plan-first
 description: "MUST use when user says 'plan this', 'complex task', 'plan first',
-             'plan before', or when plan-reflex.js blocks a dispatch.
+             'plan before', or when the routing.ts plan gate blocks a dispatch.
              Structured plan template for complex tasks before execution."
 ---
 
@@ -23,7 +23,7 @@ If NONE of these match, the task is simple enough to proceed without a plan.
 
 ## The Plan Template
 
-Write the plan to `data/plans/current-plan.md` (overwrite any previous plan). Use this exact structure:
+Write the plan to `data/plans/sessions/<session-id>/current-plan.md` (overwrite any previous plan). If the gate blocks you, copy the exact path from its block message — that printed path is the one it accepts. Use this exact structure:
 
 ```markdown
 # Plan: [Short task title]
@@ -50,8 +50,8 @@ How to prove it works. Commands to run, tests to check, manual steps.
 
 ## Output Contract
 
-1. Write the plan to `data/plans/current-plan.md`
-2. The plan-reflex.js gate checks for this file's existence and mtime (must be < 6 hours old)
+1. Write the plan to `data/plans/sessions/<session-id>/current-plan.md` (your session id; the gate's block message prints the exact path)
+2. The routing.ts plan gate checks for this file's existence and mtime (must be < 6 hours old)
 3. Once the plan exists, dispatches and code edits are unblocked
 4. Proceed with execution per R15 (dispatch-first workflow)
 
@@ -60,10 +60,10 @@ How to prove it works. Commands to run, tests to check, manual steps.
 Rotate the plan so the gate stays meaningful for the next task:
 
 ```
-Rename: data/plans/current-plan.md → data/plans/archive/<YYYY-MM-DD>-<short-task-name>.md
+Rename: data/plans/sessions/<session-id>/current-plan.md → data/plans/archive/<YYYY-MM-DD>-<short-task-name>.md
 ```
 
-This clears the marker so the next complex task must also produce a plan.
+The 6-hour freshness window is what keeps the gate meaningful for the next complex task; archiving keeps sessions/ tidy.
 
 ## Bypass
 
