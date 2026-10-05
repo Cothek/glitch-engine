@@ -45,7 +45,7 @@ Before creating, verify:
 8. On 3 consecutive failures → flagged as `degraded` for review
 
 #### For Skills
-1. Create `.agents/skills/<name>/SKILL.md` using skill-format.md template
+1. Create `.pi/skills/<name>/SKILL.md` using the `glitch-memorycore/plugins/glitch-skills/skill-format.md` template
 2. Register in `glitch-memorycore/plugins/glitch-skills/skills-registry.md` under "Auto-Created Skills"
 3. Output: "Created new skill: [name] — triggers on [patterns]"
 4. No approval needed — skill is live immediately
@@ -111,6 +111,20 @@ Pattern detected or user triggers Forge
 - Skills registry (`skills-registry.md`) is loaded at every session start
 - Full skill content loaded on demand via progressive disclosure
 - Auto-created skills appear under "Auto-Created Skills" in the registry
+
+## Skill Versioning Convention
+
+Every skill forged or leveled up from now on carries an evolution ledger in its frontmatter:
+
+```yaml
+version: 1                 # starts at 1 on creation, +1 per level-up
+last-improved: 2026-10-05  # date of the last forge or level-up (YYYY-MM-DD)
+```
+
+- **New skill** — write both lines at creation: `version: 1` plus today's date.
+- **Level-up** — increment `version` by 1 and set `last-improved` to today, in the same edit as the level-up.
+- **Legacy skills** — the pre-existing skill set is exempt until its first level-up; do NOT mass-edit frontmatter. On a legacy skill's first level-up, add both lines entering at `version: 2` (its Lv.1 state counts as version 1).
+- **Staleness** — self-review flags skills whose `last-improved` is 90+ days old or missing.
 
 ## Principles
 1. Autonomous by default for clear patterns — no approval bottleneck

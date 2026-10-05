@@ -70,9 +70,9 @@ Improve the Glitch system itself.
 | # | Description | Success Criteria |
 |---|-------------|-----------------|
 | 1 | Find a skill with an inaccurate trigger description and fix it | PR description + change committed |
-| 2 | Identify an agent in opencode.json on a suboptimal model and propose upgrade | Proposal documented |
-| 3 | Find a gap in prompt-rules.md and write a new rule | Rule + rationale documented |
-| 4 | Review forge-log.md for undocumented automation triggers | Missing triggers documented |
+| 2 | Identify an agent in `.pi/agents/*.md` on a suboptimal model and propose upgrade | Proposal documented |
+| 3 | Find a gap in `.pi/SYSTEM.md` and write a new rule | Rule + rationale documented |
+| 4 | Review `user/forge-log.md` for undocumented automation triggers | Missing triggers documented |
 
 ### Level 4 — Memory Consolidation
 
@@ -94,6 +94,10 @@ Improve the curriculum itself.
 | 2 | Find a challenge that's too easy or hard and adjust it | Difficulty adjusted |
 | 3 | Propose a new level type | Level spec added |
 
+### Post-Mortem Feed
+
+`user/post-mortems.md` is a live challenge source, not just a log. Entries from the last 30 days whose **Prevention** action names a repeatable weakness generate a challenge at the current level targeting that weakness. Failure-driven challenges take priority over the static pool — they close real, recent gaps. Track them in the state file's `postMortemChallenges` array; retire a weakness once a challenge targeting it passes.
+
 ## Curriculum State
 
 Tracked in `plugins/curriculum/curriculum-state.json`:
@@ -107,6 +111,7 @@ Tracked in `plugins/curriculum/curriculum-state.json`:
     { "id": "C002", "description": "Reverse a string", "toolSaved": "reverse-string.mjs", "timestamp": 1700000100 }
   ],
   "failedChallenges": [],
+  "postMortemChallenges": [],
   "toolsCreated": 0,
   "startedAt": 1700000000,
   "lastAttemptAt": 1700000100,
@@ -115,7 +120,7 @@ Tracked in `plugins/curriculum/curriculum-state.json`:
 }
 ```
 
-If the state file doesn't exist, create it with `{ "level": 1, "completedChallenges": [], "completedDetails": [], "failedChallenges": [], "toolsCreated": 0, "startedAt": <now>, "lastAttemptAt": null, "toolsAtStart": <current tool count>, "skillsImproved": [] }`.
+If the state file doesn't exist, create it with `{ "level": 1, "completedChallenges": [], "completedDetails": [], "failedChallenges": [], "postMortemChallenges": [], "toolsCreated": 0, "startedAt": <now>, "lastAttemptAt": null, "toolsAtStart": <current tool count>, "skillsImproved": [] }`.
 
 ## Trigger Workflow
 
@@ -130,29 +135,33 @@ At R3 step 8 (after forge check and self-review):
    - Level 3: 3 improvements → promote to Level 4
    - Level 4: 2 consolidations → promote to Level 5
 4. Pick next uncompleted challenge at current level
-5. Attempt the challenge:
+5. Read `user/post-mortems.md`; entries from the last 30 days whose Prevention
+   action names a repeatable weakness generate a challenge at the current level
+   targeting that weakness. These failure-driven challenges take priority over
+   the static pool.
+6. Attempt the challenge:
    - Level 1: Dispatch to @coder or @general
      "Build a tool that [description]. Use tdd-test.mjs with these test cases:
       [test cases]. Save on pass to plugins/tools/<name>.mjs"
    - Level 2+: Dispatch to @coder or @general with description
-6. Score the result:
+7. Score the result:
    - tdd-test.mjs all pass → challenge passed
    - tdd-test.mjs any fail → challenge failed (log result, retry next time)
-7. Update curriculum state: record pass/fail, update tools count
-8. If 3 consecutive failures at same level → log to forge-log.md as gap
-9. Continue compaction
+8. Update curriculum state: record pass/fail, update tools count
+9. If 3 consecutive failures at same level → log to `user/forge-log.md` as gap
+10. Continue compaction
 ```
 
 ## Verifier Integration
 
 All Level 1 challenges use `tdd-test.mjs` as the verifier:
 ```bash
-node plugins/dev-loop/tdd-test.mjs \
+node glitch-memorycore/plugins/dev-loop/tdd-test.mjs \
   --code "function handler(input) { /* agent's implementation */ }" \
   --tests '[{"input": <input>, "expected": <expected>, "name": "test name"}]'
 ```
 
-Pass → save to tools/, update curriculum state.
+Pass → save to `plugins/tools/`, update curriculum state.
 Fail → agent iterates, re-dispatch at next compaction.
 
 Level 2+ verifiers are challenge-specific and documented in the success criteria.

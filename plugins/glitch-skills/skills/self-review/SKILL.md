@@ -22,20 +22,20 @@ The meta-agent is a **passive review protocol** that runs at compaction checkpoi
 
 ## Review Checklist
 
-### 1. Agent Configs (`opencode.json`)
+### 1. Agent Configs (`.pi/agents/*.md` + `.pi/agent-profiles/*.md`)
 
-Read the file and check each agent object:
+Read every agent role file and mode profile, and check each definition:
 
 | Check | What to look for |
 |-------|-----------------|
-| **Model adequacy** | Is each agent on the right model for its task type? (e.g., @coder on a weak model = bad) |
+| **Model adequacy** | Is the `model:` pin in each `.pi/agents/*.md` right for its task type? (e.g., @coder on a weak model = bad) |
 | **Missing agents** | Is there a recurring task type that has no dedicated agent? |
-| **Orphaned agents** | Are there agents defined in opencode.json that don't appear in prompt-rules.md Selection Guide? |
-| **Missing agents** | Are there agents referenced in prompt-rules.md that don't exist in opencode.json? |
+| **Orphaned agents** | Are there agents defined in `.pi/agents/` that don't appear in the delegation role list in `.pi/SYSTEM.md` (R6)? |
+| **Missing agents** | Are there roles listed in `.pi/SYSTEM.md` (R6) that have no `.pi/agents/*.md` file? |
 | **Stale prompts** | Do any agent prompts reference old file paths or outdated workflows? |
 | **Config errors** | Missing fields, broken permission rules, invalid instructions paths |
 
-### 2. Skills Registry (`skills-registry.md`)
+### 2. Skills Registry (`glitch-memorycore/plugins/glitch-skills/skills-registry.md`)
 
 Check every registered skill:
 
@@ -43,12 +43,13 @@ Check every registered skill:
 |-------|-----------------|
 | **Path validity** | Does the SKILL.md file exist at the registered path for each skill? |
 | **Trigger accuracy** | Does the trigger description match what the skill actually does? |
-| **Stale skills** | Skills not triggered in 30+ days (check forge-log for usage) |
+| **Stale skills** | Skills not triggered in 30+ days (check `user/forge-log.md` for usage) |
+| **Ledger staleness** | Skills whose `last-improved` frontmatter is 90+ days old or missing (legacy skills are exempt until their first level-up) |
 | **Overlap** | Two skills with overlapping triggers (redundant) |
 | **Missing skills** | Common workflows with no skill coverage |
 | **Auto-created orphans** | Auto-created skills that were never registered in the registry |
 
-### 3. Prompt Rules (`prompt-rules.md`)
+### 3. Behavior Rules (`.pi/SYSTEM.md`)
 
 Check the behavioral rules:
 
@@ -58,11 +59,11 @@ Check the behavioral rules:
 | **Contradictions** | Two rules that conflict or override each other implicitly |
 | **Gaps** | Common scenarios with no rule coverage |
 | **Stale rules** | Rules written for workflows that have since changed |
-| **Agent Selection Guide** | Does it match the actual agents in opencode.json? |
+| **Agent Selection Guide** | Does the R6 delegation list match the actual agents in `.pi/agents/*.md`? |
 
 ### 4. Performance & Patterns
 
-From `current-session.md` scratchpad and `forge-log.md`:
+From the `user/current-session.md` scratchpad and `user/forge-log.md`:
 
 | Check | What to look for |
 |-------|-----------------|
@@ -108,20 +109,33 @@ The meta-agent produces a structured report:
 1. **BLOCKERs**: Report to the user immediately — do not wait for compaction summary
 2. **ISSUEs**: Include in compaction summary with fix recommendations
 3. **SUGGESTIONs**: Log in reminders.md for next session
-4. **NEVER modify opencode.json, agent prompts, or prompt-rules.md autonomously** — always ask for the user's approval first
+4. **NEVER modify `.pi/agents/*.md`, `.pi/agent-profiles/*.md`, or `.pi/SYSTEM.md` autonomously** — always ask for the user's approval first
 5. **The only exception**: Skills-registry.md updates (new skills, updated descriptions) — auto-commit per R12 fast-lane rules
 6. **Self-modification constraint**: If the meta-agent identifies an improvement to ITS OWN SKILL.md (self-review), it can propose changes but MUST NOT apply them without approval
+
+## Review-to-Action Loop
+
+A report that changes nothing is a wasted review. When the report contains ISSUES or SUGGESTIONS, the reviewing session MUST:
+
+1. **Create todos** — emit one inline todo marker `[[todo:new:<subject>]]` per actionable item, so findings survive compaction.
+2. **Fix or log** — if Troy is present, dispatch the highest-severity fix to a coder subagent in the same session. If running autonomously at compaction, append the item to `user/reminders.md` instead.
+3. **Record** — append each applied fix as a one-line entry to the target skill's Level History.
+
+BLOCKERs bypass this loop — they go to the user immediately per Action Rules.
 
 ## Trigger Workflow
 
 ```
 Compaction checkpoint (R3 step 7 fires)
   → Load self-review skill
-  → Read: opencode.json, skills-registry.md, all SKILL.md frontmatter,
-           prompt-rules.md, current-session.md scratchpad, forge-log.md
+  → Read: `.pi/agents/*.md` + `.pi/agent-profiles/*.md`,
+           `glitch-memorycore/plugins/glitch-skills/skills-registry.md`,
+           all SKILL.md frontmatter, `.pi/SYSTEM.md`,
+           `user/current-session.md` scratchpad, `user/forge-log.md`
   → Run all 4 checklist sections
   → Produce structured report
   → Apply action rules (blocker → immediate, issue → summary, suggestion → reminders)
+  → Run the Review-to-Action Loop (todos, fix-or-log, record)
   → Continue compaction
 ```
 

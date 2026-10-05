@@ -63,19 +63,19 @@ Tool creation can happen at ANY phase. It's not a separate phase — it's a capa
    - Error handling (invalid input, null, missing fields)
 3. **Run the tests with a stub** to confirm they fail (red phase):
    ```
-   node plugins/dev-loop/tdd-test.mjs --code "function handler(input) { return null; }" --tests '[{"input":{"x":41},"expected":42}]'
+   node glitch-memorycore/plugins/dev-loop/tdd-test.mjs --code "function handler(input) { return null; }" --tests '[{"input":{"x":41},"expected":42}]'
    ```
 
 **Phase 2 — Implement the tool**:
 4. **Write the handler** function to make tests pass
 5. **Run tests** — all should pass (green phase):
    ```
-   node plugins/dev-loop/tdd-test.mjs --code "function handler(input) { return input.x + 1; }" --tests '[{"input":{"x":41},"expected":42,"name":"41+1"},{"input":{"x":0},"expected":1,"name":"0+1"}]'
+   node glitch-memorycore/plugins/dev-loop/tdd-test.mjs --code "function handler(input) { return input.x + 1; }" --tests '[{"input":{"x":41},"expected":42,"name":"41+1"},{"input":{"x":0},"expected":1,"name":"0+1"}]'
    ```
 6. **Iterate** — if any test fails, read the error, fix the code, retest
 7. **Save on all pass**:
    ```
-   node plugins/dev-loop/tdd-test.mjs --code "function handler(input) { return input.x + 1; }" --tests '[{"input":{"x":41},"expected":42}]' --save-on-pass plugins/tools/adder.mjs
+   node glitch-memorycore/plugins/dev-loop/tdd-test.mjs --code "function handler(input) { return input.x + 1; }" --tests '[{"input":{"x":41},"expected":42}]' --save-on-pass plugins/tools/adder.mjs
    ```
 
 The tool is now live — committed, pushed, available on every machine.
@@ -119,12 +119,12 @@ node plugins/dev-loop/execute-tool.mjs \
   --input '[1, 2, 3]'
 
 # TDD workflow (write tests first, then implement):
-node plugins/dev-loop/tdd-test.mjs \
+node glitch-memorycore/plugins/dev-loop/tdd-test.mjs \
   --code "function handler(input) { return input.map(x => x * 2); }" \
   --tests '[{"input":[1,2,3],"expected":[2,4,6],"name":"doubles array"},{"input":[],"expected":[],"name":"empty array"}]'
 
 # Save on all tests pass:
-node plugins/dev-loop/tdd-test.mjs \
+node glitch-memorycore/plugins/dev-loop/tdd-test.mjs \
   --code "function handler(input) { return input.map(x => x * 2); }" \
   --tests '[{"input":[1,2,3],"expected":[2,4,6]}]' \
   --save-on-pass plugins/tools/double-array.mjs

@@ -163,7 +163,7 @@ Before shipping any UI, ask: "If someone said AI made this, would they believe i
 ---
 
 ## UI Craft Integration
-This project has **UI Craft** installed at `.agents/skills/ui-craft/` — a comprehensive design taste skill for AI agents with 22 domain reference files. Use it for depth beyond what this file covers.
+This project has **UI Craft** installed at `.pi/skills/ui-craft/` — a comprehensive design taste skill for AI agents with 22 domain reference files. Use it for depth beyond what this file covers.
 
 ### When to load UI Craft references
 | Intent | Load UI Craft Reference |

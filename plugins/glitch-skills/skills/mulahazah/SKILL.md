@@ -14,17 +14,17 @@ Active: `/continuous-improvement` triggers reflection and analysis.
 
 ### Passive Observation
 - Hooks capture every tool call as JSONL
-- Observations accumulate in `~/.claude/mulahazah/projects/<hash>/`
+- Observations accumulate in `data/mulahazah/projects/<hash>/`
 - No performance impact
 
 ### Active Reflection (/continuous-improvement)
 1. Review recent observations
 2. Extract behavioral rules from patterns
-3. Propose new rules for `main/mulahazah-rules.md`
+3. Propose new rules for `user/mulahazah-rules.md`
 4. **Always ask for approval before adding rules**
 
 ### Persistent Rules
-- Rules stored in `main/mulahazah-rules.md`
+- Rules stored in `user/mulahazah-rules.md`
 - Read each session, followed automatically
 - Rules reinforced by repetition decay without evidence
 

@@ -21,7 +21,7 @@ If user says yes:
 4. Severity? (Minor / Moderate / Major)
 
 ### Step 2: Record Entry
-Append to `main/post-mortems.md`:
+Append to `user/post-mortems.md`:
 ```
 ## YYYY-MM-DD — [Short title]
 **Severity**: Minor | Moderate | Major
@@ -39,7 +39,7 @@ If yes, apply the rule change in the same session and append one line to its
 Standards that do not absorb lessons decay.
 
 ### Step 4: Reference
-When starting work in a domain, check `main/post-mortems.md` for relevant past lessons.
+When starting work in a domain, check `user/post-mortems.md` for relevant past lessons.
 
 ## Rules
 - No blame — learning tool only

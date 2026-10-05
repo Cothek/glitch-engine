@@ -37,7 +37,7 @@ Skip quality gate if ALL of:
 
 | # | File | Launches Affected | What Breaks |
 |---|------|-------------------|-------------|
-| 1 | `opencode.json` | all | Invalid JSON, missing brackets, bad agents — opencode can't start |
+| 1 | `.pi/settings.json` | all | Invalid JSON, missing brackets, bad agents — the harness can't start |
 | 2 | `launch.mjs` | normal | Node.js import error → no TUI mode |
 | 3 | `launch-safe.mjs` | safe | Node.js import error → no safe mode (worst: can't recover) |
 | 4 | `launch-free.mjs` | free | Node.js import error → no free mode |
@@ -57,7 +57,7 @@ Skip quality gate if ALL of:
 
 #### Checklist for Each Core File
 
-**For `opencode.json` (all modes):**
+**For `.pi/settings.json` (all modes):**
 - **Step 0 — JSON syntax**: Run `validate-config.ps1` (or manual `ConvertFrom-Json`). **BLOCKER** if invalid — even a missing `}` blocks everything.
 - **Step 1 — Structural completeness**: Every agent has a `model` field. Every opening `{` has a closing `}`. Count them if unsure.
 - **Step 2 — Instructions files**: Every path in `instructions` must exist. Files in `glitch-memorycore/` need submodule init.
@@ -93,7 +93,7 @@ Skip quality gate if ALL of:
 
 - **BLOCKER** if: any change would prevent ANY launch mode from starting (normal, safe, free, server)
 - **BLOCKER** if: any .ps1 file contains non-ASCII bytes
-- **BLOCKER** if: opencode.json doesn't parse or has structural issues
+- **BLOCKER** if: `.pi/settings.json` doesn't parse or has structural issues
 - **BLOCKER** if: safe mode backup/restore logic is broken
 - **BLOCKER** if: a new MCP server lacks degraded mode (crashes when deps missing)
 - **MAJOR** if: bootstrap doesn't cover new dependencies
