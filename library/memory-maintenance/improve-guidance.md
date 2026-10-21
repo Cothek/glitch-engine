@@ -49,7 +49,7 @@ When moving content from scratchpad → proper memory file:
 6. **One fact per entry**
    - If a scratchpad bullet has two distinct facts, split into separate entries
    - ✗ "PM-009 is fixed by skipping free model AND the zombie session bug was reported"
-   - ✓ Two entries: (1) "PM-009: free model AI_APICallError — workaround: skip @general, use @general-paid." (2) "Bug #29952 — task tool zombie session, assigned @jlongster."
+   - ✓ Two entries: (1) "PM-009: free model AI_APICallError — workaround: skip @general, use @general-alt." (2) "Bug #29952 — task tool zombie session, assigned @jlongster."
 
 7. **Include rationale, not just state**
    - ✗ "Server uses port 3000"

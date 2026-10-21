@@ -129,13 +129,13 @@ The correct response when an image is shared: "Let me dispatch to @vision to ana
 ### Fallback Chain (Only If @vision Fails)
 
 1. **@vision** returns empty/error → retry with **@vision-alt**
-2. **If @vision-alt also fails** → retry with **@vision-paid**
+2. **If @vision-alt also fails** → retry with **@vision-alt**
 3. **If all three fail** → text-only mode: extract info from user's description, state clearly I'm working from text. Log all failures to scratchpad.
 4. **Feedback unclear** → ask specific yes/no questions, do NOT re-dispatch without a new image
 
 ### Post-Dispatch Cleanup
 
-After @vision (or @vision-paid) completes analysis, it runs `node scripts/cleanup-screenshots.mjs` as its final step. This deletes screenshots in `data/screenshots/` older than 14 days (always preserving `manifest.json` and `NEW_IMAGE_FLAG`). No manual cleanup needed.
+After @vision (or @vision-alt) completes analysis, it runs `node scripts/cleanup-screenshots.mjs` as its final step. This deletes screenshots in `data/screenshots/` older than 14 days (always preserving `manifest.json` and `NEW_IMAGE_FLAG`). No manual cleanup needed.
 
 ### Why This Rule Exists
 

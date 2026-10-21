@@ -518,7 +518,7 @@ Controls which sub-agents Glitch dispatches: free agents vs paid agents. This is
 ```
 User says: a trigger phrase above
     ↓
-I run: node scripts/set-agent-tier.mjs <tier>  (via @general or @general-paid)
+I run: node scripts/set-agent-tier.mjs <tier>  (via @general or @general-alt)
     ↓
 NO glitch.mjs, NO restart, NO config edit
     ↓
@@ -531,7 +531,7 @@ I confirm: "Agent tier set to free/paid — dispatching <tier> agents from now o
 @general, @coder, @explore, @reviewer, @testing, @vision, @ui-designer, @memory, @pentester. Free first, paid fallback only on free failure or quota exhaustion.
 
 **Tier = paid**:
-@general-paid, @coder-paid, @explore-paid, @reviewer-paid, @testing-paid, @vision-paid, @ui-designer-paid, @memory-paid, @pentester-paid as the PRIMARY dispatch target. Do not attempt the free agent first. Fall back to free only if the paid agent fails with a model/API error.
+@general-alt, @coder-alt, @explore-alt, @reviewer-alt, @testing-alt, @vision-alt, @ui-designer-alt, @memory-alt, @pentester-alt as the PRIMARY dispatch target. Do not attempt the free agent first. Fall back to free only if the paid agent fails with a model/API error.
 
 ### Persistence
 

@@ -58,7 +58,7 @@ Re-read the original request. Confirm every aspect was addressed, every claim ha
 
 ## Glitch Integration
 
-Your primary job is coordination. Dispatch background sub-agents for retrieval and keep working in parallel. Use @general (free) for web research with @general-paid as fallback, @explore for codebase research, @vision for visual or image sources. Research feeds thinking, it does not replace it. Feeds the wayfinder skill (research tickets) and goal skill (facts before decisions).
+Your primary job is coordination. Dispatch background sub-agents for retrieval and keep working in parallel. Use @general (free) for web research with @general-alt as fallback, @explore for codebase research, @vision for visual or image sources. Research feeds thinking, it does not replace it. Feeds the wayfinder skill (research tickets) and goal skill (facts before decisions).
 
 Output: ONE cited Markdown file per research question. Save where the repo keeps such notes. Match existing convention. If none, choose a sensible path and say where.
 

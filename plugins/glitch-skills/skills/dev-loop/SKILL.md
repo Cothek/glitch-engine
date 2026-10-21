@@ -41,7 +41,7 @@ The dev loop orchestrates sub-agents in a strict sequence for each feature:
 | **Write** | @coder or @general | Writes N candidate implementations for the feature | N code change sets |
 | **Select** | Glitch | Uses verifier skill + PPT to select best from N candidates | Single selected implementation + ranking |
 | **Review** | @reviewer | Quality + security audit using verifier continuous scoring | Structured report with continuous quality score |
-| **Security Scan** | @pentester or @pentester-paid | Static scans: snyk, trufflehog, code pattern grep | Security findings report |
+| **Security Scan** | @pentester or @pentester-alt | Static scans: snyk, trufflehog, code pattern grep | Security findings report |
 | **Build** | @general | Start dev server, wait for readiness | Server running on port |
 | **Interact** | @coder (plan) + @general (execute) | Write JSON plan, run browser-interact.mjs + nuclei scan | Screenshots + results.json |
 | **Verify** | @vision | Analyze screenshots against expectations | Visual pass/fail report |

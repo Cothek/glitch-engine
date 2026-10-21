@@ -80,21 +80,21 @@ timestamp: 2026-09-23T00:00:00Z
 | @glitch-omni | `.opencode/agents/glitch-omni.md` | deepseek-v4-flash | Direct-execution variant — no delegation, does everything itself. Alternative primary for Normal mode. |
 | @memory | `.opencode/agents/memory.md` | opencode/deepseek-v4-flash-free | Memory writer — reads and appends to `user/*.md` files only. Loads save-memory skill. |
 
-### Paid Agents (Fallback When Free Fails)
+### Alt Agents (Paid Fallback When Free Fails)
 | Agent | File | Model | Purpose |
 |-------|------|-------|---------|
-| @general-paid | `.opencode/agents/general-paid.md` | deepseek-v4-flash | General-purpose paid fallback — when @general exhausts free quota |
-| @explore-paid | `.opencode/agents/explore-paid.md` | deepseek-v4-flash | Codebase research paid fallback — when @explore fails |
-| @coder-paid | `.opencode/agents/coder-paid.md` | qwen3.7-plus | Senior full-stack engineer paid fallback |
-| @ui-designer-paid | `.opencode/agents/ui-designer-paid.md` | qwen3.7-plus | Senior UI designer paid fallback |
-| @reviewer-paid | `.opencode/agents/reviewer-paid.md` | qwen3.6-plus | Independent code quality gate paid fallback |
-| @testing-paid | `.opencode/agents/testing-paid.md` | qwen3.7-plus | Test writer paid fallback |
-| @vision-paid | `.opencode/agents/vision-paid.md` | qwen3.6-plus | Image/visual content analysis paid fallback |
-| @memory-paid | `.opencode/agents/memory-paid.md` | deepseek-v4-flash | Memory writer paid fallback — when @memory quota is exhausted |
-| @pentester-paid | `.opencode/agents/pentester-paid.md` | qwen3.7-plus | Application security tester paid fallback — OWASP Top 10, API testing, tool-based scanning |
+| @general-alt | `.opencode/agents/general-alt.md` | deepseek-v4-flash | General-purpose paid fallback — when @general exhausts free quota |
+| @explore-alt | `.opencode/agents/explore-alt.md` | deepseek-v4-flash | Codebase research paid fallback — when @explore fails |
+| @coder-alt | `.opencode/agents/coder-alt.md` | qwen3.7-plus | Senior full-stack engineer paid fallback |
+| @ui-designer-alt | `.opencode/agents/ui-designer-alt.md` | qwen3.7-plus | Senior UI designer paid fallback |
+| @reviewer-alt | `.opencode/agents/reviewer-alt.md` | qwen3.6-plus | Independent code quality gate paid fallback |
+| @testing-alt | `.opencode/agents/testing-alt.md` | qwen3.7-plus | Test writer paid fallback |
+| @vision-alt | `.opencode/agents/vision-alt.md` | qwen3.6-plus | Image/visual content analysis paid fallback |
+| @memory-alt | `.opencode/agents/memory-alt.md` | deepseek-v4-flash | Memory writer paid fallback — when @memory quota is exhausted |
+| @pentester-alt | `.opencode/agents/pentester-alt.md` | qwen3.7-plus | Application security tester paid fallback — OWASP Top 10, API testing, tool-based scanning |
 
-### Free→Paid Fallback Model Chains
-| Free Model | Paid Fallback | Agents Using |
+### Free→Alt Fallback Model Chains
+| Free Model | Alt Fallback | Agents Using |
 |------------|--------------|-------------|
 | deepseek-v4-flash-free | deepseek-v4-flash (same family) | @general, @explore |
 | nvidia/minimaxai/minimax-m3 | qwen3.7-plus (cross-family) | @coder, @ui-designer, @testing, @pentester |
